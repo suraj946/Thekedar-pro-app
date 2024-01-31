@@ -1,0 +1,11 @@
+export const theme_primary = "#2e4dd9";
+export const theme_secondary = "#3d88f9";
+export const info = "#51c380";
+export const success = "#05ad51";
+export const warning = "#dec80f";
+export const danger = "#ea1d05";
+export const dark = "#020203";
+export const dark_light_l1 = "#424242";
+export const dark_light_l2 = "#969696";
+export const light = "#e6e4e9";
+export const white = "#fff";
