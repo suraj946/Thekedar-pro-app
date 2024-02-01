@@ -1,9 +1,12 @@
 import {StyleSheet, View} from 'react-native';
-import React from 'react';
+import React, { memo } from 'react';
 import OverviewCard from './OverviewCard';
-import { moderateScale, verticalScale } from 'react-native-size-matters';
+import {moderateScale, verticalScale} from 'react-native-size-matters';
+import {useNavigation} from '@react-navigation/native';
 
 const BoxSection = () => {
+  const navigate = useNavigation();
+  // console.log(`Box ${Math.round(Math.random()*1000)}`);
   return (
     <View style={styles.container}>
       <OverviewCard
@@ -57,14 +60,14 @@ const BoxSection = () => {
   );
 };
 
-export default BoxSection;
+export default memo(BoxSection);
 
 const styles = StyleSheet.create({
-    container:{
-        flexDirection:"row",
-        flexWrap:"wrap",
-        justifyContent:"space-between",
-        marginTop:verticalScale(5),
-        gap:moderateScale(10)
-    },
+  container: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginTop: verticalScale(5),
+    gap: moderateScale(10),
+  },
 });

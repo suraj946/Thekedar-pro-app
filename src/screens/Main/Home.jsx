@@ -4,9 +4,10 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import {dark, dark_light_l1, light, theme_primary, white} from '../../styles/colors';
 import {
   moderateScale,
@@ -17,16 +18,23 @@ import {
 import {Icon} from 'react-native-paper';
 import BoxSection from '../../components/BoxSection';
 import SelectWorkerSection from '../../components/SelectWorkerSection';
+import HomeDrawer from '../../components/HomeDrawer';
 
 
 const Home = ({navigation}) => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: theme_primary, paddingTop:10}}>
       <StatusBar backgroundColor={theme_primary} barStyle="light-content" />
+      <HomeDrawer visible={drawerOpen} setVisible={setDrawerOpen} />
       <View style={styles.topView}>
         <View style={styles.headerView}>
-          <Icon source="menu" size={moderateScale(35)} color={light} />
-          <Icon source="bell-outline" size={moderateScale(30)} color={light} />
+          <TouchableOpacity activeOpacity={0.8} onPress={() => setDrawerOpen(true)}>
+            <Icon source="menu" size={moderateScale(35)} color={light} />
+          </TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.8}>
+            <Icon source="bell-outline" size={moderateScale(30)} color={light} />
+          </TouchableOpacity>
         </View>
         <View style={styles.greetView}>
           <Text style={styles.nameTxt}>Hi Suraj Gupta</Text>
