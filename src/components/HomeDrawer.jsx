@@ -10,7 +10,7 @@ const HomeDrawer = ({
   setVisible
 }) => {
   return (
-    <MyDrawer visible={visible} setVisible={setVisible} >
+    <MyDrawer visible={visible} setVisible={setVisible}>
       <Drawer.Section style={{marginTop:verticalScale(40)}}>
         <Avatar.Icon icon={"account"} size={moderateScale(70)} style={{alignSelf:"center"}} />
         <Text style={styles.nameTxt}>{"Suraj Gupta"}</Text>
@@ -45,6 +45,8 @@ const styles = StyleSheet.create({
   },
   drawerItem:{
     backgroundColor:theme_primary,
-    marginBottom:verticalScale(10)
+    marginBottom:verticalScale(10),
+    borderRadius:moderateScale(5),
+    height:45
   }
 })

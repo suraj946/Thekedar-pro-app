@@ -3,6 +3,7 @@ import React, {memo} from 'react';
 import {Avatar, Icon} from 'react-native-paper';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {dark, dark_light_l2, light, success, white} from '../styles/colors';
+import { useNavigation } from '@react-navigation/native';
 
 const WorkerCard = ({
   workerId,
@@ -11,7 +12,10 @@ const WorkerCard = ({
   selectSingle = () => {},
   deSelectSingle = () => {},
   selected = false,
+  isAnySelected=false
 }) => {
+  const navigation = useNavigation();
+
   const handlePress = () => {
     if (selected) {
       if (typeof deSelectSingle !== 'function') {
@@ -25,10 +29,11 @@ const WorkerCard = ({
       selectSingle(workerId);
     }
   };
-  // console.log(`Rendering ${Math.round(Math.random() * 1000)}`);
+  console.log(`Rendering ${Math.round(Math.random() * 1000)}`);
   return (
     <TouchableOpacity
-      onPress={handlePress}
+      onLongPress={handlePress}
+      onPress={isAnySelected ? handlePress : () => navigation.navigate("WorkerProfile", {workerId})}
       activeOpacity={0.9}
       style={{...styles.container, backgroundColor: selected ? light : white}}>
       <View style={styles.textView}>

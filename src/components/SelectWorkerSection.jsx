@@ -22,7 +22,7 @@ import OutlinedBtn from './OutlinedBtn';
 import SelectAttendanceStatus from './SelectAttendanceStatus';
 import WorkerCard from './WorkerCard';
 
-const workersData = [
+export const workersData = [
   {
     name: 'Worker 1',
     role: 'mistri',
@@ -53,6 +53,37 @@ const workersData = [
     _id: 'okaykjdgjopqw',
     isSelected: false,
   },
+  {
+    name: 'Worker 5',
+    role: 'mistri',
+    _id: 'okaykjdgjopqw12',
+    isSelected: false,
+  },
+  {
+    name: 'Worker 5',
+    role: 'mistri',
+    _id: 'okaykjdgjopqw1245',
+    isSelected: false,
+  },
+  {
+    name: 'Worker 5',
+    role: 'mistri',
+    _id: 'okaykjdgjopqw12999',
+    isSelected: false,
+  },
+  {
+    name: 'Worker 5',
+    role: 'mistri',
+    _id: 'okaykjdgjopqw12099',
+    isSelected: false,
+  },
+  {
+    name: 'Worker 5',
+    role: 'mistri',
+    _id: 'okaykjdgjopqw12099hhgg',
+    isSelected: false,
+  },
+  
 ];
 
 const SelectWorkerSection = () => {
@@ -61,7 +92,7 @@ const SelectWorkerSection = () => {
   const dispatch = useDispatch();
   const [attendanceStatus, setAttendanceStatus] = useState(DEFAULT_ATTENDANCE_STATUS);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  // console.log(`Box ${Math.round(Math.random()*1000)}`);
+
   const selectSingle = useCallback(
     wId => {
       dispatch(addWorkerSingle(wId));
@@ -87,6 +118,8 @@ const SelectWorkerSection = () => {
   const doAttendance = () => {
     console.log('Attendance');
   };
+  console.log(`section Rendering ${Math.round(Math.random() * 1000)}`);
+
   return (
     <View>
       <Text style={styles.subHeadTxt}>Attendance for today</Text>
@@ -122,6 +155,7 @@ const SelectWorkerSection = () => {
               selectSingle={selectSingle}
               deSelectSingle={deSelectSingle}
               selected={selectedWorkers.includes(w._id)}
+              isAnySelected={count > 0}
             />
           ))}
       </View>

@@ -5,7 +5,7 @@ import {moderateScale, verticalScale} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
 
 const BoxSection = () => {
-  const navigate = useNavigation();
+  const navigation = useNavigation();
   // console.log(`Box ${Math.round(Math.random()*1000)}`);
   return (
     <View style={styles.container}>
@@ -28,9 +28,7 @@ const BoxSection = () => {
         icon="account-group"
         iconBgColor="#20f72f"
         text="Workers"
-        pressHandler={() => {
-          console.log('ok');
-        }}
+        pressHandler={() => navigation.navigate("Workers")}
       />
       <OverviewCard
         icon="account-group-outline"
