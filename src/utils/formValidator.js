@@ -111,9 +111,87 @@ const validateOtp = (otp) => {
     return response;
 }
 
+const validateWages = (wages) => {
+    let response;
+    if(wages?.trim().length === 0){
+        response = {
+            isValid: false,
+            errorText: `Wages is required`
+        }
+    }
+    else if(isNaN(wages)){
+        response = {
+            isValid: false,
+            errorText: "Invalid wages, it should be a number"
+        }
+    }
+    else{
+        response={
+            isValid:true,
+            errorText:""
+        }
+    }
+    return response;
+}
+
+const validatePhoneNumber = (number) => {
+    let response;
+    if(isNaN(number)){
+        response = {
+            isValid: false,
+            errorText: "Invalid phone number"
+        }
+    }
+    else if(number?.trim().length !== 10){
+        response = {
+            isValid: false,
+            errorText: "phone number cannot be more or less than 10 digits"
+        }
+    }
+    else{
+        response={
+            isValid:true,
+            errorText:""
+        }
+    }
+    return response;
+}
+
+const validateDayDate = (date) => {
+    let response;
+    if(date?.trim().length === 0){
+        response = {
+            isValid: false,
+            errorText: `date is required`
+        }
+    }
+    else if(isNaN(date)){
+        response = {
+            isValid: false,
+            errorText: "Date should be a number"
+        }
+    }
+    else if(Number(date) > 32 || Number(date) < 1){
+        response = {
+            isValid: false,
+            errorText: "Invalid date given"
+        }
+    }
+    else{
+        response={
+            isValid:true,
+            errorText:""
+        }
+    }
+    return response;
+}
+
 export {
     validateName,
     validateEmail,
     validatePassword,
-    validateOtp
+    validateOtp,
+    validateWages,
+    validatePhoneNumber,
+    validateDayDate
 }

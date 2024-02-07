@@ -19,7 +19,10 @@ import {Icon} from 'react-native-paper';
 import BoxSection from '../../components/BoxSection';
 import SelectWorkerSection from '../../components/SelectWorkerSection';
 import HomeDrawer from '../../components/HomeDrawer';
+import { getCurrentNepaliDate } from '../../utils/helpers';
+import { DAYS, MONTH } from '../../utils/constants';
 
+const currDate = getCurrentNepaliDate();
 
 const Home = ({navigation}) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -45,7 +48,7 @@ const Home = ({navigation}) => {
       <View style={styles.overView}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
           <Text style={{fontSize: moderateScale(20), color: dark}}>Overview</Text>
-          <Text style={styles.dateTxt}>20 Baisakh 2080</Text>
+          <Text style={styles.dateTxt}>{`${DAYS[currDate.dayIndex]}, ${currDate.dayDate} ${MONTH[currDate.monthIndex]}`}</Text>
         </View>
         
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -98,6 +101,7 @@ const styles = StyleSheet.create({
     backgroundColor: light,
     borderRadius: moderateScale(20),
     padding:moderateScale(7),
-    fontSize:moderateScale(13)
+    fontSize:moderateScale(13),
+    textTransform:"capitalize"
   },
 });

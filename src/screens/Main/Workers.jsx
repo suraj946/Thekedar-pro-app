@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -8,50 +8,53 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Avatar, Icon, Searchbar } from 'react-native-paper';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
-import { useDispatch, useSelector } from 'react-redux';
+import {Avatar, Icon, Searchbar} from 'react-native-paper';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import Header from '../../components/Header';
-import { workersData } from '../../components/SelectWorkerSection';
+import {workersData} from '../../components/SelectWorkerSection';
 import WorkerCard from '../../components/WorkerCard';
 import {
-  addWorkerAll,
-  addWorkerSingle,
-  removeWorkerAll,
-  removeWorkerSingle,
-} from '../../redux/slices/workerSlice';
-import { dark, success, theme_primary, theme_secondary, white } from '../../styles/colors';
+  dark,
+  success,
+  theme_primary,
+  theme_secondary,
+  white,
+} from '../../styles/colors';
+import {useSelectionSystem} from '../../utils/hooks';
 
 const Workers = ({navigation}) => {
   const [search, setSearch] = useState('');
-  const {selectedWorkers, count} = useSelector(state => state.selectedWorkers);
-  const dispatch = useDispatch();
 
-  const selectSingle = useCallback(
-    wId => {
-      dispatch(addWorkerSingle(wId));
-    },
-    [dispatch],
-  );
+  const {
+    selectSingle,
+    deSelectSingle,
+    selectAll,
+    deselectAll,
+    count,
+    selectedItem,
+  } = useSelectionSystem(workersData);
 
-  const deSelectSingle = useCallback(
-    wId => {
-      dispatch(removeWorkerSingle(wId));
-    },
-    [dispatch],
-  );
-
-  const selectAll = () => {
-    dispatch(addWorkerAll(workersData.map(w => w._id)));
-  };
-
-  const deselectAll = () => {
-    dispatch(removeWorkerAll());
-  };
-
+  const handleEditWorker = () => {
+    const [first] = selectedItem;
+    navigation.navigate("EditWorker", {workerId:first})
+  }
   const handleDelete = () => {
     console.log('perform deleteion');
   };
+
+  const iconAni = useSharedValue(0);
+  const iconStyle = useAnimatedStyle(() => ({
+    transform: [{scale: iconAni.value}],
+  }));
+
+  useEffect(() => {
+    iconAni.value = withTiming(1, {duration: 400});
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -74,13 +77,7 @@ const Workers = ({navigation}) => {
         </Text>
         <View style={styles.selectIconsView}>
           {count === 1 && (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() =>
-                navigation.navigate('EditWorker', {
-                  workerId: selectedWorkers[0],
-                })
-              }>
+            <TouchableOpacity activeOpacity={0.8} onPress={handleEditWorker}>
               <Icon
                 source={'pencil'}
                 size={moderateScale(30)}
@@ -123,7 +120,7 @@ const Workers = ({navigation}) => {
             workerId={item._id}
             name={item.name}
             role={item.role}
-            selected={selectedWorkers.includes(item._id)}
+            selected={selectedItem.has(item._id)}
             selectSingle={selectSingle}
             deSelectSingle={deSelectSingle}
             isAnySelected={count > 0}
@@ -131,7 +128,17 @@ const Workers = ({navigation}) => {
         )}
         keyExtractor={item => item._id}
       />
-      <Avatar.Icon icon={'plus'} style={styles.plusIconStyle} size={moderateScale(70)} />
+      <Animated.View style={[styles.plusIconStyle, iconStyle]}>
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={() => navigation.navigate('AddWorker')}>
+          <Avatar.Icon
+            icon={'plus'}
+            style={{backgroundColor: success}}
+            size={moderateScale(70)}
+          />
+        </TouchableOpacity>
+      </Animated.View>
     </SafeAreaView>
   );
 };
@@ -158,7 +165,7 @@ const styles = StyleSheet.create({
   plusIconStyle: {
     position: 'absolute',
     bottom: verticalScale(30),
-    backgroundColor:success,
+    backgroundColor: success,
     right: scale(30),
     zIndex: 10,
     shadowColor: dark,
@@ -169,5 +176,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.51,
     shadowRadius: 13.16,
     elevation: 20,
+    borderRadius: moderateScale(40),
   },
 });

@@ -23,22 +23,30 @@ import {
   theme_primary,
   white
 } from '../../styles/colors';
-import { DEFAULT_WORKER_ROLE } from '../../utils/constants';
-import { validateName, validatePhoneNumber, validateWages } from '../../utils/formValidator';
+import { DEFAULT_WORKER_ROLE, MONTH } from '../../utils/constants';
+import { getCurrentNepaliDate } from '../../utils/helpers';
+import { validateDayDate, validateName, validatePhoneNumber, validateWages } from '../../utils/formValidator';
 
-const EditWorker = ({route}) => {
+const currDate = getCurrentNepaliDate();
+
+const AddWorker = () => {
   const [name, setName] = useState('');
   const [role, setRole] = useState(DEFAULT_WORKER_ROLE);
   const [contactNumber, setContactNumber] = useState('');
   const [wagesPerDay, setWagesPerDay] = useState('');
   const [address, setAddress] = useState('');
+  const [joiningDate, setJoiningDate] = useState({...currDate});
 
   const [nameError, setNameError] = useState('');
   const [wagesPerDayError, setWagesPerDayError] = useState('');
+  const [joiningDateError, setJoiningDateError] = useState('');
   const [contactNumberError, setContactNumberError] = useState('');
+
   const [selectRoleModal, setSelectRoleModal] = useState(false);
 
-  console.log(route.params.workerId);
+  const handleDateChange = (text, field) => {
+    setJoiningDate({...joiningDate, [field]: text});
+  };
 
   const validateInputs = () => {
     const nameCheck = validateName(name, "Worker Name");
@@ -65,10 +73,18 @@ const EditWorker = ({route}) => {
         forContact = false;
       }
     }
-    return nameCheck.isValid && wagesCheck.isValid && forContact;
+
+    const dateCheck = validateDayDate(joiningDate.dayDate?.toString());
+    if(dateCheck.isValid){
+      setJoiningDateError("");
+    }else{
+      setJoiningDateError(dateCheck.errorText);
+    }
+
+    return nameCheck.isValid && wagesCheck.isValid && forContact && dateCheck.isValid;
   }
 
-  const updateWorkerHandler = () => {
+  const addWorkerHandler = () => {
     const isAllOk = validateInputs();
     if(isAllOk){
       console.log("Working Fine");
@@ -79,7 +95,7 @@ const EditWorker = ({route}) => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView style={{flex: 1, backgroundColor: white}}>
         <StatusBar barStyle={'dark-content'} backgroundColor={white} />
-        <Header headingText="Edit Worker" />
+        <Header headingText="Add New Worker" />
 
         <ScrollView
           contentContainerStyle={{
@@ -120,6 +136,34 @@ const EditWorker = ({route}) => {
             value={address}
             onChangeText={useCallback(text => setAddress(text), [])}
           />
+          <View style={styles.datePickerView}>
+            <View style={styles.dateTxtView}>
+              <Text
+                style={{
+                  fontSize: moderateScale(18),
+                  color: dark,
+                }}>
+                Joining Date :{' '}
+              </Text>
+              <Text style={styles.txt}>
+                {`${joiningDate.year}/${MONTH[joiningDate.monthIndex]}/${
+                  joiningDate.dayDate
+                }`}
+              </Text>
+            </View>
+
+            <Input
+              value={joiningDate.dayDate?.toString()}
+              label="Date"
+              onChangeText={useCallback(
+                text => handleDateChange(text, 'dayDate'),
+                [],
+              )}
+              keyboardType="number-pad"
+              style={styles.datePickerInput}
+              errorText={joiningDateError}
+            />
+          </View>
           <TouchableOpacity
             activeOpacity={0.9}
             onPress={() => setSelectRoleModal(true)}>
@@ -148,8 +192,8 @@ const EditWorker = ({route}) => {
             statusBarColorRGBA="rgba(255, 255, 255, 0.6)"
           />
           <ContainedBtn
-            title="Update Worker"
-            handler={updateWorkerHandler}
+            title="Add Worker"
+            handler={addWorkerHandler}
             style={{
               borderRadius: moderateScale(5),
               marginTop: verticalScale(20),
@@ -161,7 +205,7 @@ const EditWorker = ({route}) => {
   );
 };
 
-export default EditWorker;
+export default AddWorker;
 
 const styles = StyleSheet.create({
   datePickerView: {

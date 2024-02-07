@@ -4,6 +4,7 @@ import {Avatar, Icon} from 'react-native-paper';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {dark, dark_light_l2, light, success, white} from '../styles/colors';
 import { useNavigation } from '@react-navigation/native';
+import { trigger } from 'react-native-haptic-feedback';
 
 const WorkerCard = ({
   workerId,
@@ -29,10 +30,20 @@ const WorkerCard = ({
       selectSingle(workerId);
     }
   };
-  console.log(`Rendering ${Math.round(Math.random() * 1000)}`);
+
+  const handleLongPress = () => {
+    if(!isAnySelected){
+      trigger("impactLight", {
+        enableVibrateFallback: true,
+        ignoreAndroidSystemSettings: false,
+      })
+    }
+    handlePress();
+  }
+  // console.log(`Rendering ${Math.round(Math.random() * 1000)} ${isAnySelected}`);
   return (
     <TouchableOpacity
-      onLongPress={handlePress}
+      onLongPress={handleLongPress}
       onPress={isAnySelected ? handlePress : () => navigation.navigate("WorkerProfile", {workerId})}
       activeOpacity={0.9}
       style={{...styles.container, backgroundColor: selected ? light : white}}>

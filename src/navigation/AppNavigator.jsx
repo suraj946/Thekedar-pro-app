@@ -9,6 +9,8 @@ import ResetPassword from '../screens/Auth/ResetPassword';
 import Workers from '../screens/Main/Workers';
 import WorkerProfile from '../screens/Main/WorkerProfile';
 import EditWorker from '../screens/Main/EditWorker';
+import AddWorker from '../screens/Main/AddWorker';
+import Calendar from '../screens/Main/Calendar';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +22,8 @@ const AppNavigator = () => {
         <Stack.Screen name="Workers" component={Workers} />
         <Stack.Screen name="WorkerProfile" component={WorkerProfile} />
         <Stack.Screen name="EditWorker" component={EditWorker} />
+        <Stack.Screen name="AddWorker" component={AddWorker} />
+        <Stack.Screen name="Calendar" component={Calendar} />
 
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Signup" component={Signup} />

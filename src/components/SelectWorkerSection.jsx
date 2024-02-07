@@ -1,14 +1,8 @@
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  addWorkerAll,
-  addWorkerSingle,
-  removeWorkerAll,
-  removeWorkerSingle,
-} from '../redux/slices/workerSlice';
+
 import {
   dark,
   dark_light_l1,
@@ -21,6 +15,7 @@ import ContainedBtn from './ContainedBtn';
 import OutlinedBtn from './OutlinedBtn';
 import SelectAttendanceStatus from './SelectAttendanceStatus';
 import WorkerCard from './WorkerCard';
+import { useSelectionSystem } from '../utils/hooks';
 
 export const workersData = [
   {
@@ -59,66 +54,44 @@ export const workersData = [
     _id: 'okaykjdgjopqw12',
     isSelected: false,
   },
-  {
-    name: 'Worker 5',
-    role: 'mistri',
-    _id: 'okaykjdgjopqw1245',
-    isSelected: false,
-  },
-  {
-    name: 'Worker 5',
-    role: 'mistri',
-    _id: 'okaykjdgjopqw12999',
-    isSelected: false,
-  },
-  {
-    name: 'Worker 5',
-    role: 'mistri',
-    _id: 'okaykjdgjopqw12099',
-    isSelected: false,
-  },
-  {
-    name: 'Worker 5',
-    role: 'mistri',
-    _id: 'okaykjdgjopqw12099hhgg',
-    isSelected: false,
-  },
+  // {
+  //   name: 'Worker 5',
+  //   role: 'mistri',
+  //   _id: 'okaykjdgjopqw1245',
+  //   isSelected: false,
+  // },
+  // {
+  //   name: 'Worker 5',
+  //   role: 'mistri',
+  //   _id: 'okaykjdgjopqw12999',
+  //   isSelected: false,
+  // },
+  // {
+  //   name: 'Worker 5',
+  //   role: 'mistri',
+  //   _id: 'okaykjdgjopqw12099',
+  //   isSelected: false,
+  // },
+  // {
+  //   name: 'Worker 5',
+  //   role: 'mistri',
+  //   _id: 'okaykjdgjopqw12099hhgg',
+  //   isSelected: false,
+  // },
   
 ];
 
 const SelectWorkerSection = () => {
   const [workers, setWorkers] = useState(workersData);
-  const {selectedWorkers, count} = useSelector(state => state.selectedWorkers);
-  const dispatch = useDispatch();
   const [attendanceStatus, setAttendanceStatus] = useState(DEFAULT_ATTENDANCE_STATUS);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const selectSingle = useCallback(
-    wId => {
-      dispatch(addWorkerSingle(wId));
-    },
-    [dispatch],
-  );
-
-  const deSelectSingle = useCallback(
-    wId => {
-      dispatch(removeWorkerSingle(wId));
-    },
-    [dispatch],
-  );
-
-  const selectAll = () => {
-    dispatch(addWorkerAll(workers.map(w => w._id)));
-  };
-
-  const deselectAll = () => {
-    dispatch(removeWorkerAll());
-  };
+  const {count, deSelectSingle, selectSingle, selectAll, deselectAll, selectedItem} = useSelectionSystem(workers);
 
   const doAttendance = () => {
     console.log('Attendance');
   };
-  console.log(`section Rendering ${Math.round(Math.random() * 1000)}`);
+  // console.log(`section Rendering ok ${Math.round(Math.random() * 1000)}`);
 
   return (
     <View>
@@ -154,7 +127,7 @@ const SelectWorkerSection = () => {
               role={w.role}
               selectSingle={selectSingle}
               deSelectSingle={deSelectSingle}
-              selected={selectedWorkers.includes(w._id)}
+              selected={selectedItem.has(w._id)}
               isAnySelected={count > 0}
             />
           ))}

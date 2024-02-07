@@ -1,7 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
-  selectedWorkers: [],
+  selectedWorkers: new Set(),
   count: 0,
 };
 
@@ -10,21 +10,19 @@ export const selectedWorkerSlice = createSlice({
   initialState,
   reducers: {
     addWorkerSingle: (state, action) => {
-      state.selectedWorkers.push(action.payload);
+      state.selectedWorkers.add(action.payload);
       state.count += 1;
     },
     removeWorkerSingle: (state, action) => {
-      state.selectedWorkers = state.selectedWorkers.filter(
-        i => i !== action.payload,
-      );
+      state.selectedWorkers.delete(action.payload);
       state.count -= 1;
     },
     addWorkerAll: (state, action) => {
-      state.selectedWorkers = [...action.payload];
+      state.selectedWorkers = new Set(action.payload);
       state.count = action.payload?.length;
     },
     removeWorkerAll: state => {
-      state.selectedWorkers = [];
+      state.selectedWorkers = new Set();
       state.count = 0;
     },
   },

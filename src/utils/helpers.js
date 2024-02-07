@@ -1,3 +1,4 @@
+import NepaliDate from "nepali-date-converter"
 import { info, white } from "../styles/colors"
 import {LENGTH_SHORT} from "react-native-snackbar"
 const defaultSnackbarOptions = (text, bgColor=info, textColor=white, duration=LENGTH_SHORT) => {
@@ -14,6 +15,16 @@ const defaultSnackbarOptions = (text, bgColor=info, textColor=white, duration=LE
   }
 }
 
+const getCurrentNepaliDate = () => {
+  const {year, month, date, day} = new NepaliDate().getDateObject().BS;
+  return {
+    year,
+    monthIndex:month,
+    dayDate:date,
+    dayIndex:day
+  }
+}
 export {
   defaultSnackbarOptions,
+  getCurrentNepaliDate
 }

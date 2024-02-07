@@ -34,9 +34,7 @@ const BoxSection = () => {
         icon="account-group-outline"
         iconBgColor="#8e26fc"
         text="Add Worker"
-        pressHandler={() => {
-          console.log('ok');
-        }}
+        pressHandler={() => navigation.navigate("AddWorker")}
       />
       <OverviewCard
         icon="currency-inr"
@@ -50,9 +48,7 @@ const BoxSection = () => {
         icon="calendar-month-outline"
         iconBgColor="#fc14bb"
         text="View Calendar"
-        pressHandler={() => {
-          console.log('ok');
-        }}
+        pressHandler={() => navigation.navigate("Calendar")}
       />
     </View>
   );
