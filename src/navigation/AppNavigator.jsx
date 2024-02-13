@@ -11,6 +11,9 @@ import WorkerProfile from '../screens/Main/WorkerProfile';
 import EditWorker from '../screens/Main/EditWorker';
 import AddWorker from '../screens/Main/AddWorker';
 import Calendar from '../screens/Main/Calendar';
+import Attendance from '../screens/Main/Attendance';
+import Settlement from '../screens/Main/Settlement';
+import Advance from '../screens/Main/Advance';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +27,9 @@ const AppNavigator = () => {
         <Stack.Screen name="EditWorker" component={EditWorker} />
         <Stack.Screen name="AddWorker" component={AddWorker} />
         <Stack.Screen name="Calendar" component={Calendar} />
+        <Stack.Screen name="Attendance" component={Attendance} />
+        <Stack.Screen name="Settlement" component={Settlement} />
+        <Stack.Screen name="Advance" component={Advance} />
 
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Signup" component={Signup} />

@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     width: '90%',
     minHeight: verticalScale(100),
+    maxHeight:verticalScale(400),
     backgroundColor: white,
     alignSelf: 'center',
     borderRadius: moderateScale(5),

@@ -54,30 +54,30 @@ export const workersData = [
     _id: 'okaykjdgjopqw12',
     isSelected: false,
   },
-  // {
-  //   name: 'Worker 5',
-  //   role: 'mistri',
-  //   _id: 'okaykjdgjopqw1245',
-  //   isSelected: false,
-  // },
-  // {
-  //   name: 'Worker 5',
-  //   role: 'mistri',
-  //   _id: 'okaykjdgjopqw12999',
-  //   isSelected: false,
-  // },
-  // {
-  //   name: 'Worker 5',
-  //   role: 'mistri',
-  //   _id: 'okaykjdgjopqw12099',
-  //   isSelected: false,
-  // },
-  // {
-  //   name: 'Worker 5',
-  //   role: 'mistri',
-  //   _id: 'okaykjdgjopqw12099hhgg',
-  //   isSelected: false,
-  // },
+  {
+    name: 'Worker 5',
+    role: 'mistri',
+    _id: 'okaykjdgjopqw1245',
+    isSelected: false,
+  },
+  {
+    name: 'Worker 5',
+    role: 'mistri',
+    _id: 'okaykjdgjopqw12999',
+    isSelected: false,
+  },
+  {
+    name: 'Worker 5',
+    role: 'mistri',
+    _id: 'okaykjdgjopqw12099',
+    isSelected: false,
+  },
+  {
+    name: 'Worker 5',
+    role: 'mistri',
+    _id: 'okaykjdgjopqw12099hhgg',
+    isSelected: false,
+  },
   
 ];
 
