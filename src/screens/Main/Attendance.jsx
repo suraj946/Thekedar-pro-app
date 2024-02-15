@@ -4,6 +4,7 @@ import Header from '../../components/Header';
 import MonthHeader from '../../components/MonthHeader';
 import { dark, light } from '../../styles/colors';
 import { MONTH } from '../../utils/constants';
+import Calendar from '../../components/Calendar';
 
 const Attendance = ({route}) => {
   const [count, setCount] = useState(0);
@@ -12,9 +13,8 @@ const Attendance = ({route}) => {
     <SafeAreaView style={{flex:1, backgroundColor:light}}>
       <StatusBar backgroundColor={light} barStyle={"dark-content"}/>
       <Header headingText='Attendance' />
-      <MonthHeader initialMonthIndex={0} setCurrentMonthIndex={setCurrentMonthIndex} />
-      <Text style={{color:dark}} onPress={()=>setCount(count+1)}>Okay{count}</Text>
-      <Text style={{color:dark}}>{MONTH[currentMonthIndex]}</Text>
+      <MonthHeader initialMonthIndex={9} setCurrentMonthIndex={setCurrentMonthIndex} />
+      <Calendar />
     </SafeAreaView>
   )
 }

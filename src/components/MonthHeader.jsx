@@ -25,7 +25,7 @@ const MonthHeader = ({
   const handleMonthPress = index => {
     setSelectedMonthIndex(index);
     setCurrentMonthIndex(index-1);
-    flatListRef.current.scrollToIndex({
+    flatListRef.current?.scrollToIndex({
       animated: true,
       index,
       viewPosition: 0.5,
@@ -67,6 +67,12 @@ const MonthHeader = ({
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.monthList}
+        getItemLayout={(data, index) => ({
+          length: windowWidth/3,
+          offset: (windowWidth/3) * index,
+          index,
+        })}
+        initialScrollIndex={selectedMonthIndex-1}
       />
     </View>
   );
