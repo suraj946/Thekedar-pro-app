@@ -20,7 +20,7 @@ const MonthHeader = ({
   const flatListRef = useRef(null);
   const [selectedMonthIndex, setSelectedMonthIndex] = useState(initialMonthIndex+1);
 
-    // console.log(`rendering ${Math.round(Math.random()*10000)}`);
+    // console.log(`rendering month ${Math.round(Math.random()*10000)}`);
     
   const handleMonthPress = index => {
     setSelectedMonthIndex(index);

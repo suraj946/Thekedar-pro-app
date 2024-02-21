@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Badge } from 'react-native-paper';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
@@ -13,6 +13,7 @@ import {
 } from '../styles/colors';
 import { DAYS } from '../utils/constants';
 import { getCurrentNepaliDate } from '../utils/helpers';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 const monthDetails = [
   {
@@ -235,6 +236,7 @@ const monthDetails = [
 ];
 
 const {dayIndex, dayDate} = getCurrentNepaliDate();
+
 const Calendar = () => {
   const startDayIndex = DAYS.indexOf(monthDetails[0].dayOfWeek);
 
@@ -253,6 +255,15 @@ const Calendar = () => {
   };
 
   const renderCalendarGrid = () => {
+    const cellScale = useSharedValue(0);
+    const cellAnimStyle = useAnimatedStyle(() => ({
+      transform:[{scale:cellScale.value}]
+    }));
+
+    useEffect(() => {
+      cellScale.value = withTiming(1, {duration:500});
+    }, [])
+    
     const emptyCells = Array.from({length: startDayIndex}, (_, index) => (
       <View key={`empty${index}`} style={[styles.cell, styles.emptyCell]}>
         <Text>{''}</Text>
@@ -260,8 +271,9 @@ const Calendar = () => {
     ));
 
     const daysInMonth = monthDetails.map((day, index) => (
-      <View key={`full${index}`} style={styles.cell}>
+      <Animated.View key={`full${index}`} style={[styles.cell, cellAnimStyle]}>
         <Text
+          onPress={()=>console.log("haha")}
           style={[
             styles.dateTxt,
             dayDate === day.date && styles.currentDateStyle,
@@ -273,11 +285,11 @@ const Calendar = () => {
           {day.hasAdvance && <Badge size={moderateScale(5)} style={{marginLeft: scale(2), backgroundColor:warning}} />}
           {day.hasSettlement && <Badge size={moderateScale(5)} style={{marginLeft: scale(2), backgroundColor:danger}} />}
         </View>
-      </View>
+      </Animated.View>
     ));
     return [...emptyCells, ...daysInMonth];
   };
-
+  // console.log(`rendering calender ${Math.round(Math.random()*10000)}`);
   return (
     <View style={styles.container}>
       <View style={styles.weekdaysContainer}>{renderWeekdaysHeader()}</View>
@@ -335,7 +347,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textAlignVertical: 'center',
     fontSize: moderateScale(15),
-    elevation: 2,
+    elevation: 4,
   },
   currentDateStyle: {
     backgroundColor: theme_secondary,
@@ -352,4 +364,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Calendar;
+export default memo(Calendar);
