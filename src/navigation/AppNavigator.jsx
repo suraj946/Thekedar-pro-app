@@ -11,7 +11,7 @@ import WorkerProfile from '../screens/Main/WorkerProfile';
 import EditWorker from '../screens/Main/EditWorker';
 import AddWorker from '../screens/Main/AddWorker';
 import Calendar from '../screens/Main/Calendar';
-import Attendance from '../screens/Main/Attendance';
+import Attendance from '../screens/Main/Attendance.jsx';
 import Settlement from '../screens/Main/Settlement';
 import Advance from '../screens/Main/Advance';
 

@@ -2,7 +2,7 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {Icon} from 'react-native-paper';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import {dark} from '../styles/colors';
+import {dark, white} from '../styles/colors';
 import {useNavigation} from '@react-navigation/native';
 
 const Header = ({
@@ -49,6 +49,7 @@ export default Header;
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor:white,
     paddingHorizontal: scale(10),
     paddingVertical: verticalScale(5),
     flexDirection: 'row',

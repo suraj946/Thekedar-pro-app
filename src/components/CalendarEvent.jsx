@@ -232,7 +232,6 @@ const styles = StyleSheet.create({
   },
   eventView:{
     marginLeft:scale(10),
-    // height:"100%",
     maxHeight:"100%",
     justifyContent:"space-between"
   }

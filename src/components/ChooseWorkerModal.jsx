@@ -21,7 +21,7 @@ const ChooseWorkerModal = ({
   const navigation = useNavigation();
 
   const handlePress = (id, name) => {
-    //FIXME:when immediately clicking to scrren after unmounting the model the model card is being pressed
+    //FIXME:when immediately clicking to screen after unmounting the model the model card is being pressed
     setVisible(false);
     navigation.navigate(screenToNavigate, {workerId: id, name});
   };

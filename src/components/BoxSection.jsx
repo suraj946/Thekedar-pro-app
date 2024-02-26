@@ -3,36 +3,23 @@ import React, { memo, useState } from 'react';
 import OverviewCard from './OverviewCard';
 import {moderateScale, verticalScale} from 'react-native-size-matters';
 import {useNavigation} from '@react-navigation/native';
-import ChooseWorkerModal from './ChooseWorkerModal';
 
 const BoxSection = () => {
   const navigation = useNavigation();
-  const [chooseWorkerVisible, setChooseWorkerVisible] = useState(false);
-  const [screenToNavigate, setScreenToNavigate] = useState("");
+
   // console.log(`Box ${Math.round(Math.random()*1000)}`);
   return (
     <View style={styles.container}>
-      <ChooseWorkerModal 
-        visible={chooseWorkerVisible}
-        setVisible={setChooseWorkerVisible}
-        screenToNavigate={screenToNavigate}
-      />
       <OverviewCard
         icon="calendar-month"
         iconBgColor="#fa2863"
         text="Attendance"
-        pressHandler={() => {
-          setScreenToNavigate("Attendance");
-          setChooseWorkerVisible(true);
-        }}
+        pressHandler={() => navigation.navigate("Attendance")}
       />
       <OverviewCard
         icon="calculator-variant"
         text="Settlement"
-        pressHandler={() => {
-          setScreenToNavigate("Settlement");
-          setChooseWorkerVisible(true);
-        }}
+        pressHandler={() => navigation.navigate("Settlement")}
       />
       <OverviewCard
         icon="account-group"
@@ -50,10 +37,7 @@ const BoxSection = () => {
         icon="currency-inr"
         iconBgColor="#fcc214"
         text="Give Advance"
-        pressHandler={() => {
-          setScreenToNavigate("Advance");
-          setChooseWorkerVisible(true);
-        }}
+        pressHandler={() => navigation.navigate("Advance")}
       />
       <OverviewCard
         icon="calendar-month-outline"
