@@ -11,7 +11,6 @@ import {theme_primary, white} from '../styles/colors';
 import {Portal} from 'react-native-paper';
 
 const BottomMenu = ({children, title = '', visible = false, setVisible}) => {
-  console.log(title);
   return (
     <Portal>
       <Modal

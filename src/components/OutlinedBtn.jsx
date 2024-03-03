@@ -16,7 +16,7 @@ const OutlinedBtn = ({
       disabled={disabled || loading}
       style={{
         borderWidth: moderateScale(1),
-        borderRadius: moderateScale(10),
+        borderRadius: moderateScale(5),
         borderColor: disabled ? dark_light_l2 : theme_primary,
         width: '100%',
         paddingVertical: moderateVerticalScale(3),

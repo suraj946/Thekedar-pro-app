@@ -1,12 +1,11 @@
-import {FlatList, StatusBar, StyleSheet, Text, View} from 'react-native';
-import React, {useCallback, useState} from 'react';
-import {dark, theme_secondary, white} from '../../styles/colors';
-import Header from '../../components/Header';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import {workersData} from '../../components/SelectWorkerSection';
-import WorkerCard2 from '../../components/WorkerCard2';
-import BottomMenu from '../../components/BottomMenu';
+import React, { useCallback, useState } from 'react';
+import { FlatList, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import AttendanceForm from '../../components/AttendanceForm';
+import Header from '../../components/Header';
+import { workersData } from '../../components/SelectWorkerSection';
+import WorkerCard2 from '../../components/WorkerCard2';
+import { theme_secondary, white } from '../../styles/colors';
 
 const Attendance = () => {
     const [menuVisible, setMenuVisible] = useState(false);
@@ -17,7 +16,7 @@ const Attendance = () => {
     }, []);
 
   return (
-    <>
+    <SafeAreaView style={{flex:1}}>
       <Header headingText="Attendance" />
       <StatusBar barStyle={'dark-content'} backgroundColor={white} />
 
@@ -47,7 +46,7 @@ const Attendance = () => {
         workerId={workerData.workerId}
         recordId={workerData.recordId}
       />
-    </>
+    </SafeAreaView>
   );
 };
 

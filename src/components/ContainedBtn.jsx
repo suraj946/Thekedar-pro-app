@@ -1,7 +1,7 @@
-import React, {memo} from 'react';
-import {Button, ActivityIndicator} from 'react-native-paper';
-import {dark_light_l2, light, theme_primary} from '../styles/colors';
-import {moderateScale, moderateVerticalScale} from 'react-native-size-matters';
+import React, { memo } from 'react';
+import { ActivityIndicator, Button } from 'react-native-paper';
+import { moderateScale, moderateVerticalScale } from 'react-native-size-matters';
+import { dark_light_l1, dark_light_l2, light, theme_primary } from '../styles/colors';
 
 const ContainedBtn = ({
   title = '',
@@ -15,7 +15,7 @@ const ContainedBtn = ({
     <Button
       disabled={disabled || loading}
       style={{
-        borderRadius: moderateScale(10),
+        borderRadius: moderateScale(5),
         backgroundColor: disabled ? dark_light_l2 : theme_primary,
         width: '100%',
         paddingVertical: moderateVerticalScale(3),
@@ -23,7 +23,7 @@ const ContainedBtn = ({
       }}
       labelStyle={{
         fontSize: moderateScale(15),
-        color: disabled ? dark_light_l2 : light,
+        color: disabled ? dark_light_l1 : light,
         textTransform: 'capitalize',
         ...labelStyle,
       }}

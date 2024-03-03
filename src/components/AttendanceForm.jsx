@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   StyleSheet,
@@ -6,22 +6,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Avatar, Icon} from 'react-native-paper';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import Input from './Input';
-import OutlinedBtn from './OutlinedBtn';
-import SelectAttendanceStatus from './SelectAttendanceStatus';
-import {dark_light_l2, info, theme_primary, white} from '../styles/colors';
-import {DAYS, DEFAULT_ATTENDANCE_STATUS, MONTH} from '../utils/constants';
-import {validateWages} from '../utils/formValidator';
-import {getCurrentNepaliDate} from '../utils/helpers';
-import BottomMenu from './BottomMenu';
-import ContainedBtn from './ContainedBtn';
+import { Avatar, Icon } from 'react-native-paper';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import { dark_light_l2, info, theme_primary, white } from '../styles/colors';
+import { DAYS, DEFAULT_ATTENDANCE_STATUS, MONTH } from '../utils/constants';
+import { validateWages } from '../utils/formValidator';
+import { getCurrentNepaliDate } from '../utils/helpers';
+import ContainedBtn from './ContainedBtn';
+import Input from './Input';
+import OutlinedBtn from './OutlinedBtn';
+import SelectAttendanceStatus from './SelectAttendanceStatus';
 
 const {dayDate, dayIndex, monthIndex} = getCurrentNepaliDate();
 const wHeignt = Dimensions.get('window').height;

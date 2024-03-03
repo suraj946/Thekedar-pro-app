@@ -111,18 +111,18 @@ const validateOtp = (otp) => {
     return response;
 }
 
-const validateWages = (wages) => {
+const validateWages = (wages, fieldName = "Wages") => {
     let response;
     if(wages?.trim().length === 0){
         response = {
             isValid: false,
-            errorText: `Wages is required`
+            errorText: `${fieldName} is required`
         }
     }
     else if(isNaN(wages)){
         response = {
             isValid: false,
-            errorText: "Invalid wages, it should be a number"
+            errorText: `Invalid ${fieldName}, it should be a number`
         }
     }
     else{

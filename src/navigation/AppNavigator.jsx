@@ -14,6 +14,7 @@ import Calendar from '../screens/Main/Calendar';
 import Attendance from '../screens/Main/Attendance.jsx';
 import Settlement from '../screens/Main/Settlement';
 import Advance from '../screens/Main/Advance';
+import SettlementSummary from '../screens/Main/SettlementSummary';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +31,7 @@ const AppNavigator = () => {
         <Stack.Screen name="Attendance" component={Attendance} />
         <Stack.Screen name="Settlement" component={Settlement} />
         <Stack.Screen name="Advance" component={Advance} />
+        <Stack.Screen name="SettlementSummary" component={SettlementSummary} />
 
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Signup" component={Signup} />
