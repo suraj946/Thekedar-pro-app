@@ -1,14 +1,12 @@
-import {StatusBar, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import {Modal, Portal} from 'react-native-paper';
+import { StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Modal, Portal } from 'react-native-paper';
+import { moderateScale, verticalScale } from 'react-native-size-matters';
 import {
-  dark,
   light,
   theme_primary,
-  theme_secondary,
-  white,
+  white
 } from '../styles/colors';
-import {moderateScale, verticalScale} from 'react-native-size-matters';
 
 const MyModal = ({
   heading = 'Modal Heading',

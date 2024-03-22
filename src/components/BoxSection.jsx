@@ -43,7 +43,7 @@ const BoxSection = () => {
         icon="calendar-month-outline"
         iconBgColor="#fc14bb"
         text="View Calendar"
-        pressHandler={() => navigation.navigate("Calendar")}
+        pressHandler={() => navigation.navigate("WorkerCalendar")}
       />
     </View>
   );

@@ -10,11 +10,12 @@ import Workers from '../screens/Main/Workers';
 import WorkerProfile from '../screens/Main/WorkerProfile';
 import EditWorker from '../screens/Main/EditWorker';
 import AddWorker from '../screens/Main/AddWorker';
-import Calendar from '../screens/Main/Calendar';
 import Attendance from '../screens/Main/Attendance.jsx';
 import Settlement from '../screens/Main/Settlement';
 import Advance from '../screens/Main/Advance';
 import SettlementSummary from '../screens/Main/SettlementSummary';
+import WorkerCalendar from '../screens/Main/WorkerCalendar.jsx';
+import Calendar from '../screens/Main/Calendar.jsx';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +28,7 @@ const AppNavigator = () => {
         <Stack.Screen name="WorkerProfile" component={WorkerProfile} />
         <Stack.Screen name="EditWorker" component={EditWorker} />
         <Stack.Screen name="AddWorker" component={AddWorker} />
+        <Stack.Screen name="WorkerCalendar" component={WorkerCalendar} />
         <Stack.Screen name="Calendar" component={Calendar} />
         <Stack.Screen name="Attendance" component={Attendance} />
         <Stack.Screen name="Settlement" component={Settlement} />

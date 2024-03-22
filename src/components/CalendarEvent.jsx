@@ -1,15 +1,15 @@
-import {FlatList, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import {
-  danger,
   dark,
+  dark_light_l1,
+  dark_light_l2,
   light,
-  success,
   theme_primary,
   theme_secondary,
-  white,
+  white
 } from '../styles/colors';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 
 const dailyRecords = [
   {
@@ -147,29 +147,54 @@ const CalendarEvent = () => {
     return (
       <View style={styles.cardContainer}>
         <View style={styles.dateView}>
-          <Text
-            style={{
-              fontSize: moderateScale(15),
-              textTransform: 'uppercase',
-              fontWeight: 'bold',
-            }}>
-            {item.day}
+          <Text style={styles.dateStyle}>
+            {item.dayDate > 9 ? item.dayDate : `0${item.dayDate}`}
           </Text>
-          <Text style={styles.dateStyle}>{item.dayDate}</Text>
+          <Text style={styles.dayText}>{item.day.slice(0, 3)}</Text>
         </View>
 
         <View style={styles.eventView}>
-          <View style={{flexDirection:"row", alignItems:"center"}}>
-            <Text style={{color:dark, fontSize:moderateScale(15), textTransform:"uppercase"}}>{item.presence}</Text>
-            <Text style={{color:theme_primary, fontSize:moderateScale(15)}}>{item.wagesOfDay}</Text>
+          <Text
+            style={{
+              backgroundColor: theme_secondary,
+              padding: moderateScale(3),
+              width: '50%',
+              textAlign: 'center',
+              textTransform: 'uppercase',
+              color: white,
+              fontSize: moderateScale(15),
+              borderRadius: moderateScale(20),
+            }}>
+            {item.presence}
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              marginTop: verticalScale(5),
+              alignItems: 'center',
+            }}>
+            <Text style={{fontSize: moderateScale(14), color: dark}}>
+              Wages : Rs{' '}
+            </Text>
+            <Text style={{fontSize: moderateScale(16), color: theme_primary}}>
+              {item.wagesOfDay}
+            </Text>
           </View>
           {item?.advance && (
             <View>
-              <View style={{flexDirection:"row", }}>
-                <Text>Advance</Text>
-                <Text>{item.advance?.amount}</Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <Text style={{fontSize: moderateScale(14), color: dark}}>
+                  Advance : Rs{' '}
+                </Text>
+                <Text
+                  style={{fontSize: moderateScale(16), color: theme_primary}}>
+                  {item.advance?.amount}
+                </Text>
               </View>
-              <Text>{item.advance?.purpose}</Text>
             </View>
           )}
         </View>
@@ -179,7 +204,22 @@ const CalendarEvent = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>CalendarEvent</Text>
+      <View style={styles.headerView}>
+        <Text style={[styles.headText, {width: '30%', textAlign: 'center'}]}>
+          DATE
+        </Text>
+        <View
+          style={{
+            width: scale(1.4),
+            height: '100%',
+            backgroundColor: dark_light_l2,
+          }}
+        />
+        <Text style={[styles.headText, {width: '70%', paddingLeft: scale(20)}]}>
+          EVENTS
+        </Text>
+      </View>
+
       <FlatList
         data={dailyRecords}
         renderItem={dayEventCard}
@@ -194,45 +234,52 @@ export default CalendarEvent;
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: 'green',
     flex: 1,
-    paddingHorizontal: scale(20),
+    paddingHorizontal: scale(10),
   },
-  header: {
-    color: dark,
+  headerView: {
+    height: verticalScale(50),
+    flexDirection: 'row',
+    borderTopWidth: scale(1.4),
+    borderColor: dark_light_l2,
+  },
+  headText: {
     fontSize: moderateScale(20),
+    color: dark_light_l1,
+    textAlignVertical: 'center',
+    padding: moderateScale(10),
   },
   cardContainer: {
-    backgroundColor: light,
     marginVertical: verticalScale(5),
-    // paddingHorizontal:scale(5),
     borderRadius: moderateScale(10),
     flexDirection: 'row',
     minHeight: verticalScale(60),
     alignItems: 'center',
   },
   dateView: {
-    backgroundColor: theme_secondary,
-    height: '100%',
-    maxHeight: '100%',
-    borderTopLeftRadius: moderateScale(10),
-    borderBottomLeftRadius: moderateScale(10),
     width: '30%',
     alignItems: 'center',
-    paddingTop:verticalScale(2)
+    justifyContent: 'center',
   },
   dateStyle: {
-    backgroundColor: white,
-    color: theme_primary,
-    fontSize: moderateScale(20),
-    aspectRatio: 1,
+    color: dark_light_l1,
+    fontSize: moderateScale(30),
     textAlign: 'center',
-    borderRadius: moderateScale(50),
-    padding: moderateScale(5),
   },
-  eventView:{
-    marginLeft:scale(10),
-    maxHeight:"100%",
-    justifyContent:"space-between"
-  }
+  dayText: {
+    fontSize: moderateScale(16),
+    textTransform: 'uppercase',
+    fontWeight: 'bold',
+    color: dark_light_l2,
+  },
+  eventView: {
+    backgroundColor: light,
+    paddingVertical: verticalScale(5),
+    paddingLeft: scale(10),
+    maxHeight: '100%',
+    width: '70%',
+    // justifyContent: 'space-between',
+    borderLeftWidth: scale(1.4),
+    borderColor: dark_light_l2,
+  },
 });

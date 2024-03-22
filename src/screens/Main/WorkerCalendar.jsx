@@ -1,30 +1,18 @@
-import React, {useCallback, useState} from 'react';
-import {
-  FlatList,
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import AttendanceForm from '../../components/AttendanceForm';
+import {FlatList, SafeAreaView, StatusBar, StyleSheet, Text, View} from 'react-native';
+import React from 'react';
 import Header from '../../components/Header';
-import {workersData} from '../../components/SelectWorkerSection';
+import { theme_secondary, white } from '../../styles/colors';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import { workersData } from '../../components/SelectWorkerSection';
 import WorkerCard2 from '../../components/WorkerCard2';
-import {theme_secondary, white} from '../../styles/colors';
 
-const Attendance = () => {
-  const [menuVisible, setMenuVisible] = useState(false);
-  const [workerData, setWorkerData] = useState({});
-  const handleSelectWorker = useCallback((wId, name, recordId) => {
-    setWorkerData({workerId: wId, name, recordId});
-    setMenuVisible(true);
-  }, []);
-
+const WorkerCalendar = ({navigation}) => {
+    const handleSelectWorker = (workerId, name, recordId) => {
+        navigation.navigate("Calendar", {workerId, name, recordId})
+    }
   return (
     <SafeAreaView style={{flex: 1}}>
-      <Header headingText="Attendance" />
+      <Header headingText="Calendar" />
       <StatusBar barStyle={'dark-content'} backgroundColor={white} />
 
       <View
@@ -45,19 +33,11 @@ const Attendance = () => {
           keyExtractor={item => item._id}
         />
       </View>
-
-      <AttendanceForm
-        visible={menuVisible}
-        setVisible={setMenuVisible}
-        name={workerData.name}
-        workerId={workerData.workerId}
-        recordId={workerData.recordId}
-      />
     </SafeAreaView>
   );
 };
 
-export default Attendance;
+export default WorkerCalendar;
 
 const styles = StyleSheet.create({
   headingText: {

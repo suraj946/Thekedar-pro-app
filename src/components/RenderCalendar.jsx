@@ -1,19 +1,22 @@
-import React, { memo, useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Badge } from 'react-native-paper';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import React, {memo, useEffect} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
+import {Badge} from 'react-native-paper';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {
-    danger,
-    dark,
-    dark_light_l2,
-    success,
-    theme_secondary,
-    warning,
-    white
+  danger,
+  dark_light_l2,
+  success,
+  theme_secondary,
+  warning,
+  white,
 } from '../styles/colors';
-import { DAYS } from '../utils/constants';
-import { getCurrentNepaliDate } from '../utils/helpers';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import {DAYS} from '../utils/constants';
+import {getCurrentNepaliDate} from '../utils/helpers';
 
 const monthDetails = [
   {
@@ -235,93 +238,66 @@ const monthDetails = [
   },
 ];
 
-const {dayIndex, dayDate} = getCurrentNepaliDate();
-
-const Calendar = () => {
+const {dayDate} = getCurrentNepaliDate();
+const RenderCalendar = () => {
   const startDayIndex = DAYS.indexOf(monthDetails[0].dayOfWeek);
+  const cellScale = useSharedValue(0);
+  const cellAnimStyle = useAnimatedStyle(() => ({
+    transform: [{scale: cellScale.value}],
+  }));
 
-  const renderWeekdaysHeader = () => {
-    return DAYS.map((day, index) => (
-      <View key={`days${index}`} style={styles.headerCell}>
-        <Text
-          style={{
-            ...styles.dayText,
-            color: DAYS[dayIndex] === day ? theme_secondary : dark,
-          }}>
-          {day.slice(0, 3)}
-        </Text>
-      </View>
-    ));
-  };
+  useEffect(() => {
+    cellScale.value = withTiming(1, {duration: 500});
+  }, []);
 
-  const renderCalendarGrid = () => {
-    const cellScale = useSharedValue(0);
-    const cellAnimStyle = useAnimatedStyle(() => ({
-      transform:[{scale:cellScale.value}]
-    }));
-
-    useEffect(() => {
-      cellScale.value = withTiming(1, {duration:500});
-    }, [])
-    
-    const emptyCells = Array.from({length: startDayIndex}, (_, index) => (
-      <View key={`empty${index}`} style={[styles.cell, styles.emptyCell]}>
-        <Text>{''}</Text>
-      </View>
-    ));
-
-    const daysInMonth = monthDetails.map((day, index) => (
-      <Animated.View key={`full${index}`} style={[styles.cell, cellAnimStyle]}>
-        <Text
-          onPress={()=>console.log("haha")}
-          style={[
-            styles.dateTxt,
-            dayDate === day.date && styles.currentDateStyle,
-          ]}>
-          {day.date}
-        </Text>
-        <View style={styles.badgeContainer}>
-          {day.hasAttendence && <Badge size={moderateScale(5)} style={{marginLeft: scale(2), backgroundColor:success}} />}
-          {day.hasAdvance && <Badge size={moderateScale(5)} style={{marginLeft: scale(2), backgroundColor:warning}} />}
-          {day.hasSettlement && <Badge size={moderateScale(5)} style={{marginLeft: scale(2), backgroundColor:danger}} />}
-        </View>
-      </Animated.View>
-    ));
-    return [...emptyCells, ...daysInMonth];
-  };
-  // console.log(`rendering calender ${Math.round(Math.random()*10000)}`);
   return (
-    <View style={styles.container}>
-      <View style={styles.weekdaysContainer}>{renderWeekdaysHeader()}</View>
-      <View style={styles.calendarGrid}>{renderCalendarGrid()}</View>
+    <View style={styles.calendarGrid}>
+      {Array.from({length: startDayIndex}, (_, index) => (
+        <View key={`empty${index}`} style={[styles.cell, styles.emptyCell]}>
+          <Text>{''}</Text>
+        </View>
+      ))}
+      {monthDetails.map((day, index) => (
+        <Animated.View
+          key={`full${index}`}
+          style={[styles.cell, cellAnimStyle]}>
+          <Text
+            onPress={() => console.log('haha')}
+            style={[
+              styles.dateTxt,
+              dayDate === day.date && styles.currentDateStyle,
+            ]}>
+            {day.date}
+          </Text>
+          <View style={styles.badgeContainer}>
+            {day.hasAttendence && (
+              <Badge
+                size={moderateScale(5)}
+                style={{marginLeft: scale(2), backgroundColor: success}}
+              />
+            )}
+            {day.hasAdvance && (
+              <Badge
+                size={moderateScale(5)}
+                style={{marginLeft: scale(2), backgroundColor: warning}}
+              />
+            )}
+            {day.hasSettlement && (
+              <Badge
+                size={moderateScale(5)}
+                style={{marginLeft: scale(2), backgroundColor: danger}}
+              />
+            )}
+          </View>
+        </Animated.View>
+      ))}
     </View>
   );
 };
 
+export default memo(RenderCalendar);
+
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: verticalScale(10),
-  },
-
-  weekdaysContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    width: '98%',
-  },
-  headerCell: {
-    width: '14%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dayText: {
-    color: dark,
-    textTransform: 'uppercase',
-    fontSize: moderateScale(14),
-    fontWeight: 'bold',
-  },
-
   calendarGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -333,7 +309,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 5,
+    marginVertical: verticalScale(4),
   },
   emptyCell: {
     borderColor: 'transparent',
@@ -363,5 +339,3 @@ const styles = StyleSheet.create({
     width: '70%',
   },
 });
-
-export default memo(Calendar);

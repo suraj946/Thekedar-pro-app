@@ -11,6 +11,7 @@ const Header = ({
   hasRight = false,
   rightIcon = 'help',
   rightPressHandler = () => {},
+  style={}
 }) => {
   const navigation = useNavigation();
   const handleRightPress = () => {
@@ -20,14 +21,14 @@ const Header = ({
     rightPressHandler();
   }
   return (
-    <View style={styles.container}>
+    <View style={{...styles.container, ...style}}>
       <TouchableOpacity
         style={styles.leftIcon}
         activeOpacity={0.9}
         onPress={() => navigation.goBack()}>
         <Icon
           source={'arrow-left'}
-          size={moderateScale(30)}
+          size={moderateScale(32)}
           color={textAndIconColor}
         />
       </TouchableOpacity>
@@ -36,7 +37,7 @@ const Header = ({
         <TouchableOpacity style={styles.rightIcon} activeOpacity={0.9} onPress={handleRightPress}>
           <Icon
             source={rightIcon}
-            size={moderateScale(30)}
+            size={moderateScale(32)}
             color={textAndIconColor}
           />
         </TouchableOpacity>
@@ -65,10 +66,10 @@ const styles = StyleSheet.create({
   },
   leftIcon: {
     position: 'absolute',
-    left: 0,
+    left: 8,
   },
   rightIcon: {
     position: 'absolute',
-    right: 0,
+    right: 8,
   },
 });

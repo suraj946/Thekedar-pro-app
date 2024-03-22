@@ -131,7 +131,7 @@ const AttendanceForm = ({
                 fontSize: moderateScale(20),
                 marginTop: verticalScale(12),
               }}>
-              Attendance has been done fot today
+              Attendance has been done for today
             </Text>
           </View>
         ) : (

@@ -6,4 +6,4 @@ export const DEFAULT_WORKER_ROLE = "general";
 
 export const MONTH = ["baisakh", "jestha", "asadh", "shrawan", "bhadra", "ashwin", "kartik", "mangsir", "poush", "magh", "falgun", "chaitra"]
 
-export const DAYS = ["sunday", "monday", "tuesday", "wednesday", "thusday", "friday", "saturday"]
+export const DAYS = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]

@@ -57,7 +57,7 @@ const MonthHeader = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.headerContainer}>
       <FlatList
         ref={flatListRef}
         data={['', ...MONTH, '']}
@@ -79,10 +79,11 @@ const MonthHeader = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
+  headerContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: verticalScale(3),
+    backgroundColor:white
   },
   monthList: {
     flexDirection: 'row',
@@ -114,7 +115,6 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(18),
   },
   transparentView: {
-    color: 'red',
     width: windowWidth / 3,
   },
 });
