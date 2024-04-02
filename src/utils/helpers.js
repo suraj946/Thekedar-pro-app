@@ -1,6 +1,8 @@
-import NepaliDate from "nepali-date-converter"
-import { info, white } from "../styles/colors"
-import {LENGTH_SHORT} from "react-native-snackbar"
+import NepaliDate from "nepali-date-converter";
+import { info, white } from "../styles/colors";
+import {LENGTH_SHORT} from "react-native-snackbar";
+import NetInfo from '@react-native-community/netinfo';
+
 const defaultSnackbarOptions = (text, bgColor=info, textColor=white, duration=LENGTH_SHORT) => {
   if(typeof text === "undefined"){
     throw new Error("params text is required in snackbar")
@@ -24,7 +26,18 @@ const getCurrentNepaliDate = () => {
     dayIndex:day
   }
 }
+
+const getNetInfo = async() => {
+  const res = await NetInfo.fetch();
+    return {
+    isConnected : res.isConnected,
+    reachable : res.isInternetReachable,
+    type : res.type,
+    wifiEnabled : res.isWifiEnabled,
+  };
+}
 export {
   defaultSnackbarOptions,
-  getCurrentNepaliDate
+  getCurrentNepaliDate,
+  getNetInfo
 }

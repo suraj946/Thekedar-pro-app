@@ -9,3 +9,4 @@ export const dark_light_l1 = "#424242";
 export const dark_light_l2 = "#969696";
 export const light = "#e6e4e9";
 export const white = "#fff";
+export const light2 = "#f7f7f7";

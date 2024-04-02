@@ -4,11 +4,17 @@ import { Avatar, Drawer } from 'react-native-paper'
 import { moderateScale, verticalScale } from 'react-native-size-matters'
 import { dark_light_l1, theme_primary } from '../styles/colors'
 import MyDrawer from './MyDrawer'
+import { useNavigation } from '@react-navigation/native'
 
 const HomeDrawer = ({
   visible = false,
   setVisible
 }) => {
+  const navigation = useNavigation();
+  const handleProfilePress = () => {
+    setVisible(false);
+    navigation.navigate("MyProfile");
+  }
   return (
     <MyDrawer visible={visible} setVisible={setVisible}>
       <Drawer.Section style={{marginTop:verticalScale(40)}}>
@@ -19,7 +25,7 @@ const HomeDrawer = ({
           label='Profile' 
           icon={"account"}
           style={styles.drawerItem}
-          onPress={() => console.log("Go to profile")} 
+          onPress={handleProfilePress} 
           theme={{ colors: { onSurfaceVariant:"white" } }}
         />
         <Drawer.Item 

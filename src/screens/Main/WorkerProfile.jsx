@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -7,8 +7,8 @@ import {
   Text,
   View,
 } from 'react-native';
-import { Avatar, Icon, List, Menu } from 'react-native-paper';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import {Avatar, Icon, List, Menu} from 'react-native-paper';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import BottomMenu from '../../components/BottomMenu';
 import Header from '../../components/Header';
 import {
@@ -17,9 +17,9 @@ import {
   light,
   theme_primary,
   theme_secondary,
-  white
+  white,
 } from '../../styles/colors';
-import { MONTH } from '../../utils/constants';
+import {MONTH} from '../../utils/constants';
 
 const worker = {
   _id: '657af5a169a5a97d9cbfe5a4',
@@ -58,12 +58,17 @@ const worker = {
   },
 };
 
-const WorkerProfile = () => {
+const WorkerProfile = ({navigation}) => {
   const [expanded, setExpanded] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
 
   const handlePress = txt => {
     setExpanded(txt !== expanded ? txt : '');
+  };
+
+  const handleEdit = () => {
+    setModalOpen(false);
+    navigation.navigate('EditWorker', {workerId: worker._id});
   };
 
   return (
@@ -110,7 +115,7 @@ const WorkerProfile = () => {
           </View>
         </View>
 
-        <ScrollView style={{width: '95%'}}>
+        <ScrollView style={{width: '95%'}} showsVerticalScrollIndicator={false}>
           <List.Section title="More Details">
             <List.Accordion
               style={{backgroundColor: light}}
@@ -191,6 +196,7 @@ const WorkerProfile = () => {
               />
             </List.Accordion>
           </List.Section>
+          <Text style={{color:dark_light_l2, marginTop:10, alignSelf:"center"}}>TODO: Create features for seeing calender</Text>
         </ScrollView>
 
         <BottomMenu
@@ -205,9 +211,7 @@ const WorkerProfile = () => {
             }}>
             <Menu.Item
               title={'Edit Worker'}
-              onPress={() => {
-                console.log('ok');
-              }}
+              onPress={handleEdit}
               leadingIcon={'pencil'}
               style={{margin: 5, width: '90%'}}
             />
@@ -216,7 +220,7 @@ const WorkerProfile = () => {
               onPress={() => {
                 console.log('ok');
               }}
-              leadingIcon={worker.isActive ? "human-male" : "run"}
+              leadingIcon={worker.isActive ? 'human-male' : 'run'}
               style={{margin: 5, width: '90%'}}
             />
             <Menu.Item
@@ -244,7 +248,6 @@ const WorkerProfile = () => {
               style={{margin: 5, width: '90%'}}
             />
           </View>
-
         </BottomMenu>
       </View>
     </SafeAreaView>

@@ -1,4 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import Snackbar from 'react-native-snackbar';
+import { defaultSnackbarOptions } from './helpers';
+import { danger } from '../styles/colors';
 
 const useSelectionSystem = (itemData) => {
   const [selectedItem, setSelectedItem] = useState(new Set());
@@ -33,7 +36,23 @@ const useSelectionSystem = (itemData) => {
   }
 };
 
+const useErrorMessage = ({error, setError, message, setMessage}) => {
+  useEffect(() => {
+    if(error){
+      Snackbar.show(defaultSnackbarOptions(error, danger));
+      setError("");
+    }
+
+    if(message){
+      Snackbar.show(defaultSnackbarOptions(message));
+      setMessage("");
+    }
+  }, [error, setError, message, setMessage]);
+  
+}
+
 export {
-  useSelectionSystem
+  useSelectionSystem,
+  useErrorMessage
 };
 

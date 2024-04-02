@@ -16,6 +16,8 @@ import OutlinedBtn from './OutlinedBtn';
 import SelectAttendanceStatus from './SelectAttendanceStatus';
 import WorkerCard from './WorkerCard';
 import { useSelectionSystem } from '../utils/hooks';
+import { useDispatch } from 'react-redux';
+import { loadUser } from '../redux/actions/thekedarAction';
 
 export const workersData = [
   {
@@ -85,11 +87,12 @@ const SelectWorkerSection = () => {
   const [workers, setWorkers] = useState(workersData);
   const [attendanceStatus, setAttendanceStatus] = useState(DEFAULT_ATTENDANCE_STATUS);
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  const dispatch = useDispatch();
   const {count, deSelectSingle, selectSingle, selectAll, deselectAll, selectedItem} = useSelectionSystem(workers);
 
   const doAttendance = () => {
     console.log('Attendance');
+
   };
   // console.log(`section Rendering ok ${Math.round(Math.random() * 1000)}`);
 

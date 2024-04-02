@@ -2,7 +2,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import React, {memo, useState} from 'react';
 import {TextInput} from 'react-native-paper';
 import {danger} from '../styles/colors';
-import {moderateScale, scale} from 'react-native-size-matters';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 
 const Input = ({
   keyboardType = 'default',
@@ -18,7 +18,7 @@ const Input = ({
   // console.log(`Rendering ${Math.round(Math.random())*1000}`);
   const [eyeOpen, setEyeOpen] = useState(false);
   return (
-    <View style={style}>
+    <View style={{marginBottom:verticalScale(5), ...style}}>
       <TextInput
         keyboardType={keyboardType}
         mode="outlined"

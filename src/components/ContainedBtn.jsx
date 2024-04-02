@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { ActivityIndicator, Button } from 'react-native-paper';
 import { moderateScale, moderateVerticalScale } from 'react-native-size-matters';
-import { dark_light_l1, dark_light_l2, light, theme_primary } from '../styles/colors';
+import { dark_light_l1, dark_light_l2, light, theme_primary, white } from '../styles/colors';
 
 const ContainedBtn = ({
   title = '',
@@ -23,7 +23,7 @@ const ContainedBtn = ({
       }}
       labelStyle={{
         fontSize: moderateScale(15),
-        color: disabled ? dark_light_l1 : light,
+        color: disabled ? dark_light_l1 : white,
         textTransform: 'capitalize',
         ...labelStyle,
       }}

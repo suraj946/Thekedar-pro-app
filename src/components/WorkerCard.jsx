@@ -33,7 +33,7 @@ const WorkerCard = ({
 
   const handleLongPress = () => {
     if(!isAnySelected){
-      trigger("impactLight", {
+      trigger("impactMedium", {
         enableVibrateFallback: true,
         ignoreAndroidSystemSettings: false,
       })

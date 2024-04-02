@@ -59,8 +59,8 @@ const styles = StyleSheet.create({
   titleView: {
     width: '100%',
     backgroundColor: theme_primary,
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
     padding: moderateScale(5),
     paddingHorizontal: scale(20),
     justifyContent: 'center',

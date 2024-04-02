@@ -1,8 +1,10 @@
 import {configureStore} from '@reduxjs/toolkit';
-import selectedWorkersReducer from './slices/workerSlice';
+import thekedarReducer from './slices/thekedarSlice';
+import netInfoReducer from './slices/netInfoSlice';
 
 export const store = configureStore({
   reducer: {
-    selectedWorkers: selectedWorkersReducer,
+    thekedar:thekedarReducer,
+    netInfo:netInfoReducer
   },
 });
