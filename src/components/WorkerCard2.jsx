@@ -9,14 +9,15 @@ const WorkerCard2 = ({
     _id="",
     name="",
     role="",
-    recordId=""
+    recordId="",
+    wagesPerDay
 }) => {
   return (
     <TouchableOpacity
       style={styles.card}
       activeOpacity={0.9}
       onPress={() => {
-        handlePress(_id, name, recordId);
+        handlePress(_id, name, recordId, wagesPerDay);
       }}>
       <Avatar.Icon icon={'account'} size={moderateScale(40)} />
       <View style={{marginLeft:scale(10)}}>

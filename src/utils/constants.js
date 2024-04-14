@@ -18,6 +18,17 @@ export const REGISTER_REQUEST = "registerRequest";
 export const REGISTER_SUCCESS = "registerSuccess";
 export const REGISTER_FAIL = "registerFail";
 
+export const WORKER_FOR_ATTENDANCE_REQUEST = "workerAttendanceRequest";
+export const WORKER_FOR_ATTENDANCE_SUCCESS = "workerAttendanceSuccess";
+export const WORKER_FOR_ATTENDANCE_FAIL = "workerAttendanceFail";
+
+export const GET_WORKER_REQUEST = "getWorkerRequest";
+export const GET_WORKER_SUCCESS_ACTIVE = "getWorkerSuccessActive";
+export const GET_WORKER_SUCCESS_NON_ACTIVE = "getWorkerSuccessNonActive";
+export const GET_WORKER_FAIL = "getWorkerFail";
+
+export const LOGOUT_SUCCESS = "logoutSuccess";
+
 export const CLEAR_ERROR = "clearError";
 
 

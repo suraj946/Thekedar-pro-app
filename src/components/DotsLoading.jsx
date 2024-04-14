@@ -28,7 +28,6 @@ export default DotsLoading;
 
 const styles = StyleSheet.create({
   dotsView: {
-    // backgroundColor:"red",
     flexDirection: 'row',
     width: '30%',
     justifyContent: 'space-evenly',

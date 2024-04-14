@@ -1,19 +1,36 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { StyleSheet, Text } from 'react-native'
 import { Avatar, Drawer } from 'react-native-paper'
 import { moderateScale, verticalScale } from 'react-native-size-matters'
 import { dark_light_l1, theme_primary } from '../styles/colors'
 import MyDrawer from './MyDrawer'
 import { useNavigation } from '@react-navigation/native'
+import { useDispatch } from 'react-redux'
+import { logoutUser } from '../redux/actions/thekedarAction'
 
 const HomeDrawer = ({
   visible = false,
   setVisible
 }) => {
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
   const navigation = useNavigation();
+
   const handleProfilePress = () => {
     setVisible(false);
     navigation.navigate("MyProfile");
+  }
+
+  const afterLogout = () => {
+    setVisible(false);
+    navigation.reset({
+      index:0,
+      routes:[{name:"Login"}]
+    })
+  }
+
+  const handleLogout = () => {
+    dispatch(logoutUser(setLoading, afterLogout));
   }
   return (
     <MyDrawer visible={visible} setVisible={setVisible}>
@@ -27,13 +44,15 @@ const HomeDrawer = ({
           style={styles.drawerItem}
           onPress={handleProfilePress} 
           theme={{ colors: { onSurfaceVariant:"white" } }}
+          disabled={loading}
         />
         <Drawer.Item 
-          label='Logout' 
+          label={loading ? "Logging out..." : "Logout"} 
           icon={"logout"}
           style={styles.drawerItem}
-          onPress={() => console.log("Logout")} 
+          onPress={handleLogout} 
           theme={{ colors: { onSurfaceVariant:"white" } }}
+          disabled={loading}
         />
       </Drawer.Section>
     </MyDrawer>

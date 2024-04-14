@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -19,48 +19,55 @@ import {
   theme_secondary,
   white,
 } from '../../styles/colors';
-import {MONTH} from '../../utils/constants';
+import {CONNECTION_ERROR, MONTH} from '../../utils/constants';
+import instance from '../../utils/axiosInstance';
+import { useErrorMessage } from '../../utils/hooks';
+import DotsLoading from '../../components/DotsLoading';
 
-const worker = {
-  _id: '657af5a169a5a97d9cbfe5a4',
-  name: 'Ramesh Sah',
-  role: 'mistri',
-  thekedarId: '6572c79483f62bcfc1700020',
-  contactNumber: '9855641256',
-  address: 'Bariyarpur',
-  wagesPerDay: 1000,
+// const worker = {
+//   _id: '657af5a169a5a97d9cbfe5a4',
+//   name: 'Ramesh Sah',
+//   role: 'mistri',
+//   thekedarId: '6572c79483f62bcfc1700020',
+//   contactNumber: '9855641256',
+//   address: 'Bariyarpur',
+//   wagesPerDay: 1000,
 
-  joiningDate: {
-    year: 2080,
-    monthIndex: 7,
-    dayDate: 28,
-  },
-  isActive: true,
-  currentRecords: {
-    _id: {
-      $oid: '6580213607cceaf29f59d0e9',
-    },
-    prevAdvance: 0,
-    workerId: {
-      $oid: '657af5a169a5a97d9cbfe5a4',
-    },
-    lastSettlementDate: {
-      dayName: 'monday',
-      dayDate: 16,
-    },
-    __v: 35,
-    year: 2080,
-    monthIndex: 8,
-    prevWages: 0,
-    currentWages: 0,
-    currentAdvance: 0,
-    numberOfDays: 29,
-  },
-};
+//   joiningDate: {
+//     year: 2080,
+//     monthIndex: 7,
+//     dayDate: 28,
+//   },
+//   isActive: true,
+//   currentRecords: {
+//     _id: {
+//       $oid: '6580213607cceaf29f59d0e9',
+//     },
+//     prevAdvance: 0,
+//     workerId: {
+//       $oid: '657af5a169a5a97d9cbfe5a4',
+//     },
+//     lastSettlementDate: {
+//       dayName: 'monday',
+//       dayDate: 16,
+//     },
+//     __v: 35,
+//     year: 2080,
+//     monthIndex: 8,
+//     prevWages: 0,
+//     currentWages: 0,
+//     currentAdvance: 0,
+//     numberOfDays: 29,
+//   },
+// };
 
-const WorkerProfile = ({navigation}) => {
+const WorkerProfile = ({navigation, route}) => {
+  const {workerId} = route.params;
   const [expanded, setExpanded] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [worker, setWorker] = useState({});
 
   const handlePress = txt => {
     setExpanded(txt !== expanded ? txt : '');
@@ -70,6 +77,36 @@ const WorkerProfile = ({navigation}) => {
     setModalOpen(false);
     navigation.navigate('EditWorker', {workerId: worker._id});
   };
+
+  useEffect(() => {
+    (async()=>{
+      try {
+        setLoading(true);
+        const {data} = await instance.get(`/worker/single/${workerId}`);
+        if(data.success){
+          setWorker(data.data);
+        }
+      } catch (error) {
+        if(error.errorType !== CONNECTION_ERROR){
+          setError(error.response?.data?.message);
+        }
+      }finally{
+        setLoading(false);
+      }
+    })()
+  }, []);
+
+  useErrorMessage({error, setError});
+
+  if(loading){
+    return <View style={{
+      flex:1,
+      justifyContent:"center",
+      alignItems:"center"
+    }}>
+      <DotsLoading/>
+    </View>
+  }
 
   return (
     <SafeAreaView style={{backgroundColor: theme_primary, flex: 1}}>
@@ -82,13 +119,6 @@ const WorkerProfile = ({navigation}) => {
         rightPressHandler={() => setModalOpen(true)}
       />
       <View style={styles.upperView}></View>
-      <View style={styles.avatarContainer}>
-        <Avatar.Icon
-          icon={'account'}
-          size={moderateScale(103)}
-          style={{backgroundColor: theme_secondary}}
-        />
-      </View>
       <View style={styles.lowerView}>
         <View style={styles.infoView}>
           <Text style={styles.nameTxt}>{worker.name}</Text>
@@ -156,28 +186,28 @@ const WorkerProfile = ({navigation}) => {
                   fontSize: moderateScale(18),
                   textTransform: 'capitalize',
                 }}
-                title={`Previous Wages : ₹ ${worker.currentRecords?.prevWages}`}
+                title={`Previous Wages : ₹ ${worker.monthRecord?.prevWages}`}
               />
               <List.Item
                 titleStyle={{
                   fontSize: moderateScale(18),
                   textTransform: 'capitalize',
                 }}
-                title={`Previous Advance : ₹ ${worker.currentRecords?.prevAdvance}`}
+                title={`Previous Advance : ₹ ${worker.monthRecord?.prevAdvance}`}
               />
               <List.Item
                 titleStyle={{
                   fontSize: moderateScale(18),
                   textTransform: 'capitalize',
                 }}
-                title={`Current Wages : ₹ ${worker.currentRecords?.currentWages}`}
+                title={`Current Wages : ₹ ${worker.monthRecord?.currentWages}`}
               />
               <List.Item
                 titleStyle={{
                   fontSize: moderateScale(18),
                   textTransform: 'capitalize',
                 }}
-                title={`Current Advance : ₹ ${worker.currentRecords?.currentAdvance}`}
+                title={`Current Advance : ₹ ${worker.monthRecord?.currentAdvance}`}
               />
             </List.Accordion>
 
@@ -192,7 +222,7 @@ const WorkerProfile = ({navigation}) => {
                   textTransform: 'uppercase',
                 }}
                 left={props => <List.Icon {...props} icon="calendar" />}
-                title={`${worker.currentRecords?.lastSettlementDate?.dayName} ${worker.currentRecords?.lastSettlementDate?.dayDate}`}
+                title={`${worker.lastSettlementDate ? `${worker.monthRecord?.lastSettlementDate?.dayName} ${worker.monthRecord?.lastSettlementDate?.dayDate}` : "No settlement done in this month"}`}
               />
             </List.Accordion>
           </List.Section>
@@ -250,6 +280,13 @@ const WorkerProfile = ({navigation}) => {
           </View>
         </BottomMenu>
       </View>
+      <View style={styles.avatarContainer}>
+        <Avatar.Icon
+          icon={'account'}
+          size={moderateScale(103)}
+          style={{backgroundColor: theme_secondary}}
+        />
+      </View>
     </SafeAreaView>
   );
 };
@@ -272,10 +309,9 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1,
   },
   lowerView: {
-    backgroundColor: white,
+    backgroundColor:white,
     flex: 1,
     alignItems: 'center',
   },

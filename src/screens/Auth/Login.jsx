@@ -1,22 +1,28 @@
-import { 
-  SafeAreaView, 
-  StyleSheet, 
-  Text, 
-  View, 
-  StatusBar, 
-  Keyboard, 
-  TouchableWithoutFeedback, 
-  Dimensions,
-  Image
-} from 'react-native';
 import React, { useState } from 'react';
-import { dark, light, theme_secondary } from '../../styles/colors';
-import Input from '../../components/Input';
+import {
+  Dimensions,
+  Image,
+  Keyboard,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View
+} from 'react-native';
+import Animated, { ZoomIn } from 'react-native-reanimated';
 import { moderateScale, moderateVerticalScale, scale } from 'react-native-size-matters';
-import OutlinedBtn from '../../components/OutlinedBtn';
+import { useDispatch } from 'react-redux';
 import ContainedBtn from '../../components/ContainedBtn';
+import Input from '../../components/Input';
+import OutlinedBtn from '../../components/OutlinedBtn';
+import { dark, light, theme_secondary } from '../../styles/colors';
+import instance from '../../utils/axiosInstance';
+import { CONNECTION_ERROR, REGISTER_SUCCESS } from '../../utils/constants';
 import { validateEmail } from '../../utils/formValidator';
-import Animated, { SlideInLeft, ZoomIn } from 'react-native-reanimated';
+import { useErrorMessage } from '../../utils/hooks';
+import {useSelector} from "react-redux";
+import { setCookie } from '../../utils/asyncStorage';
 
 const windowHeight = Dimensions.get("window").height;
 
@@ -25,6 +31,10 @@ const Login = ({navigation}) => {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const {isAuthenticated} = useSelector(state=>state.thekedar)
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const [error, setError] = useState("");
 
   const validateInputs = () => {
     const emailCheck = validateEmail(email);
@@ -44,13 +54,34 @@ const Login = ({navigation}) => {
     return emailCheck.isValid && passCheck;
   }
 
-  const handleLogin = () => {
+  const loginUser = async() => {
+    try {
+      setLoading(true);
+      const {data, headers} = await instance.post('/thekedar/login', {email, password}, {
+        withCredentials: false,
+      });
+      if (data.success) {
+        await setCookie(headers['set-cookie'][0].split(";")[0].split("=")[1]);
+        dispatch({type: REGISTER_SUCCESS, payload: data?.data});
+      }
+    } catch (error) {
+      if (error.errorType !== CONNECTION_ERROR) {
+        setError(error.response?.data?.message);
+      }
+    }finally{
+      setLoading(false);
+    }
+  };
+
+  const handleLogin = async() => {
     const isAllOk = validateInputs();
     if(isAllOk){
-      console.log("Submitting the form");
+      await loginUser();
     }
   }
 
+  useErrorMessage({error, setError});
+  
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView style={{flex: 1, backgroundColor: light}}>
@@ -71,6 +102,7 @@ const Login = ({navigation}) => {
               onChangeText={(text) => setEmail(text)}
               style={styles.inputStyle}
               errorText={emailError}
+              disabled={loading}
             />
             <Input 
               label='Password'
@@ -80,21 +112,23 @@ const Login = ({navigation}) => {
               onChangeText={(text) => setPassword(text)}
               style={styles.inputStyle}
               errorText={passwordError}
+              disabled={loading}
             />
             <ContainedBtn 
-              loading={false} 
+              loading={loading} 
               title='Login' 
               style={styles.mv}
               handler={handleLogin}
             />
             <Text 
               style={styles.forgetText} 
+              disabled={loading}
               onPress={() => navigation.navigate("ForgetPassword", {email})}
             >Forget Password</Text>
           </Animated.View>
           
           <Animated.View entering={ZoomIn} style={styles.bottomView}>
-            <OutlinedBtn title='Create new account' handler={() => navigation.navigate("Signup")}/>
+            <OutlinedBtn disabled={loading} title='Create new account' handler={() => navigation.navigate("Signup")}/>
             <Text style={styles.bottomText}>Thekedar Pro</Text>
           </Animated.View>
         </View>

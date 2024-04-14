@@ -10,15 +10,19 @@ import {
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import AttendanceForm from '../../components/AttendanceForm';
 import Header from '../../components/Header';
-import {workersData} from '../../components/SelectWorkerSection';
+// import {workersData} from '../../components/SelectWorkerSection';
 import WorkerCard2 from '../../components/WorkerCard2';
 import {theme_secondary, white} from '../../styles/colors';
+import {useSelector} from "react-redux";
 
 const Attendance = () => {
+  const {workersData} = useSelector(state => state.workerForAttendance);
   const [menuVisible, setMenuVisible] = useState(false);
   const [workerData, setWorkerData] = useState({});
-  const handleSelectWorker = useCallback((wId, name, recordId) => {
+  const [wagesPerDay, setWagesPerDay] = useState();
+  const handleSelectWorker = useCallback((wId, name, recordId, wpd) => {
     setWorkerData({workerId: wId, name, recordId});
+    setWagesPerDay(wpd)
     setMenuVisible(true);
   }, []);
 
@@ -40,6 +44,8 @@ const Attendance = () => {
               name={item.name}
               handlePress={handleSelectWorker}
               role={item.role}
+              recordId={item.currentRecordId}
+              wagesPerDay={item.wagesPerDay}
             />
           )}
           keyExtractor={item => item._id}
@@ -49,7 +55,8 @@ const Attendance = () => {
       <AttendanceForm
         visible={menuVisible}
         setVisible={setMenuVisible}
-        name={workerData.name}
+        workerName={workerData.name}
+        wagesPerDay={wagesPerDay}
         workerId={workerData.workerId}
         recordId={workerData.recordId}
       />

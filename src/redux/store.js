@@ -1,10 +1,30 @@
-import {configureStore} from '@reduxjs/toolkit';
+import {configureStore, combineReducers} from '@reduxjs/toolkit';
 import thekedarReducer from './slices/thekedarSlice';
-import netInfoReducer from './slices/netInfoSlice';
+import {workerForAttendanceReducer, workersReducer} from './slices/workerSlice';
+import { LOGOUT_SUCCESS } from '../utils/constants';
+
+const appReducer = combineReducers({
+  thekedar:thekedarReducer,
+  workerForAttendance:workerForAttendanceReducer,
+  workers:workersReducer
+});
+
+const rootReducer = (state, action) => {
+  if (action.type === LOGOUT_SUCCESS) {
+    return appReducer(undefined, action)
+  }
+
+  return appReducer(state, action)
+}
 
 export const store = configureStore({
-  reducer: {
-    thekedar:thekedarReducer,
-    netInfo:netInfoReducer
-  },
-});
+  reducer:rootReducer
+})
+
+// export const store = configureStore({
+//   reducer: {
+//     thekedar:thekedarReducer,
+//     workerForAttendance:workerForAttendanceReducer,
+//     workers:workersReducer
+//   },
+// });

@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+  RefreshControl,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -27,11 +28,20 @@ import {
 } from '../../styles/colors';
 import {DAYS, MONTH} from '../../utils/constants';
 import {getCurrentNepaliDate} from '../../utils/helpers';
+import { useSelector, useDispatch } from 'react-redux';
+import { getWorkerForAttendance } from '../../redux/actions/workerAction';
 
 const currDate = getCurrentNepaliDate();
 
 const Home = ({navigation}) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const {thekedar} = useSelector(state => state.thekedar);
+  const dispatch = useDispatch();
+
+  const onRefresh = () => {
+    dispatch(getWorkerForAttendance());
+  }
 
   return (
     <SafeAreaView
@@ -55,7 +65,7 @@ const Home = ({navigation}) => {
             </TouchableOpacity>
           </View>
           <View style={styles.greetView}>
-            <Text style={styles.nameTxt}>Hi Suraj Gupta</Text>
+            <Text style={styles.nameTxt}>Hi {thekedar?.name}</Text>
             <Text style={styles.greetingTxt}>Good Morning</Text>
           </View>
         </View>
@@ -75,7 +85,12 @@ const Home = ({navigation}) => {
             } ${MONTH[currDate.monthIndex]}`}</Text>
           </View>
 
-          <ScrollView showsVerticalScrollIndicator={false}>
+          <ScrollView 
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing}  onRefresh={onRefresh}/>
+            }
+          >
             <BoxSection />
             <SelectWorkerSection />
           </ScrollView>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Dimensions,
   Image,
@@ -16,19 +16,20 @@ import {
   moderateVerticalScale,
   scale,
 } from 'react-native-size-matters';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import ContainedBtn from '../../components/ContainedBtn';
 import Input from '../../components/Input';
 import OutlinedBtn from '../../components/OutlinedBtn';
 import { dark, light, theme_secondary } from '../../styles/colors';
+import instance from '../../utils/axiosInstance';
+import { CONNECTION_ERROR, REGISTER_SUCCESS } from '../../utils/constants';
 import {
   validateEmail,
   validateName,
   validatePassword,
 } from '../../utils/formValidator';
 import { useErrorMessage } from '../../utils/hooks';
-import { CONNECTION_ERROR, REGISTER_SUCCESS } from '../../utils/constants';
-import instance from '../../utils/axiosInstance';
+import { setCookie } from '../../utils/asyncStorage';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -50,9 +51,6 @@ const Signup = ({navigation}) => {
   const [message, setMessage] = useState("");
 
   const dispatch = useDispatch();
-  const {isAuthenticated} = useSelector(
-    state => state.thekedar,
-  );
 
   const validateInputs = () => {
     const nameCheck = validateName(name, 'Full Name');
@@ -108,16 +106,13 @@ const Signup = ({navigation}) => {
       const {data} = await instance.post('/thekedar/register', {name, email, password, companyName}, {
         withCredentials: false,
       });
-      console.log(data);
       if (data.success) {
+        await setCookie(headers['set-cookie'][0].split(";")[0].split("=")[1]);
         dispatch({type: REGISTER_SUCCESS, payload: data?.data});
         setMessage("Thekedar account created");
       }
     } catch (error) {
-      console.log(error);
-      if (error.errorType === CONNECTION_ERROR) {
-        setError("No internet connection");
-      }else{
+      if (error.errorType !== CONNECTION_ERROR) {
         setError(error.response.data.message);
       }
     }finally{
@@ -125,20 +120,14 @@ const Signup = ({navigation}) => {
     }
   };
 
-  const handleSignup = () => {
+  const handleSignup = async() => {
     const isAllOk = validateInputs();
     if (isAllOk) {
-      registerUser()
+      await registerUser();
     }
   };
 
   useErrorMessage({error, setError, message, setMessage});
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigation.navigate('Home');
-    }
-  }, [isAuthenticated]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>

@@ -1,37 +1,76 @@
 import {createSlice} from '@reduxjs/toolkit';
+import {
+    CLEAR_ERROR,
+    GET_WORKER_FAIL,
+    GET_WORKER_REQUEST,
+    GET_WORKER_SUCCESS_ACTIVE,
+    GET_WORKER_SUCCESS_NON_ACTIVE,
+    WORKER_FOR_ATTENDANCE_FAIL,
+    WORKER_FOR_ATTENDANCE_REQUEST,
+    WORKER_FOR_ATTENDANCE_SUCCESS,
+} from '../../utils/constants';
 
 const initialState = {
-  selectedWorkers: new Set(),
-  count: 0,
+    loading: false,
+    workersData: [],
+    error: null,
 };
 
-export const selectedWorkerSlice = createSlice({
-  name: 'selectedWorkers',
-  initialState,
-  reducers: {
-    addWorkerSingle: (state, action) => {
-      state.selectedWorkers.add(action.payload);
-      state.count += 1;
+const workerForAttendanceSlice = createSlice({
+    name: 'workerForAttendance',
+    initialState,
+    extraReducers: builder => {
+      builder
+        .addCase(WORKER_FOR_ATTENDANCE_REQUEST, state => {
+          state.loading = true;
+        })
+        .addCase(WORKER_FOR_ATTENDANCE_SUCCESS, (state, action) => {
+          state.loading = false;
+          state.workersData = action.payload;
+        })
+        .addCase(WORKER_FOR_ATTENDANCE_FAIL, (state, action) => {
+          state.loading = false;
+          state.error = action.payload;
+        })
+        .addCase(CLEAR_ERROR, state => {
+          state.error = null;
+        });
     },
-    removeWorkerSingle: (state, action) => {
-      state.selectedWorkers.delete(action.payload);
-      state.count -= 1;
-    },
-    addWorkerAll: (state, action) => {
-      state.selectedWorkers = new Set(action.payload);
-      state.count = action.payload?.length;
-    },
-    removeWorkerAll: state => {
-      state.selectedWorkers = new Set();
-      state.count = 0;
-    },
+});
+const workerForAttendanceReducer = workerForAttendanceSlice.reducer;
+
+const workersSlice = createSlice({
+  name: "worker",
+  initialState : {
+    loading:false,
+    workers: [],
+    nonActiveWorkers: [],
+    activeFetched:false,
+    nonActiveFetched:false
   },
+  extraReducers: builder => {
+    builder.addCase(GET_WORKER_REQUEST, (state) => {
+      state.loading = true;
+    })
+    .addCase(GET_WORKER_SUCCESS_ACTIVE, (state, action) => {
+      state.loading = false;
+      state.workers = action.payload;
+      state.activeFetched = true;
+    })
+    .addCase(GET_WORKER_SUCCESS_NON_ACTIVE, (state, action) => {
+      state.loading = false;
+      state.nonActiveWorkers = action.payload;
+      state.nonActiveFetched = true;
+    })
+    .addCase(GET_WORKER_FAIL, (state) => {
+      state.loading = false;
+    })
+  }
 });
 
-export const {
-  addWorkerSingle,
-  removeWorkerSingle,
-  addWorkerAll,
-  removeWorkerAll,
-} = selectedWorkerSlice.actions;
-export default selectedWorkerSlice.reducer;
+const workersReducer = workersSlice.reducer;
+
+export {
+  workerForAttendanceReducer,
+  workersReducer
+}

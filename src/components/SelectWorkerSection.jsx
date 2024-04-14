@@ -1,23 +1,19 @@
-import React, { memo, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
-
-import {
-  dark,
-  dark_light_l1,
-  light,
-  theme_primary,
-  theme_secondary,
-} from '../styles/colors';
-import { DEFAULT_ATTENDANCE_STATUS } from '../utils/constants';
+import React, {memo, useEffect, useState} from 'react';
+import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Icon} from 'react-native-paper';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
+import {useDispatch, useSelector} from 'react-redux';
+import {danger, dark, light, theme_primary, theme_secondary} from '../styles/colors';
+import {CLEAR_ERROR, DEFAULT_ATTENDANCE_STATUS} from '../utils/constants';
+import {useSelectionSystem} from '../utils/hooks';
 import ContainedBtn from './ContainedBtn';
 import OutlinedBtn from './OutlinedBtn';
 import SelectAttendanceStatus from './SelectAttendanceStatus';
 import WorkerCard from './WorkerCard';
-import { useSelectionSystem } from '../utils/hooks';
-import { useDispatch } from 'react-redux';
-import { loadUser } from '../redux/actions/thekedarAction';
+import { getWorkerForAttendance } from '../redux/actions/workerAction';
+import Snackbar from "react-native-snackbar";
+import { defaultSnackbarOptions } from '../utils/helpers';
+
 
 export const workersData = [
   {
@@ -80,90 +76,123 @@ export const workersData = [
     _id: 'okaykjdgjopqw12099hhgg',
     isSelected: false,
   },
-  
 ];
 
 const SelectWorkerSection = () => {
-  const [workers, setWorkers] = useState(workersData);
-  const [attendanceStatus, setAttendanceStatus] = useState(DEFAULT_ATTENDANCE_STATUS);
+  const {loading, error, workersData:workers} = useSelector(state => state.workerForAttendance);
+  const [attendanceStatus, setAttendanceStatus] = useState(
+    DEFAULT_ATTENDANCE_STATUS,
+  );
   const [isModalVisible, setIsModalVisible] = useState(false);
   const dispatch = useDispatch();
-  const {count, deSelectSingle, selectSingle, selectAll, deselectAll, selectedItem} = useSelectionSystem(workers);
+  const {
+    count,
+    deSelectSingle,
+    selectSingle,
+    selectAll,
+    deselectAll,
+    selectedItem,
+  } = useSelectionSystem(workers);
+
+  const [attendanceLoading, setAttendanceLoading] = useState(false);
 
   const doAttendance = () => {
     console.log('Attendance');
-
+    console.log(selectedItem);
   };
   // console.log(`section Rendering ok ${Math.round(Math.random() * 1000)}`);
 
+  useEffect(() => {
+    dispatch(getWorkerForAttendance());
+  }, []);
+
+  useEffect(() => {
+    if(error){
+      Snackbar.show(defaultSnackbarOptions(error, danger));
+      dispatch({type:CLEAR_ERROR});
+    }
+  }, [error])
+  
   return (
-    <View>
-      <Text style={styles.subHeadTxt}>Attendance for today</Text>
-      <View style={styles.selectActionView}>
-        <Text style={{color: theme_primary, fontSize: moderateScale(17)}}>
-          {count} Selected
-        </Text>
-        <View style={styles.selectIconsView}>
-          <TouchableOpacity activeOpacity={0.8} onPress={deselectAll}>
-            <Icon
-              source={'check-circle-outline'}
-              size={moderateScale(30)}
-              color={theme_secondary}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity activeOpacity={0.8} onPress={selectAll}>
-            <Icon
-              source={'check-circle'}
-              size={moderateScale(30)}
-              color={theme_secondary}
-            />
-          </TouchableOpacity>
+    <>
+      {loading ? (
+        <View style={{height:verticalScale(200), justifyContent:"center"}}>
+          <ActivityIndicator color={theme_primary} size={moderateScale(60)}/>
         </View>
-      </View>
-      <View>
-        {workers?.length > 0 &&
-          workers.map(w => (
-            <WorkerCard
-              workerId={w._id}
-              key={w._id}
-              name={w.name}
-              role={w.role}
-              selectSingle={selectSingle}
-              deSelectSingle={deSelectSingle}
-              selected={selectedItem.has(w._id)}
-              isAnySelected={count > 0}
+      ) : (
+        <View>
+          <Text style={styles.subHeadTxt}>Attendance for today</Text>
+          <View style={styles.selectActionView}>
+            <Text style={{color: theme_primary, fontSize: moderateScale(17)}}>
+              {count} Selected
+            </Text>
+            <View style={styles.selectIconsView}>
+              <TouchableOpacity activeOpacity={0.8} onPress={deselectAll}>
+                <Icon
+                  source={'check-circle-outline'}
+                  size={moderateScale(30)}
+                  color={theme_secondary}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity activeOpacity={0.8} onPress={selectAll}>
+                <Icon
+                  source={'check-circle'}
+                  size={moderateScale(30)}
+                  color={theme_secondary}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View>
+            {workers?.length > 0 &&
+              workers.map(w => (
+                <WorkerCard
+                  workerId={w._id}
+                  key={w._id}
+                  name={w.name}
+                  role={w.role}
+                  selectSingle={selectSingle}
+                  deSelectSingle={deSelectSingle}
+                  selected={selectedItem.has(w._id)}
+                  isAnySelected={count > 0}
+                />
+              ))}
+          </View>
+          <View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                padding: moderateScale(5),
+                alignItems: 'center',
+              }}>
+              <Text style={styles.attendanceTxt}>
+                Status : {attendanceStatus}
+              </Text>
+              <OutlinedBtn
+                title="Change Status"
+                style={{width: '40%'}}
+                handler={() => setIsModalVisible(true)}
+              />
+            </View>
+            <ContainedBtn
+              title={`mark all ${attendanceStatus}`}
+              style={{marginTop: verticalScale(3)}}
+              labelStyle={{textTransform: 'uppercase'}}
+              handler={doAttendance}
+              loading={attendanceLoading}
+              disabled={count === 0}
             />
-          ))}
-      </View>
-      <View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            padding: moderateScale(5),
-            alignItems:"center"
-          }}>
-          <Text style={styles.attendanceTxt}>Status : {attendanceStatus}</Text>
-          <OutlinedBtn
-            title="Change Status"
-            style={{width: '40%'}}
-            handler={() => setIsModalVisible(true)}
+          </View>
+          <SelectAttendanceStatus
+            value={attendanceStatus}
+            setValue={setAttendanceStatus}
+            visible={isModalVisible}
+            setVisible={setIsModalVisible}
           />
         </View>
-        <ContainedBtn
-          title={`mark all ${attendanceStatus}`}
-          style={{marginTop: verticalScale(3)}}
-          labelStyle={{textTransform:"uppercase"}}
-          handler={doAttendance}
-        />
-      </View>
-      <SelectAttendanceStatus 
-        value={attendanceStatus}
-        setValue={setAttendanceStatus}
-        visible={isModalVisible}
-        setVisible={setIsModalVisible}
-      />
-    </View>
+      )}
+    </>
   );
 };
 
@@ -187,11 +216,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   attendanceTxt: {
-    color: dark_light_l1,
+    color: theme_primary,
     backgroundColor: light,
-    fontSize: moderateScale(18),
+    fontSize: moderateScale(17),
     borderRadius: moderateScale(20),
-    padding: moderateScale(7),
-    textTransform:"uppercase",
+    paddingVertical: verticalScale(5),
+    paddingHorizontal: scale(15),
+    textTransform: 'uppercase',
   },
 });

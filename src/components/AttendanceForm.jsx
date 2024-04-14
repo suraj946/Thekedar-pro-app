@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Dimensions,
   StyleSheet,
@@ -6,17 +6,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Avatar, Icon } from 'react-native-paper';
+import {Avatar, Icon} from 'react-native-paper';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
-import { dark_light_l2, info, theme_primary, white } from '../styles/colors';
-import { DAYS, DEFAULT_ATTENDANCE_STATUS, MONTH } from '../utils/constants';
-import { validateWages } from '../utils/formValidator';
-import { getCurrentNepaliDate } from '../utils/helpers';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
+import {dark_light_l2, info, theme_primary, white} from '../styles/colors';
+import {DAYS, DEFAULT_ATTENDANCE_STATUS, MONTH} from '../utils/constants';
+import {validateWages} from '../utils/formValidator';
+import {getCurrentNepaliDate} from '../utils/helpers';
 import ContainedBtn from './ContainedBtn';
 import Input from './Input';
 import OutlinedBtn from './OutlinedBtn';
@@ -29,20 +29,19 @@ const AttendanceForm = ({
   visible = false,
   setVisible,
   workerId = '',
-  name = '',
+  workerName = '',
   recordId = '',
+  wagesPerDay = '',
 }) => {
   const [attendanceStatusModal, setAttendanceStatusModal] = useState(false);
   const [presenceStatus, setPresenceStatus] = useState(
     DEFAULT_ATTENDANCE_STATUS,
   );
-
   const [isAlreadyDone, setIsAlreadyDone] = useState(false);
 
-  const [wagesOfDay, setWagesOfDay] = useState('');
+  const [wagesOfDay, setWagesOfDay] = useState(wagesPerDay.toString());
   const [advanceAmount, setAdvanceAmount] = useState('');
   const [purposeOfAdvance, setPurposeOfAdvance] = useState('');
-
   const [wagesError, setWagesError] = useState('');
   const [advanceError, setAdvanceError] = useState('');
 
@@ -68,10 +67,38 @@ const AttendanceForm = ({
     return wagesCheck.isValid && forAdvance;
   };
 
+  useEffect(() => {
+    setWagesOfDay(wagesPerDay.toString());
+  }, [wagesPerDay])
+  
+
+  useEffect(() => {
+    setWagesOfDay(prev => {
+      let toSet;
+      if(presenceStatus === "present") toSet = wagesPerDay;
+      else if(presenceStatus === "half") toSet = (wagesPerDay * 0.5);
+      else if(presenceStatus === "absent") toSet = 0;
+      else toSet = (wagesPerDay * 1.5);
+
+      return toSet.toString();
+    })
+  }, [presenceStatus]);
+  
   const doAttendance = () => {
     const isAllOk = validateInputs();
     if (isAllOk) {
-      console.log('All good');
+      console.log({
+        workersData: {
+          workerName,
+          workerId,
+          recordId,
+          wagesOfDay,
+          advanceAmount,
+          purposeOfAdvance,
+        },
+        presence: presenceStatus,
+        dayDate
+      });
     }
   };
 
@@ -82,6 +109,12 @@ const AttendanceForm = ({
 
   const dismissHandler = () => {
     setVisible(false);
+    setAdvanceAmount("");
+    setAdvanceError("");
+    setWagesError("");
+    // setWagesOfDay("");
+    setPurposeOfAdvance("");
+    setPresenceStatus("present")
   };
 
   useEffect(() => {
