@@ -1,20 +1,31 @@
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
-import {dark, white} from '../../styles/colors';
+import {StyleSheet, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {moderateScale, scale} from 'react-native-size-matters';
+import {useDispatch, useSelector} from 'react-redux';
+import ContainedBtn from '../../components/ContainedBtn';
 import Header from '../../components/Header';
 import Input from '../../components/Input';
-import {moderateScale, scale} from 'react-native-size-matters';
-import ContainedBtn from '../../components/ContainedBtn';
-import { validateEmail, validateName, validatePhoneNumber } from '../../utils/formValidator';
+import {updateUser} from '../../redux/actions/thekedarAction';
+import {white} from '../../styles/colors';
+import {UPDATE_USER} from '../../utils/constants';
+import {
+  validateEmail,
+  validateName,
+  validatePhoneNumber,
+} from '../../utils/formValidator';
 
-const EditMyProfile = ({route}) => {
-  // {name, email, contactNumber, address, companyName}
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [companyName, setCompanyName] = useState('');
-  const [contactNumber, setContactNumber] = useState('');
-  const [address, setAddress] = useState('');
+const EditMyProfile = ({navigation}) => {
+  const {thekedar} = useSelector(state => state.thekedar);
+  const [name, setName] = useState(thekedar.name);
+  const [email, setEmail] = useState(thekedar.email);
+  const [companyName, setCompanyName] = useState(thekedar.companyName);
+  const [contactNumber, setContactNumber] = useState(
+    thekedar.contactNumber ? thekedar.contactNumber : '',
+  );
+  const [address, setAddress] = useState(
+    thekedar.address ? thekedar.address : '',
+  );
 
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -23,34 +34,36 @@ const EditMyProfile = ({route}) => {
 
   const [updateLoading, setUpdateLoading] = useState(false);
 
+  const dispatch = useDispatch();
+
   const validateInputs = () => {
-    const nameCheck = validateName(name, "Full Name");
-    if(nameCheck.isValid){
-      setNameError("");
-    }else{
+    const nameCheck = validateName(name, 'Full Name');
+    if (nameCheck.isValid) {
+      setNameError('');
+    } else {
       setNameError(nameCheck.errorText);
     }
 
     const emailCheck = validateEmail(email);
-    if(emailCheck.isValid){
-      setEmailError("");
-    }else{
+    if (emailCheck.isValid) {
+      setEmailError('');
+    } else {
       setEmailError(emailCheck.errorText);
     }
 
-    const checkCompanyName = validateName(companyName, "Company Name");
-    if(checkCompanyName.isValid){
-      setCompanyNameError("");
-    }else{
+    const checkCompanyName = validateName(companyName, 'Company Name');
+    if (checkCompanyName.isValid) {
+      setCompanyNameError('');
+    } else {
       setCompanyNameError(checkCompanyName.errorText);
     }
 
     let forContact = true;
-    if(contactNumber?.trim() !== ""){
+    if (contactNumber?.trim() !== '') {
       const contactCheck = validatePhoneNumber(contactNumber);
-      if(contactCheck.isValid){
-        setContactNumberError("");
-      }else{
+      if (contactCheck.isValid) {
+        setContactNumberError('');
+      } else {
         setContactNumberError(contactCheck.errorText);
         forContact = false;
       }
@@ -61,21 +74,43 @@ const EditMyProfile = ({route}) => {
       emailCheck.isValid &&
       checkCompanyName.isValid &&
       forContact
-    )
-  }
+    );
+  };
 
-  const handleProfileUpdate = () => {
-    if(!validateInputs()){
-      return ;
+  const handleProfileUpdate = async () => {
+    if (!validateInputs()) {
+      return;
     }
-    console.log("Handle profile update");
-  }
+    const data = {
+      name,
+      email,
+      companyName,
+      contactNumber,
+      address,
+    };
+    const modifiedData = {};
+    for (const key in data) {
+      if (data[key] !== thekedar[key]) {
+        modifiedData[key] = data[key];
+      }
+    }
+    if (Object.keys(modifiedData).length === 0) {
+      return;
+    }
+
+    setUpdateLoading(true);
+    const response = await updateUser(modifiedData);
+    if (response) {
+      dispatch({type: UPDATE_USER, payload: modifiedData});
+      navigation.goBack();
+    }
+    setUpdateLoading(false);
+  };
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: white}}>
       <Header headingText="Edit My Profile" />
-      <View
-        style={{padding: moderateScale(10), paddingHorizontal: scale(15)}}>
+      <View style={{padding: moderateScale(10), paddingHorizontal: scale(15)}}>
         <Input
           label="Full Name*"
           placeholder="John Doe"
@@ -121,7 +156,7 @@ const EditMyProfile = ({route}) => {
           disabled={updateLoading}
         />
         <ContainedBtn
-          title='Update'
+          title="Update"
           handler={handleProfileUpdate}
           loading={updateLoading}
         />

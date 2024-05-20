@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import DotsLoading from '../../components/DotsLoading';
 import Header from '../../components/Header';
 import WorkerCard from '../../components/WorkerCard';
-import { getWorkers } from '../../redux/actions/workerAction';
+import { deleteWorkers, getWorkers } from '../../redux/actions/workerAction';
 import {
   dark,
   dark_light_l1,
@@ -30,6 +30,7 @@ import {
   white,
 } from '../../styles/colors';
 import { useSelectionSystem } from '../../utils/hooks';
+import MyAlert from '../../components/MyAlert';
 
 const Workers = ({navigation}) => {
   const [search, setSearch] = useState('');
@@ -40,6 +41,9 @@ const Workers = ({navigation}) => {
     useSelector(state => state.workers);
   const dispatch = useDispatch();
   const [workersData, setWorkersData] = useState([]);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertData, setAlertData] = useState({});
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const {
     selectSingle,
@@ -55,7 +59,36 @@ const Workers = ({navigation}) => {
     navigation.navigate('EditWorker', {workerId: first});
   };
   const handleDelete = () => {
-    console.log('perform deleteion');
+    const workerIds = [...selectedItem];
+    setAlertVisible(true);
+    setAlertData({
+      title: 'Delete Worker',
+      message: 'This will delete the selected workers and records of them. Are you sure?',
+      icon: 'delete',
+      buttons: [
+        {
+          text: 'No',
+        },
+        {
+          text: 'Yes',
+          onPress: async() => {
+            setDeleteLoading(true);
+            const response = await deleteWorkers(workerIds);
+            setDeleteLoading(false);
+            if(response){
+              if(tabValue === 'active'){
+                dispatch(getWorkers());
+              }else{
+                dispatch(getWorkers(false));
+              }
+              //to clear selected items
+              deselectAll();
+            }
+          },
+        },
+      ],
+    })
+
   };
 
   const iconAni = useSharedValue(0);
@@ -91,7 +124,7 @@ const Workers = ({navigation}) => {
         setWorkersData(nonActiveWorkers);
       }
     }
-  }, [tabValue, activeFetched, nonActiveFetched]);
+  }, [tabValue, activeFetched, nonActiveFetched, workers, nonActiveWorkers]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -115,7 +148,13 @@ const Workers = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={white} barStyle={'dark-content'} />
       <Header headingText="Workers" />
-      {loading ? (
+      <MyAlert
+        visible={alertVisible}
+        setVisible={setAlertVisible}
+        {...alertData}
+        cancellable={!deleteLoading}
+      />
+      {loading || deleteLoading ? (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <DotsLoading />
         </View>

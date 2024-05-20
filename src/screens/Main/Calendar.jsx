@@ -14,6 +14,7 @@ const {monthIndex} = getCurrentNepaliDate();
 const Calendar = ({route}) => {
   const {recordId, workerId, name} = route.params;
   const [currentMonthIndex, setCurrentMonthIndex] = useState(monthIndex);
+  console.log({recordId, workerId, name});
   // console.log(currentMonthIndex);
   // console.log(`rendering calender ${Math.round(Math.random()*10000)}`);
   return (

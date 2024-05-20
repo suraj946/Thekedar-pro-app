@@ -5,7 +5,8 @@ import {
   LOAD_USER_REQUEST,
   LOAD_USER_SUCCESS,
   LOGOUT_SUCCESS,
-  REGISTER_SUCCESS
+  REGISTER_SUCCESS,
+  UPDATE_USER
 } from '../../utils/constants';
 
 const initialState = {
@@ -13,6 +14,7 @@ const initialState = {
     loading: false,
     thekedar: {},
     error: null,
+    isInitialCall: false
 };
 
 export const thekedarSlice = createSlice({
@@ -23,7 +25,8 @@ export const thekedarSlice = createSlice({
         builder
             .addCase(REGISTER_SUCCESS, (state, action) => {
                 state.isAuthenticated = true;
-                state.thekedar = action.payload;
+                state.thekedar = action.payload?.thekedar;
+                state.isInitialCall = action.payload?.isInitialCall;
             })
             .addCase(LOGOUT_SUCCESS, state => {
                 state.isAuthenticated = false;
@@ -35,7 +38,11 @@ export const thekedarSlice = createSlice({
             .addCase(LOAD_USER_SUCCESS, (state, action) => {
                 state.loading = false;
                 state.isAuthenticated = true;
-                state.thekedar = action.payload;
+                state.thekedar = action.payload?.thekedar;
+                state.isInitialCall = action.payload?.isInitialCall;
+            })
+            .addCase(UPDATE_USER, (state, action) => {
+                state.thekedar = {...state.thekedar, ...action.payload};
             })
             .addCase(LOAD_USER_FAIL, (state, action) => {
                 state.loading = false;

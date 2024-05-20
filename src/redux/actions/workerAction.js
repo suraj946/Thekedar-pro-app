@@ -50,3 +50,32 @@ export const getWorkers = (status=true) => async dispatch => {
     }
   }
 } 
+
+export const updateWorker = async(workerId, formData) => {
+  try {
+    const {data} = await instance.put(`/worker/single/${workerId}`, formData);
+    if(data.success){
+      Snackbar.show(defaultSnackbarOptions(data.message));
+      return true;
+    }
+  } catch (error) {
+    if (error.errorType !== CONNECTION_ERROR) {
+      Snackbar.show(defaultSnackbarOptions(error.response?.data?.message, danger));
+    }
+    return false;
+  }
+}
+export const deleteWorkers = async(workerIds) => {
+  try {
+    const {data} = await instance.post(`/worker/delete`, {workerIds});
+    if(data.success){
+      Snackbar.show(defaultSnackbarOptions(data.message));
+      return true;
+    }
+  } catch (error) {
+    if (error.errorType !== CONNECTION_ERROR) {
+      Snackbar.show(defaultSnackbarOptions(error.response?.data?.message, danger));
+    }
+    return false;
+  }
+}

@@ -23,11 +23,12 @@ import {
   white
 } from '../../styles/colors';
 import { validateWages } from '../../utils/formValidator';
-
-const data = {
-  fromDate: 10,
-  toDate: 30,
-};
+import { defaultSnackbarOptions, getCurrentNepaliDate } from '../../utils/helpers';
+import BottomMenu from '../../components/BottomMenu';
+import OutlinedBtn from '../../components/OutlinedBtn';
+import { checkAttendanceForToday } from '../../redux/actions/monthlyRecordAction';
+import Snackbar from 'react-native-snackbar';
+import MyAlert from '../../components/MyAlert';
 
 const response = {
   prevWages: 10000,
@@ -40,13 +41,22 @@ const response = {
   amount: 29000,
 };
 
-const SettlementSummary = ({route}) => {
-  const {name} = route.params;
+const todayDate = getCurrentNepaliDate().dayDate;
+
+const SettlementSummary = ({route, navigation}) => {
+  const {name, wId, recordId, records} = route.params;
   const [loading, setLoading] = useState(false);
   const [adjustLoading, setAdjustLoading] = useState(false);
-  const [isSettled, setIsSettled] = useState(true);
+  const [isSettled, setIsSettled] = useState(records.lastSettlementDate === todayDate);
   const [adjustmentAmount, setAdjustmentAmount] = useState('');
   const [adjustmentAmountError, setAdjustmentAmountError] = useState('');
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [toDateVal, setToDateVal] = useState({date:todayDate, error:""});
+  const [toDate, setToDate] = useState(todayDate);
+
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertData, setAlertData] = useState({});
 
   const handleAdjustAmount = () => {
     const checkAmount = validateWages(adjustmentAmount, 'Amount');
@@ -58,9 +68,77 @@ const SettlementSummary = ({route}) => {
     console.log('All ok, Proceed to adjust');
   };
 
+  const handleInputChange = (keyName, text) => {
+    setToDateVal({...toDateVal, [keyName]: text});
+  }
+  const handleSetDate = () => {
+    //using validateWages because it can also validate whether it is a number or not
+    const checkToDate = validateWages(toDateVal.date, 'To-Date');
+    if(!checkToDate.isValid){
+      setToDateVal({...toDateVal, error:checkToDate.errorText});
+      return;
+    }
+    if(Number(toDateVal.date) < records.lastSettlementDate+1 || Number(toDateVal.date) > todayDate){
+      setToDateVal({...toDateVal, error:'Invalid date range given'});
+      return;
+    }
+    setToDateVal({...toDateVal, error:''});
+    setToDate(toDateVal.date);
+    setModalVisible(false);
+  }
+
+  const performSettlement = async() => {
+    setLoading(true);
+    if(toDate === todayDate){
+      const response = await checkAttendanceForToday(recordId);
+      setLoading(false);
+      if(response === "error") return;
+      if(response === false){
+        setAlertVisible(true);
+        setAlertData({
+          title: 'Warning',
+          message: 'No attendance marked for today, mark it or settle upto previous date',
+          icon: 'alert-circle-outline',
+          cancellable: false,
+          buttons: [
+            {
+              text: 'Reduce Date',
+              onPress: () => {
+                setModalVisible(true);
+              },
+            },
+            {
+              text: 'Mark Attendance',
+              onPress: () => {
+                navigation.navigate("Attendance");
+              },
+            },
+          ],
+        });
+        return;
+      }
+    }
+
+    //TODO: Perform settlement and show relevant information
+  }
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: white}}>
       <StatusBar backgroundColor={theme_primary} barStyle={white} />
+      <BottomMenu title='Set Date' visible={modalVisible} setVisible={setModalVisible}>
+        <View style={{padding: moderateScale(15), paddingBottom: verticalScale(30)}}>
+          <Input
+            value={toDateVal.date.toString()}
+            errorText={toDateVal.error}
+            label='Date'
+            placeholder={`from ${records.lastSettlementDate+1} to ${todayDate}`}
+            keyboardType='numeric'
+            onChangeText={(text) => handleInputChange("date", text)}
+          />
+          <ContainedBtn style={{marginTop: verticalScale(10)}} title='Set Date' handler={handleSetDate} />
+        </View>
+      </BottomMenu>
+      <MyAlert visible={alertVisible} setVisible={setAlertVisible} {...alertData} />
       <View style={styles.topView}>
         <Text style={styles.topText}>{name}</Text>
       </View>
@@ -81,8 +159,8 @@ const SettlementSummary = ({route}) => {
             }}>{`Settlement (From - To)`}</Text>
           <View style={styles.dateStepperCont}>
             <View style={styles.line} />
-            <Text style={styles.dateText}>{data.fromDate}</Text>
-            <Text style={[styles.dateText, {right: 0}]}>{data.toDate}</Text>
+            <Text style={styles.dateText}>{records.lastSettlementDate === 0 ? records.lastSettlementDate+1 : records.lastSettlementDate}</Text>
+            <Text style={[styles.dateText, {right: 0}]}>{toDate}</Text>
           </View>
         </View>
 
@@ -93,11 +171,19 @@ const SettlementSummary = ({route}) => {
         />
 
         {!isSettled && (
-          <ContainedBtn
-            style={{marginTop: verticalScale(10)}}
-            title="Settle Account"
-            disabled={loading}
-          />
+          <View style={{marginTop: verticalScale(40)}}>
+            <OutlinedBtn
+              title='Change to date'
+              handler={() => setModalVisible(true)}
+              disabled={loading}
+            />
+            <ContainedBtn
+              style={{marginTop: verticalScale(10)}}
+              title="Settle Account"
+              disabled={loading}
+              handler={performSettlement}
+            />
+          </View>
         )}
 
         {loading ? (

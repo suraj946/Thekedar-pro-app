@@ -1,10 +1,13 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {
+  ADD_SINGLE_WORKER,
     CLEAR_ERROR,
+    FILTER_WORKER_FOR_ATTENDANCE,
     GET_WORKER_FAIL,
     GET_WORKER_REQUEST,
     GET_WORKER_SUCCESS_ACTIVE,
     GET_WORKER_SUCCESS_NON_ACTIVE,
+    UPDATE_SINGLE_WORKER,
     WORKER_FOR_ATTENDANCE_FAIL,
     WORKER_FOR_ATTENDANCE_REQUEST,
     WORKER_FOR_ATTENDANCE_SUCCESS,
@@ -27,6 +30,10 @@ const workerForAttendanceSlice = createSlice({
         .addCase(WORKER_FOR_ATTENDANCE_SUCCESS, (state, action) => {
           state.loading = false;
           state.workersData = action.payload;
+        })
+        .addCase(FILTER_WORKER_FOR_ATTENDANCE, (state, action) => {
+          const temp = state.workersData.filter(w => w._id !== action.payload);
+          state.workersData = temp;
         })
         .addCase(WORKER_FOR_ATTENDANCE_FAIL, (state, action) => {
           state.loading = false;
@@ -70,7 +77,25 @@ const workersSlice = createSlice({
 
 const workersReducer = workersSlice.reducer;
 
+const singleWorkerSlice = createSlice({
+  name: "singleWorker",
+  initialState : {
+    worker:null
+  },
+  extraReducers: builder => {
+    builder.addCase(ADD_SINGLE_WORKER, (state, action) => {
+      state.worker = action.payload;
+    })
+    .addCase(UPDATE_SINGLE_WORKER, (state, action) => {
+      state.worker = {...state.worker, ...action.payload};
+    })
+  }
+});
+
+const singleWorkerReducer = singleWorkerSlice.reducer;
+
 export {
   workerForAttendanceReducer,
-  workersReducer
+  workersReducer,
+  singleWorkerReducer
 }

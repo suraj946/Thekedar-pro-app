@@ -10,7 +10,13 @@ import {verticalScale, moderateScale, scale} from 'react-native-size-matters';
 import {theme_primary, white} from '../styles/colors';
 import {Portal} from 'react-native-paper';
 
-const BottomMenu = ({children, title = '', visible = false, setVisible}) => {
+const BottomMenu = ({children, title = '', visible = false, setVisible, notToClose=false}) => {
+  const handleClose = () => {
+    if(notToClose){
+      return;
+    }
+    setVisible(false);
+  }
   return (
     <Portal>
       <Modal
@@ -20,7 +26,7 @@ const BottomMenu = ({children, title = '', visible = false, setVisible}) => {
         onRequestClose={() => {
           setVisible(false);
         }}>
-        <TouchableWithoutFeedback onPress={() => setVisible(false)}>
+        <TouchableWithoutFeedback onPress={handleClose}>
           <View style={styles.overlay} />
         </TouchableWithoutFeedback>
 

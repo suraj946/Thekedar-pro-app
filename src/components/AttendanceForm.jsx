@@ -1,22 +1,26 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+  Alert,
+  BackHandler,
   Dimensions,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Avatar, Icon} from 'react-native-paper';
+import { Icon } from 'react-native-paper';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import {dark_light_l2, info, theme_primary, white} from '../styles/colors';
-import {DAYS, DEFAULT_ATTENDANCE_STATUS, MONTH} from '../utils/constants';
-import {validateWages} from '../utils/formValidator';
-import {getCurrentNepaliDate} from '../utils/helpers';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import { useDispatch } from 'react-redux';
+import { addAttendance } from '../redux/actions/monthlyRecordAction';
+import { info, theme_primary, white } from '../styles/colors';
+import { DAYS, DEFAULT_ATTENDANCE_STATUS, FILTER_WORKER_FOR_ATTENDANCE, MONTH } from '../utils/constants';
+import { validateWages } from '../utils/formValidator';
+import { getCurrentNepaliDate } from '../utils/helpers';
 import ContainedBtn from './ContainedBtn';
 import Input from './Input';
 import OutlinedBtn from './OutlinedBtn';
@@ -37,13 +41,15 @@ const AttendanceForm = ({
   const [presenceStatus, setPresenceStatus] = useState(
     DEFAULT_ATTENDANCE_STATUS,
   );
-  const [isAlreadyDone, setIsAlreadyDone] = useState(false);
 
   const [wagesOfDay, setWagesOfDay] = useState(wagesPerDay.toString());
   const [advanceAmount, setAdvanceAmount] = useState('');
   const [purposeOfAdvance, setPurposeOfAdvance] = useState('');
   const [wagesError, setWagesError] = useState('');
   const [advanceError, setAdvanceError] = useState('');
+
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const validateInputs = () => {
     const wagesCheck = validateWages(wagesOfDay);
@@ -69,26 +75,29 @@ const AttendanceForm = ({
 
   useEffect(() => {
     setWagesOfDay(wagesPerDay.toString());
-  }, [wagesPerDay])
-  
+  }, [wagesPerDay]);
 
   useEffect(() => {
     setWagesOfDay(prev => {
       let toSet;
-      if(presenceStatus === "present") toSet = wagesPerDay;
-      else if(presenceStatus === "half") toSet = (wagesPerDay * 0.5);
-      else if(presenceStatus === "absent") toSet = 0;
-      else toSet = (wagesPerDay * 1.5);
+      if (presenceStatus === 'present') toSet = wagesPerDay;
+      else if (presenceStatus === 'half') toSet = wagesPerDay * 0.5;
+      else if (presenceStatus === 'absent') toSet = 0;
+      else toSet = wagesPerDay * 1.5;
 
       return toSet.toString();
-    })
+    });
   }, [presenceStatus]);
-  
-  const doAttendance = () => {
+
+  const doAttendance = async() => {
     const isAllOk = validateInputs();
-    if (isAllOk) {
-      console.log({
-        workersData: {
+    if (!isAllOk) {
+      return;
+    }
+
+    const wData = {
+      workersData: [
+        {
           workerName,
           workerId,
           recordId,
@@ -96,10 +105,22 @@ const AttendanceForm = ({
           advanceAmount,
           purposeOfAdvance,
         },
-        presence: presenceStatus,
-        dayDate
-      });
+      ],
+      presence: presenceStatus,
+      dayDate,
+    };
+
+    setLoading(true);
+    const response = await addAttendance(wData);
+    setLoading(false);
+    if(response === false) return;
+    if(response[0].status === "rejected"){
+      Alert.alert("Rejected", response[0].reason);
+      return;
     }
+
+    dispatch({type:FILTER_WORKER_FOR_ATTENDANCE, payload:workerId});
+    dismissHandler();
   };
 
   const bottom = useSharedValue(0);
@@ -108,13 +129,14 @@ const AttendanceForm = ({
   }));
 
   const dismissHandler = () => {
+    if (loading) return;
     setVisible(false);
-    setAdvanceAmount("");
-    setAdvanceError("");
-    setWagesError("");
+    setAdvanceAmount('');
+    setAdvanceError('');
+    setWagesError('');
     // setWagesOfDay("");
-    setPurposeOfAdvance("");
-    setPresenceStatus("present")
+    setPurposeOfAdvance('');
+    setPresenceStatus('present');
   };
 
   useEffect(() => {
@@ -124,6 +146,23 @@ const AttendanceForm = ({
       bottom.value = -wHeignt;
     }
   }, [visible]);
+
+  useEffect(() => {
+    const backAction = () => {
+      if(visible) {
+        if(!loading) {
+          dismissHandler();
+        }
+        return true;
+      }
+    }
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, [visible, loading]);
 
   return (
     <Animated.View style={[styles.container, bottomStyle]}>
@@ -149,85 +188,70 @@ const AttendanceForm = ({
           />
         </View>
 
-        {isAlreadyDone ? (
-          <View
-            style={{
-              width: '100%',
-              height: '50%',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Avatar.Icon icon={'check-bold'} size={moderateScale(100)} />
-            <Text
-              style={{
-                color: dark_light_l2,
-                fontSize: moderateScale(20),
-                marginTop: verticalScale(12),
-              }}>
-              Attendance has been done for today
-            </Text>
-          </View>
-        ) : (
-          <View>
-            <View style={styles.formView}>
-              <View style={styles.attendanceStatusView}>
-                <SelectAttendanceStatus
-                  visible={attendanceStatusModal}
-                  setVisible={setAttendanceStatusModal}
-                  value={presenceStatus}
-                  setValue={setPresenceStatus}
-                />
-                <Text style={styles.statusTxt}>{presenceStatus}</Text>
-                <OutlinedBtn
-                  title="Change"
-                  handler={() => setAttendanceStatusModal(true)}
-                  style={{
-                    width: '50%',
-                    borderWidth: 0,
-                    borderLeftWidth: moderateScale(1.5),
-                    borderRadius: 0,
-                  }}
-                />
-              </View>
-
-              <View
+        <View>
+          <View style={styles.formView}>
+            <View style={styles.attendanceStatusView}>
+              <SelectAttendanceStatus
+                visible={attendanceStatusModal}
+                setVisible={setAttendanceStatusModal}
+                value={presenceStatus}
+                setValue={setPresenceStatus}
+              />
+              <Text style={styles.statusTxt}>{presenceStatus}</Text>
+              <OutlinedBtn
+                disabled={loading}
+                title="Change"
+                handler={() => setAttendanceStatusModal(true)}
                 style={{
-                  width: '90%',
-                  alignSelf: 'center',
-                  marginTop: verticalScale(20),
-                }}>
-                <Input
-                  label="Wages"
-                  placeholder="Wages of the day"
-                  keyboardType="number-pad"
-                  value={wagesOfDay}
-                  onChangeText={txt => setWagesOfDay(txt)}
-                  errorText={wagesError}
-                />
-                <Input
-                  label="Advance"
-                  placeholder="Advance amount if taken"
-                  keyboardType="number-pad"
-                  value={advanceAmount}
-                  onChangeText={txt => setAdvanceAmount(txt)}
-                  errorText={advanceError}
-                />
-                <Input
-                  label="Purpose"
-                  placeholder="Purpose of the advance"
-                  value={purposeOfAdvance}
-                  onChangeText={txt => setPurposeOfAdvance(txt)}
-                />
+                  width: '50%',
+                  borderWidth: 0,
+                  borderLeftWidth: moderateScale(1.5),
+                  borderRadius: 0,
+                }}
+              />
+            </View>
 
-                <ContainedBtn
-                  title={`Mark ${presenceStatus}`}
-                  handler={doAttendance}
-                  style={{marginTop: verticalScale(10)}}
-                />
-              </View>
+            <View
+              style={{
+                width: '90%',
+                alignSelf: 'center',
+                marginTop: verticalScale(20),
+              }}>
+              <Input
+                label="Wages"
+                placeholder="Wages of the day"
+                keyboardType="number-pad"
+                value={wagesOfDay}
+                onChangeText={txt => setWagesOfDay(txt)}
+                errorText={wagesError}
+                disabled={loading}
+              />
+              <Input
+                label="Advance"
+                placeholder="Advance amount if taken"
+                keyboardType="number-pad"
+                value={advanceAmount}
+                onChangeText={txt => setAdvanceAmount(txt)}
+                errorText={advanceError}
+                disabled={loading}
+              />
+              <Input
+                label="Purpose"
+                placeholder="Purpose of the advance"
+                value={purposeOfAdvance}
+                onChangeText={txt => setPurposeOfAdvance(txt)}
+                disabled={loading}
+              />
+
+              <ContainedBtn
+                title={`Mark ${presenceStatus}`}
+                handler={doAttendance}
+                style={{marginTop: verticalScale(10)}}
+                loading={loading}
+              />
             </View>
           </View>
-        )}
+        </View>
       </View>
     </Animated.View>
   );

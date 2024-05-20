@@ -12,11 +12,19 @@ import Settlement from '../screens/Main/Settlement';
 import Advance from '../screens/Main/Advance';
 import SettlementSummary from '../screens/Main/SettlementSummary';
 import MyProfile from '../screens/Main/MyProfile';
+import CreateRecordForm from '../screens/Main/CreateRecordForm';
+import {useSelector} from 'react-redux';
+import MonthChangedScreen from '../screens/Main/MonthChanged/MonthChangedScreen';
 
 const Stack = createNativeStackNavigator();
 
 const AppStack = () => {
-  return (
+  const {isInitialCall} = useSelector(state => state.thekedar);
+  return isInitialCall ? (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="MonthChangedScreen" component={MonthChangedScreen} />
+    </Stack.Navigator>
+  ) : (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Workers" component={Workers} />
@@ -31,6 +39,7 @@ const AppStack = () => {
       <Stack.Screen name="Advance" component={Advance} />
       <Stack.Screen name="SettlementSummary" component={SettlementSummary} />
       <Stack.Screen name="MyProfile" component={MyProfile} />
+      <Stack.Screen name="CreateRecordForm" component={CreateRecordForm} />
     </Stack.Navigator>
   );
 };

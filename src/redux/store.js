@@ -1,12 +1,13 @@
 import {configureStore, combineReducers} from '@reduxjs/toolkit';
 import thekedarReducer from './slices/thekedarSlice';
-import {workerForAttendanceReducer, workersReducer} from './slices/workerSlice';
+import {singleWorkerReducer, workerForAttendanceReducer, workersReducer} from './slices/workerSlice';
 import { LOGOUT_SUCCESS } from '../utils/constants';
 
 const appReducer = combineReducers({
   thekedar:thekedarReducer,
   workerForAttendance:workerForAttendanceReducer,
-  workers:workersReducer
+  workers:workersReducer,
+  singleWorker:singleWorkerReducer,
 });
 
 const rootReducer = (state, action) => {

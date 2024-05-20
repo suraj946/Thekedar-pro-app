@@ -10,7 +10,13 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import { useDispatch, useSelector } from 'react-redux';
+import info from '../../../package.json';
+import BottomMenu from '../../components/BottomMenu';
+import ContainedBtn from '../../components/ContainedBtn';
 import Header from '../../components/Header';
+import Input from '../../components/Input';
+import { changePassword, logoutUser } from '../../redux/actions/thekedarAction';
 import {
   dark,
   dark_light_l1,
@@ -18,71 +24,49 @@ import {
   light,
   light2,
   theme_primary,
-  white
+  white,
 } from '../../styles/colors';
-import info from "../../../package.json";
-import BottomMenu from '../../components/BottomMenu';
-import Input from '../../components/Input';
-import ContainedBtn from '../../components/ContainedBtn';
 import { validatePassword } from '../../utils/formValidator';
-
-const thekedar = {
-  name: 'Suraj Gupta',
-  contactNumber: '9822556765',
-  _id: '6572c79483f62bcfc1700020',
-  email: 'sgsuraj150@gmail.com',
-  address: 'pheta-3',
-  companyName: 'Okay construction',
-};
+import MyAlert from '../../components/MyAlert';
 
 const MyProfile = ({navigation}) => {
   const [openMenu, setOpenMenu] = useState(false);
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [oldPassError, setOldPassError] = useState("");
-  const [newPassError, setNewPassError] = useState("");
-  const [changeLoading, setChangeLoading] = useState(false);
+  const {thekedar} = useSelector(state => state.thekedar);
+  const dispatch = useDispatch();
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertData, setAlertData] = useState({});
 
   const handleLogout = () => {
-    console.log("Logout");
-  }
+    setAlertVisible(true);
+    setAlertData({
+      title: 'Logout',
+      message: 'Are you sure you want to logout?',
+      icon: 'logout',
+      buttons: [
+        {
+          text: 'No',
+        },
+        {
+          text: 'Yes',
+          onPress: () => {
+            dispatch(logoutUser());
+          },
+        },
+      ],
+    });
+  };
 
   const hideMenu = () => {
-    if(openMenu){
-      setOldPassword("");
-      setNewPassword("");
-      setOldPassError("");
-      setNewPassError("");
-    }
     setOpenMenu(false);
-  }
+  };
 
-  const handleChangePassword = () => {
-    const oldCheck = validatePassword(oldPassword);
-    if(oldCheck.isValid){
-      setOldPassError("");
-    }else{
-      setOldPassError(oldCheck.errorText);
-    }
-
-    const newCheck = validatePassword(newPassword);
-    if(newCheck.isValid){
-      setNewPassError("");
-    }else{
-      setNewPassError(newCheck.errorText);
-    }
-
-    if(!(oldCheck.isValid && newCheck.isValid)){
-      return;
-    }
-
-    console.log({oldPassword, newPassword});
-  }
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: white}}>
       <StatusBar backgroundColor={white} barStyle={'dark-content'} />
       <Header headingText={'My Profile'} />
-      <ScrollView style={styles.contentCont} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.contentCont}
+        showsVerticalScrollIndicator={false}>
         <View style={styles.profileInfo}>
           <View style={{flexDirection: 'row'}}>
             <View style={styles.avatarCont}>
@@ -104,12 +88,14 @@ const MyProfile = ({navigation}) => {
             <Icon source={'logout'} size={moderateScale(30)} />
           </TouchableOpacity>
         </View>
-        <View style={{marginTop:verticalScale(15)}}>
+        <View style={{marginTop: verticalScale(15)}}>
           <ActionCard
             leftIcon="account-outline"
             text="Edit Profile"
             rightIcon="greater-than"
-            clickHandler={()=>navigation.navigate("EditMyProfile", {id:thekedar._id})}
+            clickHandler={() =>
+              navigation.navigate('EditMyProfile')
+            }
           />
           <ActionCard
             leftIcon="lock-outline"
@@ -120,83 +106,132 @@ const MyProfile = ({navigation}) => {
       </ScrollView>
       <Text style={styles.versionTxt}>v{info.version}</Text>
 
-      <BottomMenu visible={openMenu} setVisible={hideMenu} title='Change Password'>
-        <View style={{
-          paddingVertical:verticalScale(15),
-          paddingHorizontal:scale(20)
-        }}>
-          <Input
-            value={oldPassword}
-            label='Current Password'
-            placeholder='Enter current password'
-            isPassword={true}
-            errorText={oldPassError}
-            onChangeText={(txt) => setOldPassword(txt)}
-            disabled={changeLoading}
-          />
-          <Input
-            value={newPassword}
-            label='New Password'
-            placeholder='Enter new password'
-            isPassword={true}
-            errorText={newPassError}
-            onChangeText={(txt) => setNewPassword(txt)}
-            disabled={changeLoading}
-          />
-          <ContainedBtn
-            style={{marginTop:verticalScale(5)}}
-            title='Change'
-            loading={changeLoading}
-            handler={handleChangePassword}
-          />
-        </View>
+      <BottomMenu
+        visible={openMenu}
+        setVisible={hideMenu}
+        title="Change Password">
+        <ChangePasswordForm setOpenMenu={setOpenMenu} />
       </BottomMenu>
+      <MyAlert visible={alertVisible} setVisible={setAlertVisible} {...alertData} />
     </SafeAreaView>
   );
 };
 
 const ActionCard = ({
-  leftIcon="help",
-  text="",
-  rightIcon="",
-  clickHandler=()=>{}
+  leftIcon = 'help',
+  text = '',
+  rightIcon = '',
+  clickHandler = () => {},
 }) => {
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       onPress={clickHandler}
       activeOpacity={0.5}
       style={{
-        width:"100%",
-        borderBottomWidth:moderateScale(1.6),
-        borderColor:light,
-        paddingHorizontal:scale(15),
-        paddingVertical:verticalScale(13),
-        flexDirection:"row",
-        justifyContent:"space-between",
-        alignItems:"center"
-      }}
-    >
-      <View style={{flexDirection:"row", justifyContent:"center", alignItems:"center"}}>
-        <Icon source={leftIcon} size={moderateScale(25)}/>
-        <Text style={{
-          color:dark_light_l1,
-          fontSize:moderateScale(18),
-          marginLeft:scale(10)
-        }}>{text}</Text>
+        width: '100%',
+        borderBottomWidth: moderateScale(1.6),
+        borderColor: light,
+        paddingHorizontal: scale(15),
+        paddingVertical: verticalScale(13),
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Icon source={leftIcon} size={moderateScale(25)} />
+        <Text
+          style={{
+            color: dark_light_l1,
+            fontSize: moderateScale(18),
+            marginLeft: scale(10),
+          }}>
+          {text}
+        </Text>
       </View>
-      { rightIcon && <Icon source={rightIcon} size={moderateScale(22)}/>}
+      {rightIcon && <Icon source={rightIcon} size={moderateScale(22)} />}
     </TouchableOpacity>
-  )
-}
+  );
+};
+
+const ChangePasswordForm = ({setOpenMenu}) => {
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [oldPassError, setOldPassError] = useState('');
+  const [newPassError, setNewPassError] = useState('');
+  const [changeLoading, setChangeLoading] = useState(false);
+
+  const handleChangePassword = async () => {
+    const oldCheck = validatePassword(oldPassword);
+    if (oldCheck.isValid) {
+      setOldPassError('');
+    } else {
+      setOldPassError(oldCheck.errorText);
+    }
+
+    const newCheck = validatePassword(newPassword);
+    if (newCheck.isValid) {
+      setNewPassError('');
+    } else {
+      setNewPassError(newCheck.errorText);
+    }
+
+    if (!(oldCheck.isValid && newCheck.isValid)) {
+      return;
+    }
+
+    setChangeLoading(true);
+    const res = await changePassword(oldPassword, newPassword);
+    if (res) {
+      setOpenMenu(false);
+    }
+    setChangeLoading(false);
+  };
+
+  return (
+    <View
+      style={{
+        paddingVertical: verticalScale(15),
+        paddingHorizontal: scale(20),
+      }}>
+      <Input
+        value={oldPassword}
+        label="Current Password"
+        placeholder="Enter current password"
+        isPassword={true}
+        errorText={oldPassError}
+        onChangeText={txt => setOldPassword(txt)}
+        disabled={changeLoading}
+      />
+      <Input
+        value={newPassword}
+        label="New Password"
+        placeholder="Enter new password"
+        isPassword={true}
+        errorText={newPassError}
+        onChangeText={txt => setNewPassword(txt)}
+        disabled={changeLoading}
+      />
+      <ContainedBtn
+        style={{marginTop: verticalScale(5)}}
+        title="Change"
+        loading={changeLoading}
+        handler={handleChangePassword}
+      />
+    </View>
+  );
+};
 
 export default MyProfile;
 
 const styles = StyleSheet.create({
   contentCont: {
-    marginTop:verticalScale(5),
+    marginTop: verticalScale(5),
     backgroundColor: light2,
-    // paddingVertical: verticalScale(10),
-    // paddingHorizontal: scale(15),
   },
   profileInfo: {
     flexDirection: 'row',
@@ -233,9 +268,9 @@ const styles = StyleSheet.create({
     color: dark_light_l1,
     fontSize: moderateScale(14),
   },
-  versionTxt:{
-    color:dark_light_l2,
-    alignSelf:"center",
-    fontSize:moderateScale(13)
-  }
+  versionTxt: {
+    color: dark_light_l2,
+    alignSelf: 'center',
+    fontSize: moderateScale(13),
+  },
 });
