@@ -1,13 +1,12 @@
-import React, {useEffect} from 'react';
-import {SafeAreaView, StatusBar, StyleSheet, Text, View} from 'react-native';
-import {Icon} from 'react-native-paper';
+import React, { useEffect } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { Icon } from 'react-native-paper';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import OutlinedBtn from '../../../components/OutlinedBtn';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import {
   dark,
   dark_light_l1,
@@ -16,13 +15,15 @@ import {
   theme_primary,
   theme_secondary,
   white,
-} from '../../../styles/colors';
-import {MONTH} from '../../../utils/constants';
-import {getCurrentNepaliDate} from '../../../utils/helpers';
+} from '../styles/colors';
+import { MONTH } from '../utils/constants';
+import OutlinedBtn from './OutlinedBtn';
+import MyModal from './MyModal';
+import { getCurrentNepaliDate } from '../utils/helpers';
 
-const currMonthIndex = getCurrentNepaliDate().monthIndex;
+const {monthIndex:currMonthIndex} = getCurrentNepaliDate();
 
-const MonthChangedScreen = () => {
+const MonthChangedModal = ({visible = false, setVisible = () => {}}) => {
   const viewAnimation = useSharedValue(0);
   const viewStyle = useAnimatedStyle(() => ({
     opacity: viewAnimation.value,
@@ -32,12 +33,13 @@ const MonthChangedScreen = () => {
     viewAnimation.value = withTiming(1, {duration: 600});
   }, []);
 
-  const handleRecordCreation = () => {
-    console.log('Proceeding to new record creation');
-  };
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: white}}>
-      <StatusBar backgroundColor={white} barStyle={'dark-content'} />
+    <MyModal
+      visible={visible}
+      setVisible={setVisible}
+      heading="New Month Arrival"
+      containerStyle={{maxHeight: '100%', width: '100%'}}
+      autoDismiss={false}>
       <View style={styles.contentView}>
         <Animated.View
           style={[
@@ -46,10 +48,10 @@ const MonthChangedScreen = () => {
             styles.shadow,
             viewStyle,
           ]}>
-          <Text style={styles.headText}>New Month Arrival</Text>
+          <Text style={styles.headText}>Month Changed</Text>
           <Icon
             source={'calendar-month-outline'}
-            size={moderateScale(200)}
+            size={moderateScale(160)}
             color={theme_primary}
           />
           <View style={styles.monthContainer}>
@@ -80,15 +82,15 @@ const MonthChangedScreen = () => {
             title="Proceed"
             style={styles.btn}
             labelStyle={{color: light}}
-            handler={handleRecordCreation}
+            handler={() => setVisible(false)}
           />
         </Animated.View>
       </View>
-    </SafeAreaView>
+    </MyModal>
   );
 };
 
-export default MonthChangedScreen;
+export default MonthChangedModal;
 
 const styles = StyleSheet.create({
   shadow: {
@@ -103,19 +105,19 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   contentView: {
-    flex: 1,
     justifyContent: 'space-around',
     alignItems: 'center',
+    height: '100%',
   },
   topView: {
-    height: '63%',
+    height: '50%',
     backgroundColor: light2,
     elevation: 5,
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   bottomView: {
-    height: '35%',
+    height: '40%',
     backgroundColor: theme_secondary,
     marginBottom: verticalScale(3),
     paddingHorizontal: scale(20),
@@ -131,13 +133,13 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(25),
     textAlign: 'center',
     marginTop: verticalScale(20),
-    marginBottom: verticalScale(5),
+    // marginBottom: verticalScale(5),
   },
   monthContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: verticalScale(30),
+    marginBottom: verticalScale(20),
   },
   monthText: {
     color: light,

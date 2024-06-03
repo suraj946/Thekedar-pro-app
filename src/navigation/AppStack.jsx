@@ -1,28 +1,52 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import Home from '../screens/Main/Home';
-import Workers from '../screens/Main/Workers';
-import WorkerProfile from '../screens/Main/WorkerProfile';
-import EditWorker from '../screens/Main/EditWorker';
-import EditMyProfile from '../screens/Main/EditMyProfile';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import AddWorker from '../screens/Main/AddWorker';
-import WorkerCalendar from '../screens/Main/WorkerCalendar';
-import Calendar from '../screens/Main/Calendar';
-import Attendance from '../screens/Main/Attendance';
-import Settlement from '../screens/Main/Settlement';
 import Advance from '../screens/Main/Advance';
-import SettlementSummary from '../screens/Main/SettlementSummary';
-import MyProfile from '../screens/Main/MyProfile';
+import Attendance from '../screens/Main/Attendance';
+import Calendar from '../screens/Main/Calendar';
 import CreateRecordForm from '../screens/Main/CreateRecordForm';
-import {useSelector} from 'react-redux';
-import MonthChangedScreen from '../screens/Main/MonthChanged/MonthChangedScreen';
+import EditMyProfile from '../screens/Main/EditMyProfile';
+import EditWorker from '../screens/Main/EditWorker';
+import Home from '../screens/Main/Home';
+import WorkerList from '../screens/Main/MonthChanged/WorkerList';
+import MyProfile from '../screens/Main/MyProfile';
+import Settlement from '../screens/Main/Settlement';
+import SettlementSummary from '../screens/Main/SettlementSummary';
+import WorkerCalendar from '../screens/Main/WorkerCalendar';
+import WorkerProfile from '../screens/Main/WorkerProfile';
+import Workers from '../screens/Main/Workers';
+import { deleteAppOpenDate, getAppOpenDate } from '../utils/asyncStorage';
+import { getCurrentNepaliDate } from '../utils/helpers';
 
 const Stack = createNativeStackNavigator();
+const {dayDate} = getCurrentNepaliDate();
 
 const AppStack = () => {
-  const {isInitialCall} = useSelector(state => state.thekedar);
-  return isInitialCall ? (
+  const {isInitialCall, thekedar} = useSelector(state => state.thekedar);
+  const [hasDate, setHasDate] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const prevAppOpenDate = await getAppOpenDate(thekedar._id?.toString());
+      if(!prevAppOpenDate){
+        setHasDate(false);
+        return;
+      }
+      if(prevAppOpenDate !== dayDate){
+        await deleteAppOpenDate(thekedar._id?.toString());
+        setHasDate(false);
+        return;
+      }
+      setHasDate(true);
+    })();
+  }, []);
+
+  
+  return (isInitialCall || hasDate) ? (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="MonthChangedScreen" component={MonthChangedScreen} />
+      <Stack.Screen name="WorkerList" component={WorkerList} />
+      <Stack.Screen name="CreateRecordForm" component={CreateRecordForm} />
     </Stack.Navigator>
   ) : (
     <Stack.Navigator screenOptions={{headerShown: false}}>

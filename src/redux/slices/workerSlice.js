@@ -1,6 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {
   ADD_SINGLE_WORKER,
+    ADD_WORKER_FOR_NEW_RECORD,
     CLEAR_ERROR,
     FILTER_WORKER_FOR_ATTENDANCE,
     GET_WORKER_FAIL,
@@ -8,6 +9,7 @@ import {
     GET_WORKER_SUCCESS_ACTIVE,
     GET_WORKER_SUCCESS_NON_ACTIVE,
     UPDATE_SINGLE_WORKER,
+    UPDATE_WORKER_FOR_NEW_RECORD,
     WORKER_FOR_ATTENDANCE_FAIL,
     WORKER_FOR_ATTENDANCE_REQUEST,
     WORKER_FOR_ATTENDANCE_SUCCESS,
@@ -91,11 +93,30 @@ const singleWorkerSlice = createSlice({
     })
   }
 });
-
 const singleWorkerReducer = singleWorkerSlice.reducer;
+
+
+const workersForNewRecord = createSlice({
+  name: "workersForNewRecord",
+  initialState : {
+    workers:[],
+  },
+  extraReducers: builder => {
+    builder.addCase(ADD_WORKER_FOR_NEW_RECORD, (state, action) => {
+      state.workers = action.payload;
+    })
+    .addCase(UPDATE_WORKER_FOR_NEW_RECORD, (state, action) => {
+      console.log('updating');
+      const temp = state.workers.filter(w => w._id !== action.payload);
+      state.workers = temp;
+    })
+  }
+});
+const workersForNewRecordReducer = workersForNewRecord.reducer;
 
 export {
   workerForAttendanceReducer,
   workersReducer,
-  singleWorkerReducer
+  singleWorkerReducer,
+  workersForNewRecordReducer,
 }

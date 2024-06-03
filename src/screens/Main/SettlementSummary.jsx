@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
-  View
+  View,
 } from 'react-native';
-import { Avatar } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import {Avatar} from 'react-native-paper';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import ContainedBtn from '../../components/ContainedBtn';
 import Input from '../../components/Input';
 import {
@@ -20,15 +20,24 @@ import {
   light,
   success,
   theme_primary,
-  white
+  white,
 } from '../../styles/colors';
-import { validateWages } from '../../utils/formValidator';
-import { defaultSnackbarOptions, getCurrentNepaliDate } from '../../utils/helpers';
+import {validateWages} from '../../utils/formValidator';
+import {
+  defaultSnackbarOptions,
+  getCurrentNepaliDate,
+} from '../../utils/helpers';
 import BottomMenu from '../../components/BottomMenu';
 import OutlinedBtn from '../../components/OutlinedBtn';
-import { checkAttendanceForToday } from '../../redux/actions/monthlyRecordAction';
+import {checkAttendanceForToday} from '../../redux/actions/monthlyRecordAction';
 import Snackbar from 'react-native-snackbar';
 import MyAlert from '../../components/MyAlert';
+import {
+  useCheckForSettlement,
+  usePerformSettlementAndAdjustAmount,
+} from '../../utils/hooks';
+import DotsLoading from '../../components/DotsLoading';
+import AmountInfoCard from '../../components/AmountInfoCard';
 
 const response = {
   prevWages: 10000,
@@ -45,59 +54,83 @@ const todayDate = getCurrentNepaliDate().dayDate;
 
 const SettlementSummary = ({route, navigation}) => {
   const {name, wId, recordId, records} = route.params;
-  const [loading, setLoading] = useState(false);
-  const [adjustLoading, setAdjustLoading] = useState(false);
-  const [isSettled, setIsSettled] = useState(records.lastSettlementDate === todayDate);
+  const [response, setResponse] = useState({});
+  const [isSettled, setIsSettled] = useState(
+    records.lastSettlementDate === todayDate,
+  );
+  const [alreadySettled, setAlreadySettled] = useState(false);
   const [adjustmentAmount, setAdjustmentAmount] = useState('');
   const [adjustmentAmountError, setAdjustmentAmountError] = useState('');
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [toDateVal, setToDateVal] = useState({date:todayDate, error:""});
+  const [toDateVal, setToDateVal] = useState({date: todayDate, error: ''});
   const [toDate, setToDate] = useState(todayDate);
+  const [fromDate, setFromDate] = useState(
+    records.lastSettlementDate === 0 ? 1 : records.lastSettlementDate,
+  );
 
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertData, setAlertData] = useState({});
 
-  const handleAdjustAmount = () => {
+  const {loading: initialLoading} = useCheckForSettlement(recordId, data => {
+    setAlreadySettled(data.alreadySettled);
+    setIsSettled(false);
+    if (data?.fromDate) setFromDate(data.fromDate);
+    if (data?.toDate) setToDate(data.toDate);
+    if (data?.settlement) setResponse(data.settlement);
+  });
+
+  const {settleAccount, adjustAmount, loading, setLoading} =
+    usePerformSettlementAndAdjustAmount(recordId);
+
+  const handleAdjustAmount = async() => {
     const checkAmount = validateWages(adjustmentAmount, 'Amount');
     if (!checkAmount.isValid) {
       setAdjustmentAmountError(checkAmount.errorText);
       return;
     }
     setAdjustmentAmountError('');
-    console.log('All ok, Proceed to adjust');
+    await adjustAmount(Number(adjustmentAmount), toDate, (response) => {
+      setResponse(response);
+      setAlreadySettled(true);
+      setAdjustmentAmount('');
+    });
   };
 
   const handleInputChange = (keyName, text) => {
     setToDateVal({...toDateVal, [keyName]: text});
-  }
+  };
   const handleSetDate = () => {
     //using validateWages because it can also validate whether it is a number or not
     const checkToDate = validateWages(toDateVal.date, 'To-Date');
-    if(!checkToDate.isValid){
-      setToDateVal({...toDateVal, error:checkToDate.errorText});
+    if (!checkToDate.isValid) {
+      setToDateVal({...toDateVal, error: checkToDate.errorText});
       return;
     }
-    if(Number(toDateVal.date) < records.lastSettlementDate+1 || Number(toDateVal.date) > todayDate){
-      setToDateVal({...toDateVal, error:'Invalid date range given'});
+    if (
+      Number(toDateVal.date) < records.lastSettlementDate + 1 ||
+      Number(toDateVal.date) > todayDate
+    ) {
+      setToDateVal({...toDateVal, error: 'Invalid date range given'});
       return;
     }
-    setToDateVal({...toDateVal, error:''});
+    setToDateVal({...toDateVal, error: ''});
     setToDate(toDateVal.date);
     setModalVisible(false);
-  }
+  };
 
-  const performSettlement = async() => {
+  const performSettlement = async () => {
     setLoading(true);
-    if(toDate === todayDate){
+    if (toDate === todayDate) {
       const response = await checkAttendanceForToday(recordId);
       setLoading(false);
-      if(response === "error") return;
-      if(response === false){
+      if (response === 'error') return;
+      if (response === false) {
         setAlertVisible(true);
         setAlertData({
           title: 'Warning',
-          message: 'No attendance marked for today, mark it or settle upto previous date',
+          message:
+            'No attendance marked for today, mark it or settle upto previous date',
           icon: 'alert-circle-outline',
           cancellable: false,
           buttons: [
@@ -110,7 +143,7 @@ const SettlementSummary = ({route, navigation}) => {
             {
               text: 'Mark Attendance',
               onPress: () => {
-                navigation.navigate("Attendance");
+                navigation.navigate('Attendance');
               },
             },
           ],
@@ -118,27 +151,52 @@ const SettlementSummary = ({route, navigation}) => {
         return;
       }
     }
+    await settleAccount(toDate, (response) => {
+      setResponse(response);
+      setIsSettled(true);
+    });
+  };
 
-    //TODO: Perform settlement and show relevant information
-  }
-
+  if (initialLoading)
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <DotsLoading text="Checking for settlement" />
+      </View>
+    );
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: white}}>
       <StatusBar backgroundColor={theme_primary} barStyle={white} />
-      <BottomMenu title='Set Date' visible={modalVisible} setVisible={setModalVisible}>
-        <View style={{padding: moderateScale(15), paddingBottom: verticalScale(30)}}>
+      <BottomMenu
+        title="Set Date"
+        visible={modalVisible}
+        setVisible={setModalVisible}>
+        <View
+          style={{
+            padding: moderateScale(15),
+            paddingBottom: verticalScale(30),
+          }}>
           <Input
             value={toDateVal.date.toString()}
             errorText={toDateVal.error}
-            label='Date'
-            placeholder={`from ${records.lastSettlementDate+1} to ${todayDate}`}
-            keyboardType='numeric'
-            onChangeText={(text) => handleInputChange("date", text)}
+            label="Date"
+            placeholder={`from ${
+              records.lastSettlementDate + 1
+            } to ${todayDate}`}
+            keyboardType="numeric"
+            onChangeText={text => handleInputChange('date', text)}
           />
-          <ContainedBtn style={{marginTop: verticalScale(10)}} title='Set Date' handler={handleSetDate} />
+          <ContainedBtn
+            style={{marginTop: verticalScale(10)}}
+            title="Set Date"
+            handler={handleSetDate}
+          />
         </View>
       </BottomMenu>
-      <MyAlert visible={alertVisible} setVisible={setAlertVisible} {...alertData} />
+      <MyAlert
+        visible={alertVisible}
+        setVisible={setAlertVisible}
+        {...alertData}
+      />
       <View style={styles.topView}>
         <Text style={styles.topText}>{name}</Text>
       </View>
@@ -159,21 +217,21 @@ const SettlementSummary = ({route, navigation}) => {
             }}>{`Settlement (From - To)`}</Text>
           <View style={styles.dateStepperCont}>
             <View style={styles.line} />
-            <Text style={styles.dateText}>{records.lastSettlementDate === 0 ? records.lastSettlementDate+1 : records.lastSettlementDate}</Text>
+            <Text style={styles.dateText}>{fromDate}</Text>
             <Text style={[styles.dateText, {right: 0}]}>{toDate}</Text>
           </View>
         </View>
 
         <StatusWithArrow
-          valueBgColor={isSettled ? success : theme_primary}
+          valueBgColor={isSettled || alreadySettled ? success : theme_primary}
           label="Status"
-          value={isSettled ? 'Settled' : 'Not Settled'}
+          value={isSettled || alreadySettled ? 'Settled' : 'Not Settled'}
         />
 
-        {!isSettled && (
+        {!(isSettled || alreadySettled) && (
           <View style={{marginTop: verticalScale(40)}}>
             <OutlinedBtn
-              title='Change to date'
+              title="Change to date"
               handler={() => setModalVisible(true)}
               disabled={loading}
             />
@@ -187,67 +245,109 @@ const SettlementSummary = ({route, navigation}) => {
         )}
 
         {loading ? (
-          <ActivityIndicator size={moderateScale(60)} color={theme_primary} style={{marginTop:verticalScale(100)}}/>
+          <ActivityIndicator
+            size={moderateScale(60)}
+            color={theme_primary}
+            style={{marginTop: verticalScale(100)}}
+          />
         ) : (
-          isSettled && (
-            <View style={styles.container}>
-              <PaymentStatus amount={response.amount} />
+          <View style={styles.container}>
+            {alreadySettled ? (
+              <>
+                <PaymentStatus amount={response.wagesOccured - response.amountTaken} />
+                <View style={styles.settlementView}>
+                  <Text style={styles.settlementHeading}>
+                    Settlement Summary
+                  </Text>
+                  <AmountInfoCard
+                    fieldName="Money given to the worker"
+                    amount={response?.amountTaken || 0}
+                  />
+                  <AmountInfoCard
+                    fieldName="Wages occured till now"
+                    amount={response?.wagesOccured || 0}
+                  />
+                  <AmountInfoCard
+                    fieldName="Advance occured till now"
+                    amount={response?.advanceOccured || 0}
+                  />
+                  <AmountInfoCard
+                    fieldName="Wages transferred forward to the month"
+                    amount={response?.wagesTransferred || 0}
+                  />
+                  <AmountInfoCard
+                    fieldName="Advance transferred forward to the month"
+                    amount={response?.advanceTransferred || 0}
+                  />
+                </View>
+              </>
+            ) : (
+              isSettled && (
+                <>
+                  <PaymentStatus amount={response.amount} />
+                  <Section
+                    title={'Previous Details'}
+                    data={[
+                      {heading: 'previous wages', amount: response.prevWages},
+                      {
+                        heading: 'previous advance',
+                        amount: response.prevAdvance,
+                      },
+                    ]}
+                  />
+                  <Section
+                    title={'Calculated Details'}
+                    data={[
+                      {
+                        heading: 'current wages',
+                        amount: response.calculatedWages,
+                      },
+                      {
+                        heading: 'current advance',
+                        amount: response.calculatedAdvance,
+                      },
+                    ]}
+                  />
+                  <Section
+                    title={'New Details'}
+                    data={[
+                      {
+                        heading: 'new current wages',
+                        amount: response.newCurrentWages,
+                      },
+                      {
+                        heading: 'new current advance',
+                        amount: response.newCurrentAdvance,
+                      },
+                    ]}
+                  />
+                </>
+              )
+            )}
 
-              <Section
-                title={'Previous Details'}
-                data={[
-                  {heading: 'previous wages', amount: response.prevWages},
-                  {heading: 'previous advance', amount: response.prevAdvance},
-                ]}
-              />
-              <Section
-                title={'Calculated Details'}
-                data={[
-                  {heading: 'current wages', amount: response.calculatedWages},
-                  {
-                    heading: 'current advance',
-                    amount: response.calculatedWages,
-                  },
-                ]}
-              />
-              <Section
-                title={'New Details'}
-                data={[
-                  {
-                    heading: 'new current wages',
-                    amount: response.newCurrentWages,
-                  },
-                  {
-                    heading: 'new current advance',
-                    amount: response.newCurrentAdvance,
-                  },
-                ]}
-              />
-
+            {(isSettled || alreadySettled) && (
               <View style={styles.section}>
                 <Text style={styles.title}>Adjustment</Text>
-                {response.showForAdjustment && (
-                  <View style={styles.adjustmentSection}>
-                    <Input
-                      value={adjustmentAmount}
-                      onChangeText={txt => setAdjustmentAmount(txt)}
-                      errorText={adjustmentAmountError}
-                      keyboardType="number-pad"
-                      disabled={adjustLoading}
-                      label="Given Amount"
-                      placeholder="Amount given on settlement"
-                    />
-                    <ContainedBtn
-                      style={{marginTop: verticalScale(5)}}
-                      title="Adjust Amount"
-                      loading={adjustLoading}
-                      handler={handleAdjustAmount}
-                    />
-                  </View>
-                )}
+                <View style={styles.adjustmentSection}>
+                  <Input
+                    value={adjustmentAmount}
+                    onChangeText={txt => setAdjustmentAmount(txt)}
+                    errorText={adjustmentAmountError}
+                    keyboardType="number-pad"
+                    disabled={loading}
+                    label="Given Amount"
+                    placeholder="Amount given on settlement"
+                  />
+                  <ContainedBtn
+                    style={{marginTop: verticalScale(5)}}
+                    title="Adjust Amount"
+                    loading={loading}
+                    handler={handleAdjustAmount}
+                  />
+                </View>
               </View>
-            </View>
-          )
+            )}
+          </View>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -289,7 +389,7 @@ const PaymentStatus = ({amount}) => {
       return (
         <View style={[styles.paymentContainer, {backgroundColor: danger}]}>
           <Text style={[styles.paymentTitle, {color: white}]}>
-            Advance Occurred
+            Excess amount to be transferred
           </Text>
           <Text style={[styles.amount, {color: white}]}>
             Rs.{Math.abs(amount)}
@@ -478,4 +578,16 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(20),
     color: theme_primary,
   },
+
+  settlementView: {
+    marginTop: verticalScale(10),
+    alignItems: 'center',
+  },
+  settlementHeading: {
+    marginBottom: verticalScale(15),
+    fontSize: moderateScale(20),
+    color: dark_light_l1,
+    textAlign: 'center',
+    fontWeight: 'bold',
+  }
 });

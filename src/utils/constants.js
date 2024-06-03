@@ -42,6 +42,9 @@ export const LOGOUT_SUCCESS = "logoutSuccess";
 export const ADD_SINGLE_WORKER = "addSingleWorker";
 export const UPDATE_SINGLE_WORKER = "updateSingleWorker";
 
+export const ADD_WORKER_FOR_NEW_RECORD = "addWorkerForNewRecord";
+export const UPDATE_WORKER_FOR_NEW_RECORD = "updateWorkerForNewRecord";
+
 export const CLEAR_ERROR = "clearError";
 
 

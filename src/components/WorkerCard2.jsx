@@ -2,7 +2,7 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, { memo } from 'react';
 import {Avatar} from 'react-native-paper';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
-import { dark, dark_light_l2, light } from '../styles/colors';
+import { dark, dark_light_l2, light, light2 } from '../styles/colors';
 
 const WorkerCard2 = ({
     handlePress,
@@ -33,8 +33,8 @@ export default memo(WorkerCard2);
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: light,
-    margin: moderateScale(5),
+    backgroundColor: light2,
+    margin: moderateScale(3),
     paddingHorizontal: scale(10),
     paddingVertical: verticalScale(5),
     flexDirection: 'row',

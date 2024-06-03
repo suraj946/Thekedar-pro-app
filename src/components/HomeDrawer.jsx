@@ -7,9 +7,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import {dark_light_l1, theme_primary} from '../styles/colors';
 import MyDrawer from './MyDrawer';
 import MyAlert from './MyAlert';
-import { logoutUser } from '../redux/actions/thekedarAction';
+import {logoutUser} from '../redux/actions/thekedarAction';
 
-const HomeDrawer = ({visible = false, setVisible}) => {
+const HomeDrawer = ({visible = false, setVisible, showProfile = true}) => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -43,7 +43,7 @@ const HomeDrawer = ({visible = false, setVisible}) => {
         {
           text: 'Yes',
           onPress: () => {
-            dispatch(logoutUser(setLoading))
+            dispatch(logoutUser(setLoading));
           },
         },
       ],
@@ -61,14 +61,16 @@ const HomeDrawer = ({visible = false, setVisible}) => {
           />
           <Text style={styles.nameTxt}>{thekedar.name}</Text>
 
-          <Drawer.Item
-            label="Profile"
-            icon={'account'}
-            style={styles.drawerItem}
-            onPress={handleProfilePress}
-            theme={{colors: {onSurfaceVariant: 'white'}}}
-            disabled={loading}
-          />
+          {showProfile && (
+            <Drawer.Item
+              label="Profile"
+              icon={'account'}
+              style={styles.drawerItem}
+              onPress={handleProfilePress}
+              theme={{colors: {onSurfaceVariant: 'white'}}}
+              disabled={loading}
+            />
+          )}
           <Drawer.Item
             label={loading ? 'Logging out...' : 'Logout'}
             icon={'logout'}

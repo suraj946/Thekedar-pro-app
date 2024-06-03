@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -8,15 +8,17 @@ import {
   Text,
   View,
 } from 'react-native';
-import {Avatar, Icon, List, Menu} from 'react-native-paper';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import Snackbar from 'react-native-snackbar';
-import {useDispatch, useSelector} from 'react-redux';
+import { Avatar, Icon, List, Menu } from 'react-native-paper';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import { useDispatch, useSelector } from 'react-redux';
 import BottomMenu from '../../components/BottomMenu';
 import ContainedBtn from '../../components/ContainedBtn';
 import DotsLoading from '../../components/DotsLoading';
 import Header from '../../components/Header';
+import MyAlert from '../../components/MyAlert';
+import NotFound from '../../components/NotFound';
 import OutlinedBtn from '../../components/OutlinedBtn';
+import { deleteWorkers } from '../../redux/actions/workerAction';
 import {
   danger,
   dark_light_l1,
@@ -27,18 +29,12 @@ import {
   theme_secondary,
   white,
 } from '../../styles/colors';
-import instance from '../../utils/axiosInstance';
 import {
   ADD_SINGLE_WORKER,
-  CONNECTION_ERROR,
   MONTH,
-  UPDATE_SINGLE_WORKER,
+  UPDATE_SINGLE_WORKER
 } from '../../utils/constants';
-import {defaultSnackbarOptions} from '../../utils/helpers';
-import {useGetWorker} from '../../utils/hooks';
-import MyAlert from '../../components/MyAlert';
-import NotFound from '../../components/NotFound';
-import { deleteWorkers } from '../../redux/actions/workerAction';
+import { useGetWorker, useWorkerStatusUpdate } from '../../utils/hooks';
 
 const WorkerProfile = ({navigation, route}) => {
   const {workerId} = route.params;
@@ -46,9 +42,11 @@ const WorkerProfile = ({navigation, route}) => {
   const [modalOpen, setModalOpen] = useState(false);
   const dispatch = useDispatch();
   const {worker} = useSelector(state => state.singleWorker);
-  const [updateLoading, setUpdateLoading] = useState(false);
+  // const [updateLoading, setUpdateLoading] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertData, setAlertData] = useState({});
+  const {setUpdateLoading, updateStatus, updateLoading} =
+    useWorkerStatusUpdate();
 
   const {loading} = useGetWorker(workerId, worker => {
     dispatch({type: ADD_SINGLE_WORKER, payload: worker});
@@ -63,30 +61,30 @@ const WorkerProfile = ({navigation, route}) => {
     navigation.navigate('EditWorker', {workerId: worker._id});
   };
 
-  const updateStatus = async () => {
-    try {
-      setUpdateLoading(true);
-      const {data} = await instance.put(`/worker/updatestatus`, {
-        activeStatus: !worker.isActive,
-        workerId: worker._id,
-      });
-      if (data.success) {
-        Snackbar.show(defaultSnackbarOptions(data.message));
-        dispatch({
-          type: UPDATE_SINGLE_WORKER,
-          payload: {isActive: !worker.isActive, monthRecord: undefined},
-        });
-      }
-    } catch (error) {
-      if (error.errorType !== CONNECTION_ERROR) {
-        Snackbar.show(
-          defaultSnackbarOptions(error.response?.data?.message, danger),
-        );
-      }
-    } finally {
-      setUpdateLoading(false);
-    }
-  };
+  // const updateStatus = async () => {
+  //   try {
+  //     setUpdateLoading(true);
+  //     const {data} = await instance.put(`/worker/updatestatus`, {
+  //       activeStatus: !worker.isActive,
+  //       workerId: worker._id,
+  //     });
+  //     if (data.success) {
+  //       Snackbar.show(defaultSnackbarOptions(data.message));
+  //       dispatch({
+  //         type: UPDATE_SINGLE_WORKER,
+  //         payload: {isActive: !worker.isActive, monthRecord: undefined},
+  //       });
+  //     }
+  //   } catch (error) {
+  //     if (error.errorType !== CONNECTION_ERROR) {
+  //       Snackbar.show(
+  //         defaultSnackbarOptions(error.response?.data?.message, danger),
+  //       );
+  //     }
+  //   } finally {
+  //     setUpdateLoading(false);
+  //   }
+  // };
 
   const handleStatusUpdate = () => {
     setAlertVisible(true);
@@ -100,7 +98,12 @@ const WorkerProfile = ({navigation, route}) => {
         {
           text: 'Yes',
           onPress: () => {
-            updateStatus();
+            updateStatus(worker._id, !worker.isActive, () => {
+              dispatch({
+                type: UPDATE_SINGLE_WORKER,
+                payload: {isActive: !worker.isActive, monthRecord: undefined},
+              });
+            });
           },
         },
       ],
@@ -119,17 +122,17 @@ const WorkerProfile = ({navigation, route}) => {
         },
         {
           text: 'Yes',
-          onPress: async() => {
+          onPress: async () => {
             setUpdateLoading(true);
             const response = await deleteWorkers([worker._id]);
             setUpdateLoading(false);
-            if(response){
+            if (response) {
               navigation.goBack();
             }
           },
         },
       ],
-    })
+    });
   };
 
   if (loading) {
@@ -145,14 +148,10 @@ const WorkerProfile = ({navigation, route}) => {
     );
   }
 
-  if(!worker){
-    return (
-      <NotFound
-        text='worker'
-      />
-    )
+  if (!worker) {
+    return <NotFound text="worker" />;
   }
-  
+
   return (
     <SafeAreaView style={{backgroundColor: theme_primary, flex: 1}}>
       <StatusBar backgroundColor={theme_primary} barStyle={'light-content'} />

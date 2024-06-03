@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { moderateScale, verticalScale } from 'react-native-size-matters';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import { dark_light_l2, theme_primary } from '../styles/colors';
 
 const DotsLoading = ({
@@ -17,7 +17,7 @@ const DotsLoading = ({
     }, []);
     
   return (
-    <View style={containerStyle}>
+    <View style={{...styles.container, ...containerStyle}}>
       <View style={styles.dotsView}>
         <View style={{...styles.dots, backgroundColor: currentDot === 0 ? theme_primary : dark_light_l2}} />
         <View style={{...styles.dots, backgroundColor: currentDot === 1 ? theme_primary : dark_light_l2}} />
@@ -33,6 +33,10 @@ const DotsLoading = ({
 export default DotsLoading;
 
 const styles = StyleSheet.create({
+  container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   dotsView: {
     flexDirection: 'row',
     width: '30%',
@@ -48,5 +52,6 @@ const styles = StyleSheet.create({
     color: theme_primary,
     marginTop: verticalScale(7),
     fontSize: moderateScale(16),
+    marginLeft: scale(5),
   }
 });

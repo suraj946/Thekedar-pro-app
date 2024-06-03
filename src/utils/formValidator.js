@@ -157,24 +157,24 @@ const validatePhoneNumber = (number) => {
     return response;
 }
 
-const validateDayDate = (date) => {
+const validateDayDate = (date, fieldName="") => {
     let response;
     if(date?.trim().length === 0){
         response = {
             isValid: false,
-            errorText: `date is required`
+            errorText: `${fieldName ? fieldName : "Date"} is required`
         }
     }
     else if(isNaN(date)){
         response = {
             isValid: false,
-            errorText: "Date should be a number"
+            errorText: `${fieldName ? fieldName : "Date"} should be a number`
         }
     }
     else if(Number(date) > 32 || Number(date) < 1){
         response = {
             isValid: false,
-            errorText: "Invalid date given"
+            errorText: `Invalid ${fieldName ? fieldName : "Date"} given`
         }
     }
     else{

@@ -24,6 +24,10 @@ const BottomMenu = ({children, title = '', visible = false, setVisible, notToClo
         transparent={true}
         visible={visible}
         onRequestClose={() => {
+          //condition added later if any bug arises due to this then check here
+          if(notToClose){
+            return;
+          }
           setVisible(false);
         }}>
         <TouchableWithoutFeedback onPress={handleClose}>

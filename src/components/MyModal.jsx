@@ -15,13 +15,14 @@ const MyModal = ({
   children,
   statusBarColorRGBA = 'rgba(46, 77, 217, 0.6)',
   containerStyle = {},
+  autoDismiss = true,
 }) => {
   return (
     <Portal>
       <Modal
         visible={visible}
-        dismissable
-        dismissableBackButton
+        dismissable={autoDismiss}
+        dismissableBackButton={autoDismiss}
         onDismiss={() => setVisible(false)}>
         <StatusBar backgroundColor={statusBarColorRGBA} />
         <View style={[styles.modalContainer, containerStyle]}>
