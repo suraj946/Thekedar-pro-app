@@ -5,95 +5,105 @@ import { useDispatch } from 'react-redux';
 import AmountInfoCard from '../../components/AmountInfoCard';
 import ContainedBtn from '../../components/ContainedBtn';
 import Header from '../../components/Header';
-import Input from '../../components/Input';
-import { dark_light_l1, dark_light_l2, theme_secondary, white } from '../../styles/colors';
-import { MONTH, UPDATE_WORKER_FOR_NEW_RECORD } from '../../utils/constants';
-import { validateDayDate } from '../../utils/formValidator';
-import { getCurrentNepaliDate } from '../../utils/helpers';
-import { useCreateMonthlyRecord } from '../../utils/hooks';
-
-const {year, monthIndex} = getCurrentNepaliDate();
+import { getSingleWorker } from '../../redux/actions/workerAction';
+import {
+  dark_light_l1,
+  dark_light_l2,
+  success,
+  theme_secondary,
+  white,
+} from '../../styles/colors';
+import {
+  ADD_SINGLE_WORKER,
+  MONTH,
+  UPDATE_WORKER_FOR_NEW_RECORD,
+} from '../../utils/constants';
+import { useCreateMonthlyRecord, useCurrentDate } from '../../utils/hooks';
 
 const CreateRecordForm = ({route}) => {
-  const [numberOfDays, setNumberOfDays] = useState('');
-  const [daysError, setDaysError] = useState("");
+  const {workerId, screenName} = route.params;
   const {loading, createRecord, settlementResult} = useCreateMonthlyRecord();
-  const dispatch= useDispatch();
+  const dispatch = useDispatch();
+  const [isApiCalled, setIsApiCalled] = useState(false);
 
-  const handleCreateRecord = async() => {
-    const validateDays = validateDayDate(numberOfDays, "Number of days");
-    if(!validateDays.isValid){
-      setDaysError(validateDays.errorText);
-      return;
+  const {year, monthIndex, numberOfDays} = useCurrentDate();
+
+  const afterRecordCreation = async () => {
+    switch (screenName) {
+      case 'WorkerList':
+        dispatch({type: UPDATE_WORKER_FOR_NEW_RECORD, payload: workerId});
+        break;
+      case 'WorkerProfile':
+        const worker = await getSingleWorker(workerId);
+        dispatch({type: ADD_SINGLE_WORKER, payload: worker});
+        break;
+      default:
+        break;
     }
-    if(Number(numberOfDays) < 29){
-      setDaysError("Number of days should be between 29 to 32");
-      return;
-    }
-    setDaysError("");
-    if(!route?.params?.workerId) return;
-    await createRecord(route.params.workerId, numberOfDays, () => {
-      dispatch({type: UPDATE_WORKER_FOR_NEW_RECORD, payload: route.params.workerId});
-    });
-  }
+  };
+
+  const handleCreateRecord = async () => {
+    if (!workerId) return;
+    await createRecord(workerId, numberOfDays, afterRecordCreation);
+    setIsApiCalled(true);
+  };
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: white}}>
-      <StatusBar barStyle={'dark-content'}/>
-      <Header headingText='Create Record'/>
+      <StatusBar barStyle={'dark-content'} />
+      <Header headingText="Create Record" />
       <View style={styles.container}>
         <Text style={styles.infoText}>
           Create record for
-          <Text style={styles.monthText}> {MONTH[monthIndex]} {year}</Text>
+          <Text style={styles.monthText}>
+            {' '}
+            {MONTH[monthIndex]} {year}
+          </Text>
         </Text>
         <View style={styles.formContainer}>
-          <Input
-            label='Number Of Days'
-            placeholder='Between 29 to 32'
-            value={numberOfDays}
-            onChangeText={(txt) => setNumberOfDays(txt)}
-            keyboardType='number-pad'
-            errorText={daysError}
-            disabled={loading}
-          />
-
           <ContainedBtn
-            title='Create'
+            title="Create"
             loading={loading}
             handler={handleCreateRecord}
           />
-          <Text style={{marginTop:scale(10), color:dark_light_l2,}}>
-            Note:- Creating a new record will first perform settlement of previous record (if any) and then the result will be updated to the new record.
+          <Text style={{marginTop: scale(10), color: dark_light_l2}}>
+            Note:- Creating a new record will first perform settlement of
+            previous record (if any) and then the result will be updated to the
+            new record.
           </Text>
         </View>
-        {
-          Object.keys(settlementResult).length > 0 && (<View style={styles.settlementView}>
+        {Object.keys(settlementResult).length > 0 ? (
+          <View style={styles.settlementView}>
             <Text style={styles.settlementHeading}>Settlement Summary</Text>
-            <AmountInfoCard 
-              fieldName='Wages occured in the month'
+            <AmountInfoCard
+              fieldName="Wages occured in the month"
               amount={settlementResult?.wagesOccured || 0}
             />
-            <AmountInfoCard 
-              fieldName='Advance occured in the month'
+            <AmountInfoCard
+              fieldName="Advance occured in the month"
               amount={settlementResult?.advanceOccured || 0}
             />
-            <AmountInfoCard 
-              fieldName='Wages transferred to the new month'
+            <AmountInfoCard
+              fieldName="Wages transferred to the new month"
               amount={settlementResult?.wagesTransferred || 0}
             />
-            <AmountInfoCard 
-              fieldName='Advance transferred to the new month'
+            <AmountInfoCard
+              fieldName="Advance transferred to the new month"
               amount={settlementResult?.advanceTransferred || 0}
             />
-          </View>)
-        }
+          </View>
+        ) : (
+          isApiCalled && <View style={styles.infoCont}>
+            <Text style={styles.text1}>Record created successfully</Text>
+            <Text style={styles.text2}>No settlement has been done because no any previous record found for settlement</Text>
+          </View>
+        )}
       </View>
     </SafeAreaView>
-  )
-}
+  );
+};
 
-
-export default CreateRecordForm
+export default CreateRecordForm;
 
 const styles = StyleSheet.create({
   container: {
@@ -124,5 +134,21 @@ const styles = StyleSheet.create({
     color: dark_light_l1,
     textAlign: 'center',
     fontWeight: 'bold',
-  }
-})
+  },
+  infoCont: {
+    marginTop: verticalScale(70),
+    alignItems: 'center',
+    paddingHorizontal: scale(10),
+  },
+  text1: {
+    fontSize: moderateScale(25),
+    color: success,
+    textAlign: 'center',
+  },
+  text2: {
+    fontSize: moderateScale(16),
+    color: dark_light_l2,
+    textAlign: 'center',
+    marginTop: verticalScale(10),
+  },
+});

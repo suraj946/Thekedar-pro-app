@@ -1,8 +1,8 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, { memo } from 'react';
-import {Avatar} from 'react-native-paper';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Avatar } from 'react-native-paper';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
-import { dark, dark_light_l2, light, light2 } from '../styles/colors';
+import { dark, dark_light_l2, light2 } from '../styles/colors';
 
 const WorkerCard2 = ({
     handlePress,
@@ -16,7 +16,7 @@ const WorkerCard2 = ({
   return (
     <TouchableOpacity
       style={styles.card}
-      activeOpacity={0.9}
+      activeOpacity={0.6}
       onPress={() => {
         handlePress(_id, name, recordId, wagesPerDay, rest);
       }}>

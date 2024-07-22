@@ -1,4 +1,4 @@
-import React, {memo, useEffect, useState} from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -7,98 +7,29 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import {useDispatch, useSelector} from 'react-redux';
+import { Icon } from 'react-native-paper';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import { useDispatch, useSelector } from 'react-redux';
+import { addAttendance } from '../redux/actions/monthlyRecordAction';
 import {
-  danger,
   dark,
   dark_light_l2,
   light,
   success,
   theme_primary,
-  theme_secondary,
+  theme_secondary
 } from '../styles/colors';
-import {CLEAR_ERROR, DEFAULT_ATTENDANCE_STATUS, WAGES_FACTOR} from '../utils/constants';
-import {useSelectionSystem} from '../utils/hooks';
+import { DEFAULT_ATTENDANCE_STATUS, UPDATE_AFTER_ATTENDANCE, WAGES_FACTOR } from '../utils/constants';
+import { useSelectionSystem } from '../utils/hooks';
 import ContainedBtn from './ContainedBtn';
 import OutlinedBtn from './OutlinedBtn';
 import SelectAttendanceStatus from './SelectAttendanceStatus';
 import WorkerCard from './WorkerCard';
-import {getWorkerForAttendance} from '../redux/actions/workerAction';
-import Snackbar from 'react-native-snackbar';
-import {defaultSnackbarOptions, getCurrentNepaliDate} from '../utils/helpers';
-import { addAttendance } from '../redux/actions/monthlyRecordAction';
-
-export const workersData = [
-  {
-    name: 'Worker 1',
-    role: 'mistri',
-    _id: 'okaykjdgj',
-    isSelected: false,
-  },
-  {
-    name: 'Worker 2',
-    role: 'labour',
-    _id: 'okaykddsjdgj',
-    isSelected: false,
-  },
-  {
-    name: 'Worker 3',
-    role: 'labour',
-    _id: 'okaykjiyedgj',
-    isSelected: false,
-  },
-  {
-    name: 'Worker 4',
-    role: 'mistri',
-    _id: 'okaykjdgjqw',
-    isSelected: false,
-  },
-  {
-    name: 'Worker 5',
-    role: 'mistri',
-    _id: 'okaykjdgjopqw',
-    isSelected: false,
-  },
-  {
-    name: 'Worker 5',
-    role: 'mistri',
-    _id: 'okaykjdgjopqw12',
-    isSelected: false,
-  },
-  {
-    name: 'Worker 5',
-    role: 'mistri',
-    _id: 'okaykjdgjopqw1245',
-    isSelected: false,
-  },
-  {
-    name: 'Worker 5',
-    role: 'mistri',
-    _id: 'okaykjdgjopqw12999',
-    isSelected: false,
-  },
-  {
-    name: 'Worker 5',
-    role: 'mistri',
-    _id: 'okaykjdgjopqw12099',
-    isSelected: false,
-  },
-  {
-    name: 'Worker 5',
-    role: 'mistri',
-    _id: 'okaykjdgjopqw12099hhgg',
-    isSelected: false,
-  },
-];
+import { getWorkers } from '../redux/actions/workerAction';
+import { useNavigation } from '@react-navigation/native';
 
 const SelectWorkerSection = () => {
-  const {
-    loading,
-    error,
-    workersData: workers,
-  } = useSelector(state => state.workerForAttendance);
+  const { loading, workerForAttendance: workers } = useSelector(state => state.workers);
   const [attendanceStatus, setAttendanceStatus] = useState(
     DEFAULT_ATTENDANCE_STATUS,
   );
@@ -114,6 +45,7 @@ const SelectWorkerSection = () => {
   } = useSelectionSystem(workers);
 
   const [attendanceLoading, setAttendanceLoading] = useState(false);
+  const navigation = useNavigation();
 
   const doAttendance = async() => {
     const wagesFactor = WAGES_FACTOR[attendanceStatus];
@@ -129,7 +61,6 @@ const SelectWorkerSection = () => {
     const response = await addAttendance({
       workersData: wData,
       presence: attendanceStatus,
-      dayDate:getCurrentNepaliDate().dayDate
     });
     setAttendanceLoading(false);
 
@@ -137,7 +68,7 @@ const SelectWorkerSection = () => {
       return;
     }
 
-    dispatch(getWorkerForAttendance());
+    dispatch({type: UPDATE_AFTER_ATTENDANCE, payload:[...selectedItem]});
     deselectAll();
     const rejectedMessage = response?.filter(d => d.status === "rejected").map(d => d.reason);
     if(rejectedMessage?.length > 0){
@@ -146,15 +77,15 @@ const SelectWorkerSection = () => {
   };
 
   useEffect(() => {
-    dispatch(getWorkerForAttendance());
+    dispatch(getWorkers());
   }, []);
 
-  useEffect(() => {
-    if (error) {
-      Snackbar.show(defaultSnackbarOptions(error, danger));
-      dispatch({type: CLEAR_ERROR});
-    }
-  }, [error]);
+  // useEffect(() => {
+  //   if (error) {
+  //     Snackbar.show(defaultSnackbarOptions(error, danger));
+  //     dispatch({type: CLEAR_ERROR});
+  //   }
+  // }, [error]);
 
   if (loading || attendanceLoading) {
     return (
@@ -177,7 +108,7 @@ const SelectWorkerSection = () => {
           <Text style={styles.text}>
             If you want to edit worker's attendance then go to
           </Text>
-          <Text style={styles.hightLightedText}> View Calendar</Text>
+          <Text style={styles.hightLightedText} onPress={() => navigation.navigate('WorkerCalendar')} > View Calendar</Text>
           <Text style={styles.text}>
             and select worker from the list and edit
           </Text>

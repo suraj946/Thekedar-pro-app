@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   RefreshControl,
   SafeAreaView,
@@ -9,16 +9,18 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
+import { Icon } from 'react-native-paper';
 import {
   moderateScale,
   moderateVerticalScale,
   scale,
   verticalScale,
 } from 'react-native-size-matters';
+import { useDispatch, useSelector } from 'react-redux';
 import BoxSection from '../../components/BoxSection';
 import HomeDrawer from '../../components/HomeDrawer';
 import SelectWorkerSection from '../../components/SelectWorkerSection';
+import { getWorkers } from '../../redux/actions/workerAction';
 import {
   dark,
   dark_light_l1,
@@ -26,21 +28,19 @@ import {
   theme_primary,
   white,
 } from '../../styles/colors';
-import {DAYS, MONTH} from '../../utils/constants';
-import {getCurrentNepaliDate} from '../../utils/helpers';
-import { useSelector, useDispatch } from 'react-redux';
-import { getWorkerForAttendance } from '../../redux/actions/workerAction';
-
-const currDate = getCurrentNepaliDate();
+import { DAYS, MONTH } from '../../utils/constants';
+import { getGreetings } from '../../utils/helpers';
 
 const Home = ({navigation}) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const {thekedar} = useSelector(state => state.thekedar);
+  const {thekedar, currentDate} = useSelector(state => state.thekedar);
   const dispatch = useDispatch();
 
   const onRefresh = () => {
-    dispatch(getWorkerForAttendance());
+    setRefreshing(true);
+    dispatch(getWorkers());
+    setRefreshing(false);
   }
 
   return (
@@ -66,7 +66,7 @@ const Home = ({navigation}) => {
           </View>
           <View style={styles.greetView}>
             <Text style={styles.nameTxt}>Hi {thekedar?.name}</Text>
-            <Text style={styles.greetingTxt}>Good Morning</Text>
+            <Text style={styles.greetingTxt}>{getGreetings()}</Text>
           </View>
         </View>
 
@@ -80,9 +80,9 @@ const Home = ({navigation}) => {
             <Text style={{fontSize: moderateScale(20), color: dark}}>
               Overview
             </Text>
-            <Text style={styles.dateTxt}>{`${DAYS[currDate.dayIndex]}, ${
-              currDate.dayDate
-            } ${MONTH[currDate.monthIndex]}`}</Text>
+            <Text style={styles.dateTxt}>{`${DAYS[currentDate.dayIndex]}, ${
+              currentDate.dayDate
+            } ${MONTH[currentDate.monthIndex]}`}</Text>
           </View>
 
           <ScrollView 

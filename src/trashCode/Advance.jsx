@@ -1,14 +1,13 @@
 import React, { useCallback, useState } from 'react';
 import { FlatList, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
-import AttendanceForm from '../../components/AttendanceForm';
+import BottomMenu from '../../components/BottomMenu';
+import ContainedBtn from '../../components/ContainedBtn';
 import Header from '../../components/Header';
+import Input from '../../components/Input';
 import { workersData } from '../../components/SelectWorkerSection';
 import WorkerCard2 from '../../components/WorkerCard2';
 import { theme_secondary, white } from '../../styles/colors';
-import BottomMenu from '../../components/BottomMenu';
-import Input from '../../components/Input';
-import ContainedBtn from '../../components/ContainedBtn';
 import { validateWages } from '../../utils/formValidator';
 
 const Advance = () => {

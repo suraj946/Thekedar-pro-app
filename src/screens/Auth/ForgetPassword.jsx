@@ -1,27 +1,32 @@
-import { 
-  SafeAreaView, 
-  StyleSheet, 
-  Text, 
-  View, 
-  StatusBar, 
-  Keyboard, 
-  TouchableWithoutFeedback, 
-  Dimensions,
-  Image
-} from 'react-native';
 import React, { useState } from 'react';
-import { light, theme_secondary } from '../../styles/colors';
-import Input from '../../components/Input';
+import {
+  Dimensions,
+  Image,
+  Keyboard,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View
+} from 'react-native';
+import Animated, { ZoomIn } from 'react-native-reanimated';
 import { moderateScale, moderateVerticalScale, scale } from 'react-native-size-matters';
 import ContainedBtn from '../../components/ContainedBtn';
+import Input from '../../components/Input';
+import { danger, light, theme_secondary } from '../../styles/colors';
 import { validateEmail } from '../../utils/formValidator';
-import Animated, { ZoomIn } from 'react-native-reanimated';
+import Snackbar from 'react-native-snackbar';
+import { defaultSnackbarOptions } from '../../utils/helpers';
+import { CONNECTION_ERROR } from '../../utils/constants';
+import instance from '../../utils/axiosInstance';
 
 const windowHeight = Dimensions.get("window").height;
 
 const ForgetPassword = ({navigation}) => {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const validateInputs = () => {
     const emailCheck = validateEmail(email);
@@ -33,11 +38,25 @@ const ForgetPassword = ({navigation}) => {
     return emailCheck.isValid;
   }
 
-  const handleSendOTP = () => {
+  const handleSendOTP = async() => {
     const isAllOk = validateInputs();
-    if(isAllOk){
-      console.log("Submitting the form");
-      navigation.navigate("ResetPassword");
+    if(!isAllOk){
+      return;
+    }
+    try {
+      setLoading(true);
+      const {data} = await instance.post('/thekedar/forgotpassword', {email});
+      if (data.success) {
+        Snackbar.show(defaultSnackbarOptions(data.message));
+        navigation.navigate("ResetPassword");
+      }
+    } catch (error) {
+      console.log(error);
+      if(error.errorType !== CONNECTION_ERROR){
+        Snackbar.show(defaultSnackbarOptions(error.response?.data?.message, danger));
+      }
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -61,9 +80,10 @@ const ForgetPassword = ({navigation}) => {
               onChangeText={(text) => setEmail(text)}
               style={styles.inputStyle}
               errorText={emailError}
+              disabled={loading}
             />
             <ContainedBtn 
-              loading={false} 
+              loading={loading} 
               title='Send OTP' 
               style={styles.mv}
               handler={handleSendOTP}

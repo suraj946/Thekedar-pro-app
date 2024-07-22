@@ -19,11 +19,11 @@ import {
 import { MONTH } from '../utils/constants';
 import OutlinedBtn from './OutlinedBtn';
 import MyModal from './MyModal';
-import { getCurrentNepaliDate } from '../utils/helpers';
-
-const {monthIndex:currMonthIndex} = getCurrentNepaliDate();
+import { useCurrentDate } from '../utils/hooks';
 
 const MonthChangedModal = ({visible = false, setVisible = () => {}}) => {
+  const {monthIndex:currMonthIndex} = useCurrentDate();
+
   const viewAnimation = useSharedValue(0);
   const viewStyle = useAnimatedStyle(() => ({
     opacity: viewAnimation.value,

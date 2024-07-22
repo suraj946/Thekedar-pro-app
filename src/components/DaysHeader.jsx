@@ -1,13 +1,17 @@
-import {StyleSheet, Text, View} from 'react-native';
 import React, { memo } from 'react';
-import {DAYS} from '../utils/constants';
-import { dark, theme_secondary } from '../styles/colors';
+import { StyleSheet, Text, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
-import { getCurrentNepaliDate } from '../utils/helpers';
+import { dark, theme_secondary } from '../styles/colors';
+import { DAYS } from '../utils/constants';
+import { useCurrentDate } from '../utils/hooks';
 
-const {dayIndex} = getCurrentNepaliDate();
-
-const DaysHeader = () => {
+const DaysHeader = ({currentShowingMonthIndex}) => {
+  const {monthIndex, dayIndex} = useCurrentDate();
+  // console.log(`rendering days header ${Math.round(Math.random()*10000)}`);
+  const getColor = (idx) => {
+    if(currentShowingMonthIndex !== monthIndex) return dark;
+    return idx === dayIndex ? theme_secondary : dark;
+  }
   return (
     <View style={styles.weekdaysContainer}>
       {DAYS.map((day, index) => (
@@ -15,7 +19,7 @@ const DaysHeader = () => {
           <Text
             style={{
               ...styles.dayText,
-              color: DAYS[dayIndex] === day ? theme_secondary : dark,
+              color: getColor(index)
             }}>
             {day.slice(0, 3)}
           </Text>

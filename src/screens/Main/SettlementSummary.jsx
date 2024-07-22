@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   ScrollView,
@@ -7,11 +7,17 @@ import {
   Text,
   View,
 } from 'react-native';
-import {Avatar} from 'react-native-paper';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
+import { Avatar } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import AmountInfoCard from '../../components/AmountInfoCard';
+import BottomMenu from '../../components/BottomMenu';
 import ContainedBtn from '../../components/ContainedBtn';
+import DotsLoading from '../../components/DotsLoading';
 import Input from '../../components/Input';
+import MyAlert from '../../components/MyAlert';
+import OutlinedBtn from '../../components/OutlinedBtn';
+import { checkAttendanceForToday } from '../../redux/actions/monthlyRecordAction';
 import {
   danger,
   dark,
@@ -22,22 +28,12 @@ import {
   theme_primary,
   white,
 } from '../../styles/colors';
-import {validateWages} from '../../utils/formValidator';
-import {
-  defaultSnackbarOptions,
-  getCurrentNepaliDate,
-} from '../../utils/helpers';
-import BottomMenu from '../../components/BottomMenu';
-import OutlinedBtn from '../../components/OutlinedBtn';
-import {checkAttendanceForToday} from '../../redux/actions/monthlyRecordAction';
-import Snackbar from 'react-native-snackbar';
-import MyAlert from '../../components/MyAlert';
+import { validateWages } from '../../utils/formValidator';
 import {
   useCheckForSettlement,
+  useCurrentDate,
   usePerformSettlementAndAdjustAmount,
 } from '../../utils/hooks';
-import DotsLoading from '../../components/DotsLoading';
-import AmountInfoCard from '../../components/AmountInfoCard';
 
 const response = {
   prevWages: 10000,
@@ -50,9 +46,8 @@ const response = {
   amount: 29000,
 };
 
-const todayDate = getCurrentNepaliDate().dayDate;
-
 const SettlementSummary = ({route, navigation}) => {
+  const todayDate = useCurrentDate().dayDate;
   const {name, wId, recordId, records} = route.params;
   const [response, setResponse] = useState({});
   const [isSettled, setIsSettled] = useState(

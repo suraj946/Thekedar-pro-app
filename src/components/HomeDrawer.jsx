@@ -9,7 +9,7 @@ import MyDrawer from './MyDrawer';
 import MyAlert from './MyAlert';
 import {logoutUser} from '../redux/actions/thekedarAction';
 
-const HomeDrawer = ({visible = false, setVisible, showProfile = true}) => {
+const HomeDrawer = ({visible = false, setVisible, showLogoutOnly = false}) => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -21,14 +21,6 @@ const HomeDrawer = ({visible = false, setVisible, showProfile = true}) => {
     setVisible(false);
     navigation.navigate('MyProfile');
   };
-
-  // const afterLogout = () => {
-  //   setVisible(false);
-  //   navigation.reset({
-  //     index:0,
-  //     routes:[{name:"Login"}]
-  //   })
-  // }
 
   const handleLogout = () => {
     setAlertVisible(true);
@@ -61,7 +53,7 @@ const HomeDrawer = ({visible = false, setVisible, showProfile = true}) => {
           />
           <Text style={styles.nameTxt}>{thekedar.name}</Text>
 
-          {showProfile && (
+          {!showLogoutOnly && (
             <Drawer.Item
               label="Profile"
               icon={'account'}

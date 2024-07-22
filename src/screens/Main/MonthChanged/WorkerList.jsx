@@ -35,14 +35,11 @@ import {
 } from '../../../utils/constants';
 import {
   defaultSnackbarOptions,
-  getCurrentNepaliDate,
 } from '../../../utils/helpers';
 import { useWorkerStatusUpdate } from '../../../utils/hooks';
 
-const {dayDate} = getCurrentNepaliDate();
-
 const WorkerList = ({navigation}) => {
-  const {thekedar} = useSelector(state => state.thekedar);
+  const {thekedar, currentDate} = useSelector(state => state.thekedar);
   const [modalVisible, setModalVisible] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [optionModalVisible, setOptionModalVisible] = useState(false);
@@ -117,7 +114,7 @@ const WorkerList = ({navigation}) => {
       const prevAppOpenDate = await getAppOpenDate(thekedar._id?.toString());
       if (!prevAppOpenDate) {
         setModalVisible(true);
-        await setAppOpenDate(dayDate, thekedar._id?.toString());
+        await setAppOpenDate(currentDate.dayDate, thekedar._id?.toString());
         return;
       }
     })();
@@ -149,7 +146,7 @@ const WorkerList = ({navigation}) => {
       <HomeDrawer
         visible={drawerOpen}
         setVisible={setDrawerOpen}
-        showProfile={false}
+        showLogoutOnly={false}
       />
       <BottomMenu
         visible={optionModalVisible}
@@ -163,6 +160,7 @@ const WorkerList = ({navigation}) => {
               setOptionModalVisible(false);
               navigation.navigate('CreateRecordForm', {
                 workerId: selectedWorker,
+                screenName:"WorkerList"
               });
             }}
             disabled={updateLoading}

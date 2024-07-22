@@ -11,9 +11,15 @@ const Header = ({
   hasRight = false,
   rightIcon = 'help',
   rightPressHandler = () => {},
-  style={}
+  style={},
+  disableBack = false
 }) => {
   const navigation = useNavigation();
+
+  const handleLeftPress = () => {
+    if(disableBack) return;
+    navigation.goBack();
+  }
   const handleRightPress = () => {
     if(typeof rightPressHandler !== "function"){
       throw new Error("rightPressHandler is not a function");
@@ -25,7 +31,7 @@ const Header = ({
       <TouchableOpacity
         style={styles.leftIcon}
         activeOpacity={0.9}
-        onPress={() => navigation.goBack()}>
+        onPress={handleLeftPress}>
         <Icon
           source={'arrow-left'}
           size={moderateScale(32)}

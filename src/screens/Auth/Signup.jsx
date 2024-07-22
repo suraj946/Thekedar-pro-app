@@ -21,6 +21,7 @@ import ContainedBtn from '../../components/ContainedBtn';
 import Input from '../../components/Input';
 import OutlinedBtn from '../../components/OutlinedBtn';
 import { dark, light, theme_secondary } from '../../styles/colors';
+import { setCookie } from '../../utils/asyncStorage';
 import instance from '../../utils/axiosInstance';
 import { CONNECTION_ERROR, REGISTER_SUCCESS } from '../../utils/constants';
 import {
@@ -29,7 +30,6 @@ import {
   validatePassword,
 } from '../../utils/formValidator';
 import { useErrorMessage } from '../../utils/hooks';
-import { setCookie } from '../../utils/asyncStorage';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -103,7 +103,7 @@ const Signup = ({navigation}) => {
   const registerUser = async() => {
     try {
       setLoading(true);
-      const {data} = await instance.post('/thekedar/register', {name, email, password, companyName}, {
+      const {data, headers} = await instance.post('/thekedar/register', {name, email, password, companyName}, {
         withCredentials: false,
       });
       if (data.success) {
@@ -113,7 +113,7 @@ const Signup = ({navigation}) => {
       }
     } catch (error) {
       if (error.errorType !== CONNECTION_ERROR) {
-        setError(error.response.data.message);
+        setError(error.response?.data?.message);
       }
     }finally{
       setLoading(false);

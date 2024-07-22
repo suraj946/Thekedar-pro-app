@@ -14,7 +14,8 @@ const initialState = {
     loading: false,
     thekedar: {},
     error: null,
-    isInitialCall: false
+    isInitialCall: false,
+    currentDate: {}
 };
 
 export const thekedarSlice = createSlice({
@@ -27,6 +28,7 @@ export const thekedarSlice = createSlice({
                 state.isAuthenticated = true;
                 state.thekedar = action.payload?.thekedar;
                 state.isInitialCall = action.payload?.isInitialCall;
+                state.currentDate = action.payload?.currentDate
             })
             .addCase(LOGOUT_SUCCESS, state => {
                 state.isAuthenticated = false;
@@ -40,6 +42,7 @@ export const thekedarSlice = createSlice({
                 state.isAuthenticated = true;
                 state.thekedar = action.payload?.thekedar;
                 state.isInitialCall = action.payload?.isInitialCall;
+                state.currentDate = action.payload?.currentDate
             })
             .addCase(UPDATE_USER, (state, action) => {
                 state.thekedar = {...state.thekedar, ...action.payload};

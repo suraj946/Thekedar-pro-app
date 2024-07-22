@@ -1,25 +1,29 @@
+import React, {useState} from 'react';
 import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  StatusBar,
-  Keyboard,
-  TouchableWithoutFeedback,
   Dimensions,
   Image,
+  Keyboard,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
 } from 'react-native';
-import React, {useState} from 'react';
-import {light, theme_secondary} from '../../styles/colors';
-import Input from '../../components/Input';
+import Animated, {ZoomIn} from 'react-native-reanimated';
 import {
   moderateScale,
   moderateVerticalScale,
   scale,
 } from 'react-native-size-matters';
 import ContainedBtn from '../../components/ContainedBtn';
-import { validateOtp, validatePassword} from '../../utils/formValidator';
-import Animated, {ZoomIn} from 'react-native-reanimated';
+import Input from '../../components/Input';
+import {danger, light, theme_secondary} from '../../styles/colors';
+import {validateOtp, validatePassword} from '../../utils/formValidator';
+import instance from '../../utils/axiosInstance';
+import Snackbar from 'react-native-snackbar';
+import { defaultSnackbarOptions } from '../../utils/helpers';
+import { CONNECTION_ERROR } from '../../utils/constants';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -28,6 +32,7 @@ const ResetPassword = ({navigation}) => {
   const [passwordError, setPasswordError] = useState('');
   const [otp, setOtp] = useState();
   const [otpError, setOtpError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const validateInputs = () => {
     const passCheck = validatePassword(password);
@@ -38,23 +43,33 @@ const ResetPassword = ({navigation}) => {
     }
     const otpCheck = validateOtp(otp);
     if (otpCheck.isValid) {
-        setOtpError('');
-      } else {
-        setOtpError(otpCheck.errorText);
-      }
+      setOtpError('');
+    } else {
+      setOtpError(otpCheck.errorText);
+    }
     return passCheck.isValid && otpCheck.isValid;
   };
 
-  const hanldeResetPassword = () => {
+  const hanldeResetPassword = async() => {
     const isAllOk = validateInputs();
-    if (isAllOk) {
-        const formData = {
-            otp: Number(otp),
-            password
-        }
-      console.log(formData);
-      console.log(typeof formData.otp);
-      console.log('Submitting the form');
+    if (!isAllOk) return;
+    const formData = {
+      otp: Number(otp),
+      newPassword: password,
+    };
+    try {
+      setLoading(true);
+      const {data} = await instance.put("/thekedar/resetpassword", formData);
+      if (data.success) {
+        Snackbar.show(defaultSnackbarOptions(data.message));
+        navigation.navigate("Login");
+      }
+    } catch (error) {
+      if(error.errorType !== CONNECTION_ERROR){
+        Snackbar.show(defaultSnackbarOptions(error.response?.data?.message, danger));
+      }
+    }finally {
+      setLoading(false);
     }
   };
 
@@ -85,6 +100,7 @@ const ResetPassword = ({navigation}) => {
               onChangeText={text => setOtp(text)}
               style={styles.inputStyle}
               errorText={otpError}
+              disabled={loading}
             />
             <Input
               label="New Password"
@@ -94,9 +110,10 @@ const ResetPassword = ({navigation}) => {
               onChangeText={text => setPassword(text)}
               style={styles.inputStyle}
               errorText={passwordError}
+              disabled={loading}
             />
             <ContainedBtn
-              loading={false}
+              loading={loading}
               title="Reset Password"
               style={styles.mv}
               handler={hanldeResetPassword}

@@ -2,10 +2,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import AddWorker from '../screens/Main/AddWorker';
-import Advance from '../screens/Main/Advance';
 import Attendance from '../screens/Main/Attendance';
+import AttendanceForm from '../screens/Main/AttendanceForm';
 import Calendar from '../screens/Main/Calendar';
 import CreateRecordForm from '../screens/Main/CreateRecordForm';
+import EditAttendance from '../screens/Main/EditAttendance';
 import EditMyProfile from '../screens/Main/EditMyProfile';
 import EditWorker from '../screens/Main/EditWorker';
 import Home from '../screens/Main/Home';
@@ -16,14 +17,15 @@ import SettlementSummary from '../screens/Main/SettlementSummary';
 import WorkerCalendar from '../screens/Main/WorkerCalendar';
 import WorkerProfile from '../screens/Main/WorkerProfile';
 import Workers from '../screens/Main/Workers';
+import WorksiteManagement from '../screens/Main/WorksiteManagement';
 import { deleteAppOpenDate, getAppOpenDate } from '../utils/asyncStorage';
-import { getCurrentNepaliDate } from '../utils/helpers';
+import AllRecords from '../screens/Main/AllRecords';
+import RecordDetails from '../screens/Main/RecordDetails';
 
 const Stack = createNativeStackNavigator();
-const {dayDate} = getCurrentNepaliDate();
 
 const AppStack = () => {
-  const {isInitialCall, thekedar} = useSelector(state => state.thekedar);
+  const {isInitialCall, thekedar, currentDate} = useSelector(state => state.thekedar);
   const [hasDate, setHasDate] = useState(false);
 
   useEffect(() => {
@@ -33,7 +35,7 @@ const AppStack = () => {
         setHasDate(false);
         return;
       }
-      if(prevAppOpenDate !== dayDate){
+      if(prevAppOpenDate !== currentDate.dayDate){
         await deleteAppOpenDate(thekedar._id?.toString());
         setHasDate(false);
         return;
@@ -59,11 +61,15 @@ const AppStack = () => {
       <Stack.Screen name="WorkerCalendar" component={WorkerCalendar} />
       <Stack.Screen name="Calendar" component={Calendar} />
       <Stack.Screen name="Attendance" component={Attendance} />
+      <Stack.Screen name="AttendanceForm" component={AttendanceForm} />
+      <Stack.Screen name="EditAttendance" component={EditAttendance} />
       <Stack.Screen name="Settlement" component={Settlement} />
-      <Stack.Screen name="Advance" component={Advance} />
+      <Stack.Screen name="WorksiteManagement" component={WorksiteManagement} />
       <Stack.Screen name="SettlementSummary" component={SettlementSummary} />
       <Stack.Screen name="MyProfile" component={MyProfile} />
       <Stack.Screen name="CreateRecordForm" component={CreateRecordForm} />
+      <Stack.Screen name="AllRecords" component={AllRecords} />
+      <Stack.Screen name="RecordDetails" component={RecordDetails} />
     </Stack.Navigator>
   );
 };

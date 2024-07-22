@@ -27,15 +27,17 @@ export const REGISTER_FAIL = "registerFail";
 
 export const UPDATE_USER = "updateUser";
 
-export const WORKER_FOR_ATTENDANCE_REQUEST = "workerAttendanceRequest";
-export const WORKER_FOR_ATTENDANCE_SUCCESS = "workerAttendanceSuccess";
-export const WORKER_FOR_ATTENDANCE_FAIL = "workerAttendanceFail";
-export const FILTER_WORKER_FOR_ATTENDANCE = "filterWorkerAttendance";
+// export const WORKER_FOR_ATTENDANCE_REQUEST = "workerAttendanceRequest";
+// export const WORKER_FOR_ATTENDANCE_SUCCESS = "workerAttendanceSuccess";
+// export const WORKER_FOR_ATTENDANCE_FAIL = "workerAttendanceFail";
+// export const FILTER_WORKER_FOR_ATTENDANCE = "filterWorkerAttendance";
 
 export const GET_WORKER_REQUEST = "getWorkerRequest";
 export const GET_WORKER_SUCCESS_ACTIVE = "getWorkerSuccessActive";
 export const GET_WORKER_SUCCESS_NON_ACTIVE = "getWorkerSuccessNonActive";
 export const GET_WORKER_FAIL = "getWorkerFail";
+export const ADD_WORKER_FOR_ATTENDANCE = "addWorkerForAttendance";
+export const UPDATE_AFTER_ATTENDANCE = "updateAfterAttendance";
 
 export const LOGOUT_SUCCESS = "logoutSuccess";
 
@@ -47,6 +49,20 @@ export const UPDATE_WORKER_FOR_NEW_RECORD = "updateWorkerForNewRecord";
 
 export const CLEAR_ERROR = "clearError";
 
+export const SET_CURRENT_DATE = "setCurrentDate";
+
+export const EVENT_REQUEST = "eventRequest";
+export const EVENT_SUCCESS = "eventSuccess";
+export const EVENT_FAIL = "eventFail";
+
+export const GOOD_MORNING = "Good Morning";
+export const GOOD_AFTERNOON = "Good Afternoon";
+export const GOOD_EVENING = "Good Evening";
+
+export const ALL_RECORDS_REQUEST = "allRecordsRequest";
+export const ALL_RECORDS_SUCCESS = "allRecordsSuccess";
+export const ALL_RECORDS_FAIL = "allRecordsFail";
+export const RESET_RECORDS = "resetRecords";
 
 //error types
 export const CONNECTION_ERROR = "connection-error";

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -8,9 +8,9 @@ import {
   Text,
   View,
 } from 'react-native';
-import { Avatar, Icon, List, Menu } from 'react-native-paper';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
-import { useDispatch, useSelector } from 'react-redux';
+import {Avatar, Icon, List, Menu} from 'react-native-paper';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
+import {useDispatch, useSelector} from 'react-redux';
 import BottomMenu from '../../components/BottomMenu';
 import ContainedBtn from '../../components/ContainedBtn';
 import DotsLoading from '../../components/DotsLoading';
@@ -18,7 +18,7 @@ import Header from '../../components/Header';
 import MyAlert from '../../components/MyAlert';
 import NotFound from '../../components/NotFound';
 import OutlinedBtn from '../../components/OutlinedBtn';
-import { deleteWorkers } from '../../redux/actions/workerAction';
+import {deleteWorkers} from '../../redux/actions/workerAction';
 import {
   danger,
   dark_light_l1,
@@ -32,9 +32,9 @@ import {
 import {
   ADD_SINGLE_WORKER,
   MONTH,
-  UPDATE_SINGLE_WORKER
+  UPDATE_SINGLE_WORKER,
 } from '../../utils/constants';
-import { useGetWorker, useWorkerStatusUpdate } from '../../utils/hooks';
+import {useGetWorker, useWorkerStatusUpdate} from '../../utils/hooks';
 
 const WorkerProfile = ({navigation, route}) => {
   const {workerId} = route.params;
@@ -42,7 +42,6 @@ const WorkerProfile = ({navigation, route}) => {
   const [modalOpen, setModalOpen] = useState(false);
   const dispatch = useDispatch();
   const {worker} = useSelector(state => state.singleWorker);
-  // const [updateLoading, setUpdateLoading] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertData, setAlertData] = useState({});
   const {setUpdateLoading, updateStatus, updateLoading} =
@@ -60,31 +59,6 @@ const WorkerProfile = ({navigation, route}) => {
     setModalOpen(false);
     navigation.navigate('EditWorker', {workerId: worker._id});
   };
-
-  // const updateStatus = async () => {
-  //   try {
-  //     setUpdateLoading(true);
-  //     const {data} = await instance.put(`/worker/updatestatus`, {
-  //       activeStatus: !worker.isActive,
-  //       workerId: worker._id,
-  //     });
-  //     if (data.success) {
-  //       Snackbar.show(defaultSnackbarOptions(data.message));
-  //       dispatch({
-  //         type: UPDATE_SINGLE_WORKER,
-  //         payload: {isActive: !worker.isActive, monthRecord: undefined},
-  //       });
-  //     }
-  //   } catch (error) {
-  //     if (error.errorType !== CONNECTION_ERROR) {
-  //       Snackbar.show(
-  //         defaultSnackbarOptions(error.response?.data?.message, danger),
-  //       );
-  //     }
-  //   } finally {
-  //     setUpdateLoading(false);
-  //   }
-  // };
 
   const handleStatusUpdate = () => {
     setAlertVisible(true);
@@ -305,6 +279,7 @@ const WorkerProfile = ({navigation, route}) => {
                       handler={() =>
                         navigation.navigate('CreateRecordForm', {
                           workerId: worker._id,
+                          screenName: 'WorkerProfile',
                         })
                       }
                       style={{
@@ -327,6 +302,17 @@ const WorkerProfile = ({navigation, route}) => {
                     }
                   />
                 )}
+                <OutlinedBtn
+                  style={{marginTop: verticalScale(10)}}
+                  title="View All Records"
+                  handler={() =>
+                    navigation.navigate('AllRecords', {
+                      workerId: worker._id,
+                      name: worker.name,
+                      joinedYear: worker.joiningDate?.year,
+                    })
+                  }
+                />
               </View>
             )}
           </ScrollView>

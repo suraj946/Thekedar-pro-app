@@ -110,10 +110,6 @@ const EditWorker = ({route, navigation}) => {
     setUpdateLoading(false);
   };
 
-  // if(loading){
-  //   return <Text style={{color: 'white', alignSelf: 'center', fontSize: 20}}>Loading</Text>
-  // }
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView style={{flex: 1, backgroundColor: white}}>

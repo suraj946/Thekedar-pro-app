@@ -10,15 +10,21 @@ import {
 import { moderateScale, verticalScale } from 'react-native-size-matters';
 import { dark_light_l2, theme_primary, white } from '../styles/colors';
 import { MONTH } from '../utils/constants';
+import { useCurrentDate } from '../utils/hooks';
+import { useDispatch } from 'react-redux';
+import { getMonthEvents } from '../redux/actions/monthlyRecordAction';
 
 const windowWidth = Dimensions.get('window').width;
 
 const MonthHeader = ({
     initialMonthIndex=0,
-    setCurrentMonthIndex=()=>{}
+    setCurrentMonthIndex=()=>{},
+    workerId
 }) => {
   const flatListRef = useRef(null);
   const [selectedMonthIndex, setSelectedMonthIndex] = useState(initialMonthIndex+1);
+  const {monthIndex} = useCurrentDate();
+  const dispatch = useDispatch();
 
     // console.log(`rendering month ${Math.round(Math.random()*10000)}`);
     
@@ -32,6 +38,11 @@ const MonthHeader = ({
     });
   };
 
+  const handleLongPress = (index) => {
+    if((index-1) !== monthIndex) return;
+    dispatch(getMonthEvents(workerId, monthIndex));
+  }
+
   const renderMonth = ({item, index}) => {
     if (item === '') {
       return <View style={styles.transparentView}></View>;
@@ -39,6 +50,7 @@ const MonthHeader = ({
       return (
         <TouchableOpacity
           onPress={() => handleMonthPress(index)}
+          onLongPress={() => handleLongPress(index)}
           activeOpacity={0.5}
           style={[
             styles.monthContainer,

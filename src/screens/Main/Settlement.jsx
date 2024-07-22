@@ -1,12 +1,12 @@
-import React, {useCallback, useState} from 'react';
-import {FlatList, StatusBar, StyleSheet, Text, View} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
+import React, { useCallback } from 'react';
+import { FlatList, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import DotsLoading from '../../components/DotsLoading';
 import Header from '../../components/Header';
 import WorkerCard2 from '../../components/WorkerCard2';
-import {dark_light_l2, theme_secondary, white} from '../../styles/colors';
-import {useGetSettlementReadyWorkers} from '../../utils/hooks';
-import DotsLoading from '../../components/DotsLoading';
+import { dark_light_l2, theme_secondary, white } from '../../styles/colors';
+import { useGetSettlementReadyWorkers } from '../../utils/hooks';
 
 const Settlement = ({navigation}) => {
   const {loading, settlementReadyWorkers} = useGetSettlementReadyWorkers();

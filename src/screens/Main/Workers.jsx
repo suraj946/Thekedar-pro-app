@@ -286,7 +286,7 @@ const Workers = ({navigation}) => {
           />
           <Animated.View style={[styles.plusIconStyle, iconStyle]}>
             <TouchableOpacity
-              activeOpacity={0.9}
+              activeOpacity={0.4}
               onPress={() => navigation.navigate('AddWorker')}>
               <Avatar.Icon
                 icon={'plus'}

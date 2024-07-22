@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import Snackbar from 'react-native-snackbar';
+import { useDispatch, useSelector } from 'react-redux';
+import { getSingleWorker, getWorkers } from '../redux/actions/workerAction';
+// import { addToEvent } from '../redux/slices/recordSlice';
 import { danger } from '../styles/colors';
 import instance from './axiosInstance';
-import { CONNECTION_ERROR } from './constants';
+import { CONNECTION_ERROR, RESET_RECORDS } from './constants';
 import { defaultSnackbarOptions } from './helpers';
-import { useDispatch, useSelector } from 'react-redux';
-import { getWorkers } from '../redux/actions/workerAction';
 
 const useSelectionSystem = (itemData) => {
   const [selectedItem, setSelectedItem] = useState(new Set());
@@ -60,31 +61,18 @@ const useGetWorker = (workerId, cb) => {
   const [prevData, setPrevData] = useState({});
   useEffect(() => {
     (async()=>{
-      try {
-        setLoading(true);
-        const {data} = await instance.get(`/worker/single/${workerId}`);
-        // const {data} = await instance.get(`/worker/single/661b806c041b992a9a0ac2e1`);
-        if(data.success){
-          setPrevData({
-            name: data.data.name,
-            role: data.data.role,
-            contactNumber: data.data.contactNumber,
-            wagesPerDay: data.data.wagesPerDay,
-            address: data.data.address,
-          });
-          cb(data.data);
-        }
-      } catch (error) {
-        if (error.errorType !== CONNECTION_ERROR) {
-          Snackbar.show(
-            defaultSnackbarOptions(error.response?.data?.message, danger),
-          );
-          //to set worker data to default -> null
-          cb(null);
-        }
-      }finally{
-        setLoading(false);
-      }
+      setLoading(true);
+      const worker = await getSingleWorker(workerId);
+      if(worker === null) return;
+      setPrevData({
+        name: worker.name,
+        role: worker.role,
+        contactNumber: worker.contactNumber,
+        wagesPerDay: worker.wagesPerDay,
+        address: worker.address,
+      });
+      cb(worker);
+      setLoading(false);
     })();
   }, []);
   
@@ -106,26 +94,27 @@ const useGetSettlementReadyWorkers = () => {
   return {settlementReadyWorkers, loading};
 }
 
+
 const useCreateMonthlyRecord = () => {
   const [loading, setLoading] = useState(false);
   const [settlementResult, setSettlementResult] = useState({});
-  const createRecord = async(workerId, numberOfDays, cb=() => {}) => {
+  const createRecord = async(workerId, numberOfDays, cb=async() => {}) => {
     try {
       setLoading(true);
       const {data} = await instance.post("/record/create", {workerId, numberOfDays});
       if(data.success){
+        setLoading(false);
         Snackbar.show(defaultSnackbarOptions(data.message));
         setSettlementResult(data.data?.settlementResponse);
         if(typeof cb === 'function'){
-          cb();
+          await cb();
         }
       }
     } catch (error) {
       if(error.errorType !== CONNECTION_ERROR){
+        setLoading(false);
         Snackbar.show(defaultSnackbarOptions(error.response?.data?.message, danger));
       }
-    }finally{
-      setLoading(false);
     }
   }
 
@@ -217,8 +206,9 @@ const usePerformSettlementAndAdjustAmount = (recordId) => {
         }
       }
     } catch (error) {
+      console.log(error);
       if(error.errorType !== CONNECTION_ERROR){
-        Snackbar.show(defaultSnackbarOptions(error.response?.data?.message, danger));
+        Snackbar.show(defaultSnackbarOptions(error?.response?.data?.message, danger));
       }
     }finally{
       setLoading(false);
@@ -228,13 +218,82 @@ const usePerformSettlementAndAdjustAmount = (recordId) => {
   return {settleAccount, adjustAmount, loading, setLoading};
 }
 
+const useCurrentDate = () => {
+  const {currentDate} = useSelector(state => state.thekedar);
+  return currentDate;
+}
+
+const useMonthEvent = () => {
+  const {events, loading} = useSelector(state => state.events);
+
+  const getEvent = (workerId, monthIndex) => {
+    if(!events[workerId]){
+      return null;
+    }
+    return events[workerId][monthIndex];
+  }
+
+  const checkIfEventExists = (workerId, monthIndex) => {
+    if(!events[workerId]){
+      return false;
+    }
+    if(!events[workerId][monthIndex]){
+      return false;
+    }
+    // const {dailyRecords} = events[workerId][monthIndex];
+    // return  dailyRecords?.length > 0;
+    return true;
+  }
+
+  return {
+    getEvent,
+    checkIfEventExists,
+    loading
+  };
+}
+
+const useGetALlRecords = (workerId) => {
+  const {data, loading, workerId: currWID} = useSelector(state => state.allRecords);
+  const dispatch = useDispatch();
+
+  const getRecords = (year) => {
+    if(!data[year]){
+      return [];
+    }
+    return data[year];
+  }
+
+  const ifRecordExist = (year) => {
+    if(workerId !== currWID){
+      dispatch({type:RESET_RECORDS});
+      return false;
+    }
+    if(!data[year]){
+      return false;
+    }
+    return true;
+  }
+
+  return {
+    getRecords,
+    ifRecordExist,
+    loading
+  };
+}
+
+
+
 export {
-  useErrorMessage,
-  useGetWorker, useSelectionSystem,
-  useGetSettlementReadyWorkers,
-  useCreateMonthlyRecord,
-  useWorkerStatusUpdate,
   useCheckForSettlement,
-  usePerformSettlementAndAdjustAmount
+  useCreateMonthlyRecord,
+  useCurrentDate,
+  useErrorMessage,
+  useGetSettlementReadyWorkers,
+  useGetWorker,
+  useMonthEvent,
+  usePerformSettlementAndAdjustAmount,
+  useSelectionSystem,
+  useWorkerStatusUpdate,
+  useGetALlRecords
 };
 

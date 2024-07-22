@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   Keyboard,
   SafeAreaView,
@@ -10,27 +10,36 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {Avatar} from 'react-native-paper';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
+import { Avatar, Icon } from 'react-native-paper';
+import { moderateScale, verticalScale } from 'react-native-size-matters';
+import Snackbar from 'react-native-snackbar';
+import { useDispatch } from 'react-redux';
 import ContainedBtn from '../../components/ContainedBtn';
 import Header from '../../components/Header';
 import Input from '../../components/Input';
 import SelectRole from '../../components/SelectRole';
-import {danger, dark, info, light, theme_primary, white} from '../../styles/colors';
-import {CONNECTION_ERROR, DEFAULT_WORKER_ROLE, MONTH} from '../../utils/constants';
-import {defaultSnackbarOptions, getCurrentNepaliDate} from '../../utils/helpers';
+import { getWorkers } from '../../redux/actions/workerAction';
 import {
-  validateDayDate,
+  danger,
+  dark,
+  info,
+  theme_primary,
+  white
+} from '../../styles/colors';
+import instance from '../../utils/axiosInstance';
+import {
+  CONNECTION_ERROR,
+  DAYS,
+  DEFAULT_WORKER_ROLE,
+  MONTH,
+} from '../../utils/constants';
+import {
   validateName,
   validatePhoneNumber,
   validateWages,
 } from '../../utils/formValidator';
-import instance from '../../utils/axiosInstance';
-import Snackbar from "react-native-snackbar";
-import {useDispatch} from 'react-redux';
-import { getWorkers } from '../../redux/actions/workerAction';
-
-const currDate = getCurrentNepaliDate();
+import { defaultSnackbarOptions } from '../../utils/helpers';
+import { useCurrentDate } from '../../utils/hooks';
 
 const AddWorker = () => {
   const [name, setName] = useState('');
@@ -38,30 +47,23 @@ const AddWorker = () => {
   const [contactNumber, setContactNumber] = useState('');
   const [wagesPerDay, setWagesPerDay] = useState('');
   const [address, setAddress] = useState('');
-  const [joiningDate, setJoiningDate] = useState({...currDate});
-  const [numberOfDays, setNumberOfDays] = useState('');
 
   const [nameError, setNameError] = useState('');
   const [wagesPerDayError, setWagesPerDayError] = useState('');
-  const [joiningDateError, setJoiningDateError] = useState('');
   const [contactNumberError, setContactNumberError] = useState('');
-  const [numberOfDaysError, setNumberOfDaysError] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [selectRoleModal, setSelectRoleModal] = useState(false);
 
   const dispatch = useDispatch();
-
-  const handleDateChange = (text, field) => {
-    setJoiningDate({...joiningDate, [field]: text});
-  };
+  const {year, monthIndex, dayDate, dayIndex} = useCurrentDate();
 
   const resetForm = () => {
-    setName("");
-    setWagesPerDay("");
-    setContactNumber("");
-    setAddress("");
-  }
+    setName('');
+    setWagesPerDay('');
+    setContactNumber('');
+    setAddress('');
+  };
 
   const validateInputs = () => {
     const nameCheck = validateName(name, 'Worker Name');
@@ -88,28 +90,7 @@ const AddWorker = () => {
         forContact = false;
       }
     }
-
-    const dateCheck = validateDayDate(joiningDate.dayDate?.toString());
-    if (dateCheck.isValid) {
-      setJoiningDateError('');
-    } else {
-      setJoiningDateError(dateCheck.errorText);
-    }
-
-    const numberOfDaysCheck = validateWages(numberOfDays, 'Days Count');
-    if (numberOfDaysCheck.isValid) {
-      setNumberOfDaysError('');
-    } else {
-      setNumberOfDaysError(numberOfDaysCheck.errorText);
-    }
-
-    return (
-      nameCheck.isValid &&
-      wagesCheck.isValid &&
-      forContact &&
-      dateCheck.isValid &&
-      numberOfDaysCheck.isValid
-    );
+    return nameCheck.isValid && wagesCheck.isValid && forContact;
   };
 
   const addWorkerHandler = async () => {
@@ -123,20 +104,20 @@ const AddWorker = () => {
           contactNumber,
           wagesPerDay,
           address,
-          joiningDate,
-          numberOfDays,
         });
 
-        if(data.success){
+        if (data.success) {
           dispatch(getWorkers());
           Snackbar.show(defaultSnackbarOptions(data.message));
           resetForm();
         }
       } catch (error) {
-        if(error.errorType !== CONNECTION_ERROR){
-          Snackbar.show(defaultSnackbarOptions(error.response?.data?.message, danger));
+        if (error.errorType !== CONNECTION_ERROR) {
+          Snackbar.show(
+            defaultSnackbarOptions(error.response?.data?.message, danger),
+          );
         }
-      }finally{
+      } finally {
         setLoading(false);
       }
     }
@@ -158,6 +139,14 @@ const AddWorker = () => {
             size={moderateScale(70)}
             style={{alignSelf: 'center', marginBottom: verticalScale(10)}}
           />
+
+          <View style={styles.dateInfoView}>
+            <Icon source={"calendar"} size={moderateScale(30)} color={theme_primary}/>
+            <Text style={styles.txt}>
+              {`${DAYS[dayIndex]}, ${dayDate} ${MONTH[monthIndex]}, ${year}`}
+            </Text>
+          </View>
+
           <Input
             label="Worker name"
             placeholder="eg:John Doe"
@@ -189,44 +178,6 @@ const AddWorker = () => {
             placeholder="eg:Singapore"
             value={address}
             onChangeText={useCallback(text => setAddress(text), [])}
-            disabled={loading}
-          />
-          <View style={styles.datePickerView}>
-            <View style={styles.dateTxtView}>
-              <Text
-                style={{
-                  fontSize: moderateScale(18),
-                  color: dark,
-                }}>
-                Joining Date :{' '}
-              </Text>
-              <Text style={styles.txt}>
-                {`${joiningDate.year}/${MONTH[joiningDate.monthIndex]}/${
-                  joiningDate.dayDate
-                }`}
-              </Text>
-            </View>
-
-            <Input
-              value={joiningDate.dayDate?.toString()}
-              label="Date"
-              onChangeText={useCallback(
-                text => handleDateChange(text, 'dayDate'),
-                [],
-              )}
-              keyboardType="number-pad"
-              style={styles.datePickerInput}
-              errorText={joiningDateError}
-              disabled={loading}
-            />
-          </View>
-          <Input
-            placeholder="Total number of days in this month"
-            value={numberOfDays}
-            label="Days Count"
-            onChangeText={useCallback(text => setNumberOfDays(text), [])}
-            keyboardType="number-pad"
-            errorText={numberOfDaysError}
             disabled={loading}
           />
           <TouchableOpacity
@@ -275,32 +226,17 @@ const AddWorker = () => {
 export default AddWorker;
 
 const styles = StyleSheet.create({
-  datePickerView: {
-    justifyContent: 'center',
-    width: '100%',
-  },
-  dateTxtView: {
+  dateInfoView: {
     flexDirection: 'row',
-    alignItems: 'center',
-  },
-  monthPickerBtn: {
-    backgroundColor: light,
-    width: '30%',
-    marginHorizontal: scale(10),
     justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: verticalScale(9),
-    alignSelf: 'flex-start',
-    position: 'relative',
-    marginTop: verticalScale(5),
-    borderRadius: moderateScale(5),
-  },
-  datePickerInput: {
     width: '100%',
+    alignItems: 'center',
+    marginBottom: verticalScale(10),
   },
   txt: {
+    marginLeft: moderateScale(10),
     color: dark,
-    fontSize: moderateScale(20),
+    fontSize: moderateScale(25),
     textTransform: 'uppercase',
     color: theme_primary,
   },
