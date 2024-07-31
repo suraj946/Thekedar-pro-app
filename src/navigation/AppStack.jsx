@@ -21,6 +21,9 @@ import WorksiteManagement from '../screens/Main/WorksiteManagement';
 import { deleteAppOpenDate, getAppOpenDate } from '../utils/asyncStorage';
 import AllRecords from '../screens/Main/AllRecords';
 import RecordDetails from '../screens/Main/RecordDetails';
+import SiteDetails from '../screens/Main/SiteDetails';
+import CreateAndUpdateSite from '../screens/Main/CreateAndUpdateSite';
+import CreateAndUpdatePayment from '../screens/Main/CreateAndUpdatePayment';
 
 const Stack = createNativeStackNavigator();
 
@@ -70,6 +73,9 @@ const AppStack = () => {
       <Stack.Screen name="CreateRecordForm" component={CreateRecordForm} />
       <Stack.Screen name="AllRecords" component={AllRecords} />
       <Stack.Screen name="RecordDetails" component={RecordDetails} />
+      <Stack.Screen name="SiteDetails" component={SiteDetails} />
+      <Stack.Screen name="CreateAndUpdateSite" component={CreateAndUpdateSite} />
+      <Stack.Screen name="CreateAndUpdatePayment" component={CreateAndUpdatePayment} />
     </Stack.Navigator>
   );
 };

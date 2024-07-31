@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { ALL_RECORDS_FAIL, ALL_RECORDS_REQUEST, ALL_RECORDS_SUCCESS, EVENT_FAIL, EVENT_REQUEST, EVENT_SUCCESS, RESET_RECORDS } from '../../utils/constants';
+import { ALL_RECORDS_FAIL, ALL_RECORDS_REQUEST, ALL_RECORDS_SUCCESS, EVENT_FAIL, EVENT_REQUEST, EVENT_SUCCESS, RESET_RECORDS, SET_LOADING } from '../../utils/constants';
 
 const initialState = {
   events:{},
@@ -54,6 +54,9 @@ const allRecordsSlice = createSlice({
     .addCase(RESET_RECORDS, state => {
       state.data = {};
       state.workerId = null;
+    })
+    .addCase(SET_LOADING, (state, action) => {
+      state.loading = action.payload;
     });
   }
 });

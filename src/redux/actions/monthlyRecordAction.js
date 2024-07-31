@@ -70,3 +70,18 @@ export const getAllRecordsOfYear = (workerId, year) => async dispatch => {
   }
 }
 
+export const deleteMonthlyRecords = async(recordIds, workerId) => {
+  try{
+  const {data} = await instance.post("/record/delete", {recordIds, workerId});
+  if(data.success){
+    Snackbar.show(defaultSnackbarOptions(data.message));
+    return true;
+  }
+  }catch(error){
+    if(error.errorType !== CONNECTION_ERROR){
+      Snackbar.show(defaultSnackbarOptions(error.response?.data?.message, danger));
+    }
+    return false;
+  }
+}
+

@@ -63,6 +63,15 @@ export const ALL_RECORDS_REQUEST = "allRecordsRequest";
 export const ALL_RECORDS_SUCCESS = "allRecordsSuccess";
 export const ALL_RECORDS_FAIL = "allRecordsFail";
 export const RESET_RECORDS = "resetRecords";
+export const SET_LOADING = "setLoading";
+
+export const GET_SITES_REQUEST = "getSitesRequest";
+export const GET_SITES_SUCCESS = "getSitesSuccess";
+export const GET_SITES_FAIL = "getSitesFail";
+
+export const SINGLE_SITE_REQUEST = "singleSiteRequest";
+export const SINGLE_SITE_SUCCESS = "singleSiteSuccess";
+export const SINGLE_SITE_FAIL = "singleSiteFail";
 
 //error types
 export const CONNECTION_ERROR = "connection-error";

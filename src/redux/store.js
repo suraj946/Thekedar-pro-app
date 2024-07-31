@@ -2,21 +2,22 @@ import {configureStore, combineReducers} from '@reduxjs/toolkit';
 import thekedarReducer from './slices/thekedarSlice';
 import {
     singleWorkerReducer,
-    // workerForAttendanceReducer,
     workersForNewRecordReducer,
     workersReducer,
 } from './slices/workerSlice';
 import {LOGOUT_SUCCESS} from '../utils/constants';
-import {allRecordsReducer, eventReducer} from "./slices/recordSlice";
+import {allRecordsReducer, eventReducer} from './slices/recordSlice';
+import {singleSiteReducer, siteReducer} from './slices/siteSlice';
 
 const appReducer = combineReducers({
     thekedar: thekedarReducer,
-    // workerForAttendance: workerForAttendanceReducer,
     workers: workersReducer,
     singleWorker: singleWorkerReducer,
     workersForNewRecord: workersForNewRecordReducer,
     events: eventReducer,
-    allRecords: allRecordsReducer
+    allRecords: allRecordsReducer,
+    site: siteReducer,
+    singleSite: singleSiteReducer
 });
 
 const rootReducer = (state, action) => {
@@ -31,10 +32,3 @@ export const store = configureStore({
     reducer: rootReducer,
 });
 
-// export const store = configureStore({
-//   reducer: {
-//     thekedar:thekedarReducer,
-//     workerForAttendance:workerForAttendanceReducer,
-//     workers:workersReducer
-//   },
-// });

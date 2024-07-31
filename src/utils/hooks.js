@@ -5,8 +5,10 @@ import { getSingleWorker, getWorkers } from '../redux/actions/workerAction';
 // import { addToEvent } from '../redux/slices/recordSlice';
 import { danger } from '../styles/colors';
 import instance from './axiosInstance';
-import { CONNECTION_ERROR, RESET_RECORDS } from './constants';
+import { CONNECTION_ERROR, RESET_RECORDS, SET_LOADING } from './constants';
 import { defaultSnackbarOptions } from './helpers';
+import { getAllSites } from '../redux/actions/siteAction';
+import { addSiteToStore, removeSiteFromStrore, updateSiteInStore } from '../redux/slices/siteSlice';
 
 const useSelectionSystem = (itemData) => {
   const [selectedItem, setSelectedItem] = useState(new Set());
@@ -263,6 +265,10 @@ const useGetALlRecords = (workerId) => {
     return data[year];
   }
 
+  const setLoading = (value) => {
+    dispatch({type:SET_LOADING, payload:value});
+  }
+
   const ifRecordExist = (year) => {
     if(workerId !== currWID){
       dispatch({type:RESET_RECORDS});
@@ -277,11 +283,44 @@ const useGetALlRecords = (workerId) => {
   return {
     getRecords,
     ifRecordExist,
-    loading
+    loading,
+    setLoading
   };
 }
 
+const useSite = () => {
+  const {sites, loading} = useSelector(state => state.site);
+  const dispatch = useDispatch()
+  const ifSiteExist = () => {
+    return sites?.length > 0;
+  }
 
+  const getSites = () => {
+    dispatch(getAllSites());
+  }
+
+  const addSite = (site) => {
+    dispatch(addSiteToStore(site));
+  }
+
+  const removeSite = (siteId) => {
+    dispatch(removeSiteFromStrore(siteId));
+  }
+
+  const editSite = (site) => {
+    dispatch(updateSiteInStore(site));
+  }
+
+  return {
+    sites,
+    ifSiteExist,
+    loading,
+    getSites,
+    removeSite,
+    editSite,
+    addSite
+  };
+}
 
 export {
   useCheckForSettlement,
@@ -294,6 +333,7 @@ export {
   usePerformSettlementAndAdjustAmount,
   useSelectionSystem,
   useWorkerStatusUpdate,
-  useGetALlRecords
+  useGetALlRecords,
+  useSite
 };
 

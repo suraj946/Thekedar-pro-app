@@ -9,28 +9,22 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Avatar, Icon, Searchbar, SegmentedButtons } from 'react-native-paper';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import { Icon, Searchbar, SegmentedButtons } from 'react-native-paper';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import { useDispatch, useSelector } from 'react-redux';
+import AnimatedIcon from '../../components/AnimatedIcon';
 import DotsLoading from '../../components/DotsLoading';
 import Header from '../../components/Header';
+import MyAlert from '../../components/MyAlert';
 import WorkerCard from '../../components/WorkerCard';
 import { deleteWorkers, getWorkers } from '../../redux/actions/workerAction';
 import {
-  dark,
   dark_light_l1,
-  success,
   theme_primary,
   theme_secondary,
-  white,
+  white
 } from '../../styles/colors';
 import { useSelectionSystem } from '../../utils/hooks';
-import MyAlert from '../../components/MyAlert';
 
 const Workers = ({navigation}) => {
   const [search, setSearch] = useState('');
@@ -91,11 +85,6 @@ const Workers = ({navigation}) => {
 
   };
 
-  const iconAni = useSharedValue(0);
-  const iconStyle = useAnimatedStyle(() => ({
-    transform: [{scale: iconAni.value}],
-  }));
-
   const handleOnRefresh = () => {
     setRefreshing(true);
     if (tabValue === 'active') {
@@ -105,10 +94,6 @@ const Workers = ({navigation}) => {
     }
     setRefreshing(false);
   };
-
-  useEffect(() => {
-    iconAni.value = withTiming(1, {duration: 400});
-  }, []);
 
   useEffect(() => {
     if (tabValue === 'active') {
@@ -284,17 +269,7 @@ const Workers = ({navigation}) => {
             }
             keyExtractor={item => item._id}
           />
-          <Animated.View style={[styles.plusIconStyle, iconStyle]}>
-            <TouchableOpacity
-              activeOpacity={0.4}
-              onPress={() => navigation.navigate('AddWorker')}>
-              <Avatar.Icon
-                icon={'plus'}
-                style={{backgroundColor: success}}
-                size={moderateScale(70)}
-              />
-            </TouchableOpacity>
-          </Animated.View>
+          <AnimatedIcon icon='plus' onPress={() => navigation.navigate('AddWorker')}/>
         </>
       )}
     </SafeAreaView>
@@ -319,22 +294,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '60%',
     justifyContent: 'space-around',
-  },
-  plusIconStyle: {
-    position: 'absolute',
-    bottom: verticalScale(30),
-    backgroundColor: success,
-    right: scale(30),
-    zIndex: 10,
-    shadowColor: dark,
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
-    shadowOpacity: 0.51,
-    shadowRadius: 13.16,
-    elevation: 20,
-    borderRadius: moderateScale(40),
   },
   tabView: {
     marginHorizontal: scale(10),

@@ -107,6 +107,10 @@ const getGreetings = () => {
   }
 }
 
+const capitalize = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 export {
   defaultSnackbarOptions,
   // getCurrentNepaliDate,
@@ -114,5 +118,6 @@ export {
   getUniqueIdentifier,
   generateEvents,
   getDayIndex,
-  getGreetings
+  getGreetings,
+  capitalize
 }

@@ -17,60 +17,6 @@ import instance from '../../utils/axiosInstance';
 import { CONNECTION_ERROR } from '../../utils/constants';
 import { defaultSnackbarOptions } from '../../utils/helpers';
 
-// const data = {
-//   lastSettlementDate: {
-//     dayDate: 31,
-//     performedOn: 4,
-//     dayName: "friday"
-//   },
-//   _id: "668bafa11a2c1786e0eb52f1",
-//   workerId: "668bafa01a2c1786e0eb52ef",
-//   year: 2081,
-//   monthIndex: 2,
-//   numberOfDays: 31,
-//   prevWages: 1200,
-//   prevAdvance: 0,
-//   currentWages: 0,
-//   currentAdvance: 0,
-//   dailyRecords: [
-//     {
-//       day: "thursday",
-//       dayDate: 27,
-//       presence: "present",
-//       wagesOfDay: 1200,
-//       _id: "668fa89bd7d3f1eb55617a5d"
-//     },
-//     {
-//       day: "monday",
-//       dayDate: 31,
-//       presence: "absent",
-//       wagesOfDay: 0,
-//       _id: "66950487ef9daffe8d03ea39"
-//     }
-//   ],
-//   settlements: [
-//     {
-//       dayDate: 31,
-//       wagesOccured: 1200,
-//       advanceOccured: 0,
-//       amountTaken: 0,
-//       wagesTransferred: 1200,
-//       advanceTransferred: 0,
-//       _id: "669a25d581288bbcd1b7eaf2"
-//     },
-//     {
-//       dayDate: 31,
-//       wagesOccured: 1200,
-//       advanceOccured: 0,
-//       amountTaken: 0,
-//       wagesTransferred: 1200,
-//       advanceTransferred: 0,
-//       _id: "669a25d581288bgggbcd1b7eaf2"
-//     }
-//   ],
-//   __v: 6
-// }
-
 const RecordDetails = ({route}) => {
   const {_id, monthName, year} = route.params;
   const [loading, setLoading] = useState(false);
