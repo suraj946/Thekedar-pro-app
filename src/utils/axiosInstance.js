@@ -7,6 +7,7 @@ import { getCookie } from './asyncStorage';
 
 
 const baseUrl = "http://192.168.1.76:4000/api/v1";
+// const baseUrl = "https://thekedar-pro.vercel.app/api/v1";
 // const baseUrl = 'https://jsonplaceholder.typicode.com';
 
 const instance = axios.create({

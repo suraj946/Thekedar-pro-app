@@ -10,7 +10,6 @@ import MyModal from './MyModal';
 const SelectRole = ({
   visible = false,
   setVisible = () => {},
-  statusBarColorRGBA = 'rgba(0,0,0,0.6)',
   value=DEFAULT_WORKER_ROLE,
   setValue=() => {}
 }) => {
@@ -19,14 +18,11 @@ const SelectRole = ({
     setVisible(false);
     Snackbar.show(defaultSnackbarOptions(`Role status changed to ${val.toUpperCase()}`))
   }
-
-  // console.log(`Rendering okay ${Math.round(Math.random()*10000)}`);
   return (
     <MyModal
       visible={visible}
       setVisible={setVisible}
       heading="Select Role"
-      statusBarColorRGBA={statusBarColorRGBA}
       containerStyle={{paddingBottom:verticalScale(5)}}
       >
       {WORKER_ROLES.map(s => (

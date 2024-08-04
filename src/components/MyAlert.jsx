@@ -45,7 +45,9 @@ const MyAlert = ({
         animationType="fade"
         transparent={true}
         visible={visible}
-        onRequestClose={handleReqClose}>
+        onRequestClose={handleReqClose}
+        statusBarTranslucent
+        >
         <TouchableWithoutFeedback onPress={handleReqClose}>
           <View style={styles.overlay} />
         </TouchableWithoutFeedback>

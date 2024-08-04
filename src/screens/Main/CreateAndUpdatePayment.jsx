@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
-import { Dropdown } from 'react-native-paper-dropdown';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import { useDispatch } from 'react-redux';
 import ContainedBtn from '../../components/ContainedBtn';
 import Header from '../../components/Header';
 import Input from '../../components/Input';
 import MyAlert from '../../components/MyAlert';
+import MyDropDown from '../../components/MyDropDown';
 import OutlinedBtn from '../../components/OutlinedBtn';
 import {
   createPayment,
@@ -46,7 +46,7 @@ const CreateAndUpdatePayment = ({route, navigation}) => {
   const [description, setDescription] = useState('');
   const [bitNumber, setBitNumber] = useState('');
   const [month, setMonth] = useState(`${monthIndex + 1}`);
-  const [date, setDate] = useState(`${dayDate}`);
+  const [date, setDate] = useState(`${dayDate}`);  
 
   const [amountError, setAmountError] = useState('');
   const [bitError, setBitError] = useState('');
@@ -189,28 +189,23 @@ const CreateAndUpdatePayment = ({route, navigation}) => {
             width: '100%',
             justifyContent: 'space-between',
           }}>
-          <View style={{width: '48%'}}>
-            <Dropdown
-              label={'Month'}
-              placeholder="Select Month"
-              options={getMonthOptions(monthIndex)}
-              value={month}
-              onSelect={setMonth}
-              hideMenuHeader
-              disabled={loading || delLoading}
-            />
-          </View>
-          <View style={{width: '48%'}}>
-            <Dropdown
-              label={'Date'}
-              placeholder="Select Date"
-              options={getDayOptions(dayDate)}
-              value={date}
-              onSelect={setDate}
-              hideMenuHeader
-              disabled={loading || delLoading}
-            />
-          </View>
+          <MyDropDown
+            label='Month'
+            options={getMonthOptions(monthIndex)}
+            value={month}
+            onSelect={setMonth}
+            disabled={loading || delLoading}
+            containerStyle={{width: '48%'}}
+          />
+          <MyDropDown
+            label='Date'
+            options={getDayOptions(dayDate)}
+            value={date}
+            onSelect={setDate}
+            disabled={loading || delLoading}
+            containerStyle={{width: '48%'}}
+          />
+          
         </View>
         <View style={styles.dateInfo}>
           <Text style={styles.dateTxt}>{`${year}/${month}/${date}`}</Text>

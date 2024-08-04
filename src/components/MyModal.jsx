@@ -1,55 +1,65 @@
 import React from 'react';
-import { StatusBar, StyleSheet, Text, View } from 'react-native';
-import { Modal, Portal } from 'react-native-paper';
-import { moderateScale, verticalScale } from 'react-native-size-matters';
 import {
-  light,
-  theme_primary,
-  white
-} from '../styles/colors';
+  Dimensions,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View
+} from 'react-native';
+import { moderateScale, verticalScale } from 'react-native-size-matters';
+import { light, theme_primary, white } from '../styles/colors';
 
+const {height} = Dimensions.get('window');
 const MyModal = ({
   heading = 'Modal Heading',
   visible = false,
   setVisible,
   children,
-  statusBarColorRGBA = 'rgba(46, 77, 217, 0.6)',
   containerStyle = {},
   autoDismiss = true,
 }) => {
   return (
-    <Portal>
-      <Modal
-        visible={visible}
-        dismissable={autoDismiss}
-        dismissableBackButton={autoDismiss}
-        onDismiss={() => setVisible(false)}>
-        <StatusBar backgroundColor={statusBarColorRGBA} />
-        <View style={[styles.modalContainer, containerStyle]}>
-          <Text style={styles.heading} onPress={() => setVisible(false)}>
-            {heading}
-          </Text>
-          {children}
-        </View>
-      </Modal>
-    </Portal>
+    <Modal
+      visible={visible}
+      animationType="fade"
+      onRequestClose={autoDismiss ? () => setVisible(false) : () => {}}
+      transparent
+      statusBarTranslucent>
+      <TouchableWithoutFeedback
+        onPress={autoDismiss ? () => setVisible(false) : () => {}}>
+        <View style={styles.overlay} />
+      </TouchableWithoutFeedback>
+
+      <View style={[styles.modalContainer, containerStyle]}>
+        <Text style={styles.heading} onPress={() => setVisible(false)}>
+          {heading}
+        </Text>
+        {children}
+      </View>
+    </Modal>
   );
 };
 
 export default MyModal;
 
 const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.40)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   modalContainer: {
+    position: 'absolute',
+    top: height / 3.3,
     width: '90%',
     minHeight: verticalScale(100),
-    maxHeight:verticalScale(400),
+    maxHeight: verticalScale(400),
     backgroundColor: white,
     alignSelf: 'center',
     borderRadius: moderateScale(5),
-    position: 'relative',
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    paddingTop:verticalScale(35)
+    paddingTop: verticalScale(35),
   },
   heading: {
     color: light,

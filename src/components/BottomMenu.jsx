@@ -20,6 +20,7 @@ const BottomMenu = ({children, title = '', visible = false, setVisible, notToClo
   return (
     <Portal>
       <Modal
+        statusBarTranslucent
         animationType="slide"
         transparent={true}
         visible={visible}

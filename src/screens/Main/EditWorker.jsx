@@ -184,7 +184,6 @@ const EditWorker = ({route, navigation}) => {
               setValue={setRole}
               visible={selectRoleModal}
               setVisible={setSelectRoleModal}
-              statusBarColorRGBA="rgba(255, 255, 255, 0.6)"
             />
             <ContainedBtn
               loading={updateLoading}

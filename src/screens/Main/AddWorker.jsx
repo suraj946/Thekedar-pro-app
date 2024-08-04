@@ -206,7 +206,6 @@ const AddWorker = () => {
             setValue={setRole}
             visible={selectRoleModal}
             setVisible={setSelectRoleModal}
-            statusBarColorRGBA="rgba(255, 255, 255, 0.6)"
           />
           <ContainedBtn
             title="Add Worker"
