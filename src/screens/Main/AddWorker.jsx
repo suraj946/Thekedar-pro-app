@@ -40,6 +40,7 @@ import {
 } from '../../utils/formValidator';
 import { defaultSnackbarOptions } from '../../utils/helpers';
 import { useCurrentDate } from '../../utils/hooks';
+import { updateWorkersCount } from '../../redux/slices/thekedarSlice';
 
 const AddWorker = () => {
   const [name, setName] = useState('');
@@ -108,6 +109,7 @@ const AddWorker = () => {
 
         if (data.success) {
           dispatch(getWorkers());
+          dispatch(updateWorkersCount(1));
           Snackbar.show(defaultSnackbarOptions(data.message));
           resetForm();
         }

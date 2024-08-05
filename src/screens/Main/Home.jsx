@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
+import { Button, Icon } from 'react-native-paper';
 import {
   moderateScale,
   moderateVerticalScale,
@@ -34,7 +34,7 @@ import { getGreetings } from '../../utils/helpers';
 const Home = ({navigation}) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const {thekedar, currentDate} = useSelector(state => state.thekedar);
+  const {thekedar, currentDate, workersCount} = useSelector(state => state.thekedar);
   const dispatch = useDispatch();
 
   const onRefresh = () => {
@@ -92,7 +92,17 @@ const Home = ({navigation}) => {
             }
           >
             <BoxSection />
-            <SelectWorkerSection />
+            {
+              (workersCount > 0) ? <SelectWorkerSection /> : (
+                <View style={styles.gettingStarted}>
+                  <Text style={styles.gettingStartedTxt}>Get started by creating a new worker</Text>
+                  <Button
+                    onPress={() => navigation.navigate('AddWorker')}
+                    mode='contained'
+                  >Add Worker</Button>
+                </View>
+              )
+            }
           </ScrollView>
         </View>
       </>
@@ -105,7 +115,7 @@ export default Home;
 const styles = StyleSheet.create({
   topView: {
     width: '100%',
-    height: verticalScale(105),
+    height: verticalScale(110),
   },
   headerView: {
     flexDirection: 'row',
@@ -142,7 +152,19 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(20),
     padding: moderateScale(7),
     paddingHorizontal: scale(10),
-    fontSize: moderateScale(13),
+    fontSize: moderateScale(15),
     textTransform: 'capitalize',
   },
+  gettingStarted: {
+    marginTop: verticalScale(20),
+    justifyContent: 'center',
+    alignItems: 'center',
+    height:verticalScale(200),
+    paddingHorizontal: scale(15),
+  },
+  gettingStartedTxt: {
+    fontSize: moderateScale(20),
+    color: dark_light_l1,
+    marginBottom: verticalScale(20),
+  }
 });

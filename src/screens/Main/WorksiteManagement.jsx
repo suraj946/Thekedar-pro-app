@@ -45,7 +45,7 @@ const WorksiteManagement = ({navigation}) => {
         <View style={styles.topView}>
           <Icon
             source={'office-building-marker'}
-            size={moderateScale(150)}
+            size={moderateScale(120)}
             color={success}
           />
           <View style={styles.topViewText}>
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   text: {
-    fontSize: moderateScale(50),
+    fontSize: moderateScale(40),
     fontWeight: 'bold',
   },
   text1: {

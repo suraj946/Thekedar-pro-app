@@ -14,6 +14,7 @@ import AmountInfoCard from '../../components/AmountInfoCard';
 import BottomMenu from '../../components/BottomMenu';
 import ContainedBtn from '../../components/ContainedBtn';
 import DotsLoading from '../../components/DotsLoading';
+import Header from '../../components/Header';
 import Input from '../../components/Input';
 import MyAlert from '../../components/MyAlert';
 import OutlinedBtn from '../../components/OutlinedBtn';
@@ -34,17 +35,6 @@ import {
   useCurrentDate,
   usePerformSettlementAndAdjustAmount,
 } from '../../utils/hooks';
-
-const response = {
-  prevWages: 10000,
-  prevAdvance: 0,
-  newCurrentWages: 20000,
-  newCurrentAdvance: 1000,
-  showForAdjustment: true,
-  calculatedWages: 20000,
-  calculatedAdvance: 1000,
-  amount: 29000,
-};
 
 const SettlementSummary = ({route, navigation}) => {
   const todayDate = useCurrentDate().dayDate;
@@ -154,7 +144,7 @@ const SettlementSummary = ({route, navigation}) => {
 
   if (initialLoading)
     return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: white}}>
         <DotsLoading text="Checking for settlement" />
       </View>
     );
@@ -192,9 +182,8 @@ const SettlementSummary = ({route, navigation}) => {
         setVisible={setAlertVisible}
         {...alertData}
       />
-      <View style={styles.topView}>
-        <Text style={styles.topText}>{name}</Text>
-      </View>
+      <Header headingText={name}/>
+      <StatusBar barStyle="dark-content" backgroundColor={white} />
       <ScrollView
         style={{
           flex: 1,
@@ -203,7 +192,7 @@ const SettlementSummary = ({route, navigation}) => {
           marginBottom: verticalScale(10),
         }}
         showsVerticalScrollIndicator={false}>
-        <View style={styles.settlementDateCont}>
+        <View>
           <Text
             style={{
               textAlign: 'center',
@@ -425,26 +414,6 @@ const Section = ({title, data = []}) => {
 export default SettlementSummary;
 
 const styles = StyleSheet.create({
-  topView: {
-    backgroundColor: theme_primary,
-    minHeight: verticalScale(30),
-    borderBottomLeftRadius: moderateScale(20),
-    borderBottomRightRadius: moderateScale(20),
-    shadowColor: '#000',
-    shadowOpacity: 0.32,
-    shadowRadius: 15,
-    elevation: 9,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: verticalScale(10),
-  },
-  topText: {
-    color: light,
-    fontSize: moderateScale(20),
-  },
-  settlementDateCont: {
-    // backgroundColor:"green",
-  },
   dateStepperCont: {
     position: 'relative',
     flexDirection: 'row',

@@ -17,12 +17,11 @@ import ContainedBtn from '../../components/ContainedBtn';
 import Input from '../../components/Input';
 import OutlinedBtn from '../../components/OutlinedBtn';
 import { dark, light, theme_secondary } from '../../styles/colors';
+import { setCookie } from '../../utils/asyncStorage';
 import instance from '../../utils/axiosInstance';
 import { CONNECTION_ERROR, REGISTER_SUCCESS } from '../../utils/constants';
 import { validateEmail } from '../../utils/formValidator';
 import { useErrorMessage } from '../../utils/hooks';
-import {useSelector} from "react-redux";
-import { setCookie } from '../../utils/asyncStorage';
 
 const windowHeight = Dimensions.get("window").height;
 
@@ -31,7 +30,6 @@ const Login = ({navigation}) => {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const {isAuthenticated} = useSelector(state=>state.thekedar)
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [error, setError] = useState("");
@@ -60,7 +58,7 @@ const Login = ({navigation}) => {
       const {data, headers} = await instance.post('/thekedar/login', {email, password}, {
         withCredentials: false,
       });
-      if (data.success) {
+      if (data.success) {        
         await setCookie(headers['set-cookie'][0].split(";")[0].split("=")[1]);
         dispatch({type: REGISTER_SUCCESS, payload: data?.data});
       }

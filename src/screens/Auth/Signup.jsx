@@ -1,26 +1,26 @@
 import React, { useState } from 'react';
 import {
-  Dimensions,
   Image,
   Keyboard,
   SafeAreaView,
+  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
-  TouchableWithoutFeedback,
-  View,
+  TouchableWithoutFeedback
 } from 'react-native';
 import Animated, { ZoomIn } from 'react-native-reanimated';
 import {
   moderateScale,
   moderateVerticalScale,
   scale,
+  verticalScale,
 } from 'react-native-size-matters';
 import { useDispatch } from 'react-redux';
 import ContainedBtn from '../../components/ContainedBtn';
 import Input from '../../components/Input';
 import OutlinedBtn from '../../components/OutlinedBtn';
-import { dark, light, theme_secondary } from '../../styles/colors';
+import { light, theme_secondary } from '../../styles/colors';
 import { setCookie } from '../../utils/asyncStorage';
 import instance from '../../utils/axiosInstance';
 import { CONNECTION_ERROR, REGISTER_SUCCESS } from '../../utils/constants';
@@ -30,8 +30,6 @@ import {
   validatePassword,
 } from '../../utils/formValidator';
 import { useErrorMessage } from '../../utils/hooks';
-
-const windowHeight = Dimensions.get('window').height;
 
 const Signup = ({navigation}) => {
   const [name, setName] = useState('');
@@ -47,8 +45,8 @@ const Signup = ({navigation}) => {
   const [companyNameError, setCompanyNameError] = useState('');
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
 
   const dispatch = useDispatch();
 
@@ -100,27 +98,31 @@ const Signup = ({navigation}) => {
     );
   };
 
-  const registerUser = async() => {
+  const registerUser = async () => {
     try {
       setLoading(true);
-      const {data, headers} = await instance.post('/thekedar/register', {name, email, password, companyName}, {
-        withCredentials: false,
-      });
+      const {data, headers} = await instance.post(
+        '/thekedar/register',
+        {name, email, password, companyName},
+        {
+          withCredentials: false,
+        },
+      );
       if (data.success) {
-        await setCookie(headers['set-cookie'][0].split(";")[0].split("=")[1]);
+        await setCookie(headers['set-cookie'][0].split(';')[0].split('=')[1]);
         dispatch({type: REGISTER_SUCCESS, payload: data?.data});
-        setMessage("Thekedar account created");
+        setMessage('Thekedar account created');
       }
     } catch (error) {
       if (error.errorType !== CONNECTION_ERROR) {
         setError(error.response?.data?.message);
       }
-    }finally{
+    } finally {
       setLoading(false);
     }
   };
 
-  const handleSignup = async() => {
+  const handleSignup = async () => {
     const isAllOk = validateInputs();
     if (isAllOk) {
       await registerUser();
@@ -137,26 +139,22 @@ const Signup = ({navigation}) => {
           backgroundColor={light}
           animated={true}
         />
-
-        <View style={styles.container}>
-          <Animated.View entering={ZoomIn} style={styles.topView}>
-            <Image
-              style={styles.logoImg}
-              source={require('../../assests/logo.png')}
-            />
-            <Text style={styles.headingTxt}>SIGN-UP</Text>
-          </Animated.View>
-
-          <Animated.View
-            entering={ZoomIn}
-            style={styles.middleView}
+        <Animated.View entering={ZoomIn} style={styles.topView}>
+          <Image
+            style={styles.logoImg}
+            source={require('../../assests/logo.png')}
+          />
+        </Animated.View>
+        <Animated.View style={styles.formContainer}>
+          <Text style={styles.headingTxt}>SIGN-UP</Text>
+          <ScrollView
+            style={styles.scrollView}
             showsVerticalScrollIndicator={false}>
             <Input
               label="Full Name"
               placeholder="John Doe"
               value={name}
               onChangeText={text => setName(text)}
-              style={styles.inputStyle}
               errorText={nameError}
               disabled={loading}
             />
@@ -166,7 +164,6 @@ const Signup = ({navigation}) => {
               keyboardType="email-address"
               value={email}
               onChangeText={text => setEmail(text)}
-              style={styles.inputStyle}
               errorText={emailError}
               disabled={loading}
             />
@@ -176,7 +173,6 @@ const Signup = ({navigation}) => {
               isPassword={true}
               value={password}
               onChangeText={text => setPassword(text)}
-              style={styles.inputStyle}
               errorText={passwordError}
               disabled={loading}
             />
@@ -186,7 +182,6 @@ const Signup = ({navigation}) => {
               isPassword={true}
               value={confirmPassword}
               onChangeText={text => setConfirmPassword(text)}
-              style={styles.inputStyle}
               errorText={confirmPasswordError}
               disabled={loading}
             />
@@ -195,7 +190,6 @@ const Signup = ({navigation}) => {
               placeholder="Your company name"
               value={companyName}
               onChangeText={text => setCompanyName(text)}
-              style={styles.inputStyle}
               errorText={companyNameError}
               disabled={loading}
             />
@@ -205,17 +199,13 @@ const Signup = ({navigation}) => {
               style={styles.mv}
               handler={handleSignup}
             />
-          </Animated.View>
-
-          <Animated.View entering={ZoomIn} style={styles.bottomView}>
             <OutlinedBtn
               title="Login"
               handler={() => navigation.navigate('Login')}
               disabled={loading}
             />
-            <Text style={styles.bottomText}>Thekedar Pro</Text>
-          </Animated.View>
-        </View>
+          </ScrollView>
+        </Animated.View>
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );
@@ -224,15 +214,16 @@ const Signup = ({navigation}) => {
 export default Signup;
 
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: scale(10),
-    height: windowHeight,
-    flexDirection: 'column',
-  },
   topView: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: '25%',
+    marginTop: verticalScale(15),
+  },
+  formContainer: {
+    width: '100%',
+    flex: 1,
+    paddingHorizontal: scale(15),
+    paddingVertical: verticalScale(10),
   },
   logoImg: {
     width: '100%',
@@ -241,31 +232,10 @@ const styles = StyleSheet.create({
   headingTxt: {
     color: theme_secondary,
     fontSize: moderateScale(25),
-    marginTop: moderateVerticalScale(10),
-  },
-  middleView: {
-    height: '60%',
-    alignItems: 'center',
-  },
-  inputStyle: {
-    width: '100%',
+    marginBottom: moderateVerticalScale(10),
+    alignSelf: 'center',
   },
   mv: {
     marginVertical: moderateVerticalScale(20),
-  },
-  forgetText: {
-    color: dark,
-    fontSize: moderateScale(17),
-    marginVertical: moderateVerticalScale(20),
-  },
-  bottomView: {
-    height: '10%',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  bottomText: {
-    color: theme_secondary,
-    padding: moderateScale(10),
-    fontSize: moderateScale(20),
   },
 });

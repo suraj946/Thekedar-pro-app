@@ -23,8 +23,8 @@ import instance from '../../utils/axiosInstance';
 
 const windowHeight = Dimensions.get("window").height;
 
-const ForgetPassword = ({navigation}) => {
-  const [email, setEmail] = useState("");
+const ForgetPassword = ({navigation, route}) => {
+  const [email, setEmail] = useState(route.params?.email || "");
   const [emailError, setEmailError] = useState("");
   const [loading, setLoading] = useState(false);
 

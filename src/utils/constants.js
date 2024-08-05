@@ -27,11 +27,6 @@ export const REGISTER_FAIL = "registerFail";
 
 export const UPDATE_USER = "updateUser";
 
-// export const WORKER_FOR_ATTENDANCE_REQUEST = "workerAttendanceRequest";
-// export const WORKER_FOR_ATTENDANCE_SUCCESS = "workerAttendanceSuccess";
-// export const WORKER_FOR_ATTENDANCE_FAIL = "workerAttendanceFail";
-// export const FILTER_WORKER_FOR_ATTENDANCE = "filterWorkerAttendance";
-
 export const GET_WORKER_REQUEST = "getWorkerRequest";
 export const GET_WORKER_SUCCESS_ACTIVE = "getWorkerSuccessActive";
 export const GET_WORKER_SUCCESS_NON_ACTIVE = "getWorkerSuccessNonActive";

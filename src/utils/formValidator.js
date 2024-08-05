@@ -13,7 +13,7 @@ const validateName = (nameTxt, labelName="name") => {
             errorText: `${labelName} is too small (min length 4 characters)`
         }
     }
-    else if(!nameTxt.match(nameRegx)){
+    else if(!nameTxt.trim().match(nameRegx)){
         response = {
             isValid: false,
             errorText: `Please enter valid ${labelName}`
@@ -37,7 +37,7 @@ const validateEmail = (email) => {
             errorText: "Email is required"
         }
     }
-    else if(!email.match(emailRegx)){
+    else if(!email.trim().match(emailRegx)){
         response = {
             isValid: false,
             errorText: "Please enter valid email address"

@@ -9,22 +9,24 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Icon, Searchbar, SegmentedButtons } from 'react-native-paper';
+import { Icon, Searchbar } from 'react-native-paper';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import { useDispatch, useSelector } from 'react-redux';
 import AnimatedIcon from '../../components/AnimatedIcon';
 import DotsLoading from '../../components/DotsLoading';
 import Header from '../../components/Header';
 import MyAlert from '../../components/MyAlert';
+import TabComponent from '../../components/TabComponent';
 import WorkerCard from '../../components/WorkerCard';
 import { deleteWorkers, getWorkers } from '../../redux/actions/workerAction';
 import {
   dark_light_l1,
   theme_primary,
   theme_secondary,
-  white
+  white,
 } from '../../styles/colors';
 import { useSelectionSystem } from '../../utils/hooks';
+import { updateWorkersCount } from '../../redux/slices/thekedarSlice';
 
 const Workers = ({navigation}) => {
   const [search, setSearch] = useState('');
@@ -38,7 +40,7 @@ const Workers = ({navigation}) => {
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertData, setAlertData] = useState({});
   const [deleteLoading, setDeleteLoading] = useState(false);
-
+  
   const {
     selectSingle,
     deSelectSingle,
@@ -57,7 +59,8 @@ const Workers = ({navigation}) => {
     setAlertVisible(true);
     setAlertData({
       title: 'Delete Worker',
-      message: 'This will delete the selected workers and records of them. Are you sure?',
+      message:
+        'This will delete the selected workers and records of them. Are you sure?',
       icon: 'delete',
       buttons: [
         {
@@ -65,24 +68,24 @@ const Workers = ({navigation}) => {
         },
         {
           text: 'Yes',
-          onPress: async() => {
+          onPress: async () => {
             setDeleteLoading(true);
             const response = await deleteWorkers(workerIds);
             setDeleteLoading(false);
-            if(response){
-              if(tabValue === 'active'){
+            if (response) {
+              if (tabValue === 'active') {
                 dispatch(getWorkers());
-              }else{
+              } else {
                 dispatch(getWorkers(false));
               }
+              dispatch(updateWorkersCount(-1 * workerIds.length));
               //to clear selected items
               deselectAll();
             }
           },
         },
       ],
-    })
-
+    });
   };
 
   const handleOnRefresh = () => {
@@ -141,7 +144,7 @@ const Workers = ({navigation}) => {
       />
       {loading || deleteLoading ? (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <DotsLoading />
+          <DotsLoading text="Fetching Workers" />
         </View>
       ) : (
         <>
@@ -161,24 +164,15 @@ const Workers = ({navigation}) => {
             onChangeText={text => setSearch(text)}
           />
           <View style={styles.tabView}>
-            <SegmentedButtons
-              value={tabValue}
-              onValueChange={setTabValue}
-              buttons={[
-                {
-                  value: 'active',
-                  label: 'Active',
-                  checkedColor: theme_primary,
-                },
-                {
-                  value: 'non-active',
-                  label: 'Non Active',
-                  checkedColor: theme_primary,
-                },
+            <TabComponent
+              tabs={[
+                {value: 'active', text: 'Active'},
+                {value: 'non-active', text: 'Non Active'},
               ]}
+              selectedTab={tabValue}
+              setSelectedTab={setTabValue}
             />
           </View>
-
           {workersData.length > 0 && (
             <View style={styles.selectActionView}>
               <Text style={{color: theme_primary, fontSize: moderateScale(17)}}>
@@ -269,7 +263,10 @@ const Workers = ({navigation}) => {
             }
             keyExtractor={item => item._id}
           />
-          <AnimatedIcon icon='plus' onPress={() => navigation.navigate('AddWorker')}/>
+          <AnimatedIcon
+            icon="plus"
+            onPress={() => navigation.navigate('AddWorker')}
+          />
         </>
       )}
     </SafeAreaView>

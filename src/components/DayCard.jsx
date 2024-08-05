@@ -76,7 +76,6 @@ export default memo(DayCard);
 const styles = StyleSheet.create({
   cardContainer: {
     marginVertical: verticalScale(5),
-    // borderRadius: moderateScale(10),
     flexDirection: 'row',
     minHeight: verticalScale(60),
     alignItems: 'center',

@@ -74,18 +74,11 @@ const SelectWorkerSection = () => {
     if(rejectedMessage?.length > 0){
       Alert.alert("Rejected", rejectedMessage.join("\n"));
     }
-  };
+  };  
 
   useEffect(() => {
     dispatch(getWorkers());
   }, []);
-
-  // useEffect(() => {
-  //   if (error) {
-  //     Snackbar.show(defaultSnackbarOptions(error, danger));
-  //     dispatch({type: CLEAR_ERROR});
-  //   }
-  // }, [error]);
 
   if (loading || attendanceLoading) {
     return (

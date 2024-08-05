@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme_secondary,
     paddingVertical: verticalScale(5),
     textAlign: 'center',
-    borderRadius: moderateScale(10),
+    borderRadius: moderateScale(5),
     width: '100%',
     alignSelf: 'center',
   },

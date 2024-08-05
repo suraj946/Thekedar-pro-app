@@ -1,3 +1,4 @@
+import React, { memo } from 'react';
 import {
   Modal,
   StyleSheet,
@@ -5,10 +6,9 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import React, {memo} from 'react';
-import {verticalScale, moderateScale, scale} from 'react-native-size-matters';
-import {theme_primary, white} from '../styles/colors';
-import {Portal} from 'react-native-paper';
+import { Portal } from 'react-native-paper';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import { theme_primary, white } from '../styles/colors';
 
 const BottomMenu = ({children, title = '', visible = false, setVisible, notToClose=false}) => {
   const handleClose = () => {

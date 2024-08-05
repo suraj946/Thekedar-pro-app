@@ -5,10 +5,11 @@ import {
   StyleSheet,
   Text,
   TouchableWithoutFeedback,
-  View
+  View,
 } from 'react-native';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
 import { light, theme_primary, white } from '../styles/colors';
+import { sharedStyles } from '../styles/styles';
 
 const {height} = Dimensions.get('window');
 const MyModal = ({
@@ -59,7 +60,8 @@ const styles = StyleSheet.create({
     backgroundColor: white,
     alignSelf: 'center',
     borderRadius: moderateScale(5),
-    paddingTop: verticalScale(35),
+    paddingTop: verticalScale(40),
+    ...sharedStyles.fullShadow
   },
   heading: {
     color: light,

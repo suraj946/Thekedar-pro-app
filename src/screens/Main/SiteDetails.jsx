@@ -93,7 +93,7 @@ export default SiteDetails;
 
 const styles = StyleSheet.create({
   topView: {
-    height: verticalScale(110),
+    height: verticalScale(120),
     width: '100%',
     backgroundColor: theme_primary,
     borderBottomLeftRadius: moderateScale(20),
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   },
   moneyText: {
     marginTop: verticalScale(10),
-    fontSize: moderateScale(40),
+    fontSize: moderateScale(35),
     fontWeight: 'bold',
     color: success,
   },

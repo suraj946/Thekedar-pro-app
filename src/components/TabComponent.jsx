@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
-import { dark_light_l1, dark_light_l2, theme_primary, white } from '../styles/colors';
+import { dark_light_l1, theme_primary, white } from '../styles/colors';
 
 const TabComponent = ({tabs, selectedTab, setSelectedTab, style={}, disabled=false}) => {
   const handlePress = tab => {

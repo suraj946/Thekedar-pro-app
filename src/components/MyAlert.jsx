@@ -10,6 +10,7 @@ import {
 import { Button, Icon, Portal } from 'react-native-paper';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import { danger, dark_light_l1, dark_light_l2, white } from '../styles/colors';
+import { sharedStyles } from '../styles/styles';
 
 const {height} = Dimensions.get('window');
 
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
   },
   menuItemContainer: {
     position: 'absolute',
-    top: height / 3.3,
+    top: height / 2.8,
     backgroundColor: white,
     width: '80%',
     minHeight: '30%',
@@ -98,6 +99,7 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(5),
     paddingVertical: verticalScale(10),
     paddingHorizontal: scale(15),
+    ...sharedStyles.fullShadow
   },
   headingView: {
     flexDirection: 'row',

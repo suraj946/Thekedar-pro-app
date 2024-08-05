@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StatusBar, StyleSheet, View } from 'react-native';
-import { verticalScale } from 'react-native-size-matters';
-import { useDispatch } from 'react-redux';
+import React, {useEffect, useState} from 'react';
+import {SafeAreaView, StatusBar, StyleSheet, View} from 'react-native';
+import {verticalScale} from 'react-native-size-matters';
+import {useDispatch} from 'react-redux';
 import CalendarEvent from '../../components/CalendarEvent';
 import DaysHeader from '../../components/DaysHeader';
 import DotsLoading from '../../components/DotsLoading';
 import Header from '../../components/Header';
 import MonthHeader from '../../components/MonthHeader';
 import RenderCalendar from '../../components/RenderCalendar';
-import { getMonthEvents } from '../../redux/actions/monthlyRecordAction';
-import { white } from '../../styles/colors';
-import { useCurrentDate, useMonthEvent } from '../../utils/hooks';
+import {getMonthEvents} from '../../redux/actions/monthlyRecordAction';
+import {white} from '../../styles/colors';
+import {useCurrentDate, useMonthEvent} from '../../utils/hooks';
 
 const Calendar = ({route}) => {
   const {monthIndex} = useCurrentDate();
@@ -51,7 +51,12 @@ const Calendar = ({route}) => {
               currentShowingMonthIndex={currentMonthIndex}
             />
           </View>
-          <CalendarEvent data={eventDate} workerId={workerId} recordId={recordId} currentShowingMonthIndex={currentMonthIndex} />
+          <CalendarEvent
+            data={eventDate}
+            workerId={workerId}
+            recordId={recordId}
+            currentShowingMonthIndex={currentMonthIndex}
+          />
         </>
       )}
     </SafeAreaView>

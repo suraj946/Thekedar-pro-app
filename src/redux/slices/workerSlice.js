@@ -3,8 +3,6 @@ import {
   ADD_SINGLE_WORKER,
   ADD_WORKER_FOR_ATTENDANCE,
   ADD_WORKER_FOR_NEW_RECORD,
-  // CLEAR_ERROR,
-  // FILTER_WORKER_FOR_ATTENDANCE,
   GET_WORKER_FAIL,
   GET_WORKER_REQUEST,
   GET_WORKER_SUCCESS_ACTIVE,
@@ -12,43 +10,7 @@ import {
   UPDATE_AFTER_ATTENDANCE,
   UPDATE_SINGLE_WORKER,
   UPDATE_WORKER_FOR_NEW_RECORD,
-  // WORKER_FOR_ATTENDANCE_FAIL,
-  // WORKER_FOR_ATTENDANCE_REQUEST,
-  // WORKER_FOR_ATTENDANCE_SUCCESS,
 } from '../../utils/constants';
-
-// const initialState = {
-//     loading: false,
-//     workersData: [],
-//     error: null,
-// };
-
-// const workerForAttendanceSlice = createSlice({
-//     name: 'workerForAttendance',
-//     initialState,
-//     extraReducers: builder => {
-//       builder
-//         .addCase(WORKER_FOR_ATTENDANCE_REQUEST, state => {
-//           state.loading = true;
-//         })
-//         .addCase(WORKER_FOR_ATTENDANCE_SUCCESS, (state, action) => {
-//           state.loading = false;
-//           state.workersData = action.payload;
-//         })
-//         .addCase(FILTER_WORKER_FOR_ATTENDANCE, (state, action) => {
-//           const temp = state.workersData.filter(w => w._id !== action.payload);
-//           state.workersData = temp;
-//         })
-//         .addCase(WORKER_FOR_ATTENDANCE_FAIL, (state, action) => {
-//           state.loading = false;
-//           state.error = action.payload;
-//         })
-//         .addCase(CLEAR_ERROR, state => {
-//           state.error = null;
-//         });
-//     },
-// });
-// const workerForAttendanceReducer = workerForAttendanceSlice.reducer;
 
 const workersSlice = createSlice({
   name: "worker",

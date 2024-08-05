@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -8,9 +8,9 @@ import {
   Text,
   View,
 } from 'react-native';
-import {Avatar, Icon, List, Menu} from 'react-native-paper';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import {useDispatch, useSelector} from 'react-redux';
+import { Avatar, Icon, List, Menu } from 'react-native-paper';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import { useDispatch, useSelector } from 'react-redux';
 import BottomMenu from '../../components/BottomMenu';
 import ContainedBtn from '../../components/ContainedBtn';
 import DotsLoading from '../../components/DotsLoading';
@@ -18,7 +18,7 @@ import Header from '../../components/Header';
 import MyAlert from '../../components/MyAlert';
 import NotFound from '../../components/NotFound';
 import OutlinedBtn from '../../components/OutlinedBtn';
-import {deleteWorkers} from '../../redux/actions/workerAction';
+import { deleteWorkers } from '../../redux/actions/workerAction';
 import {
   danger,
   dark_light_l1,
@@ -34,7 +34,7 @@ import {
   MONTH,
   UPDATE_SINGLE_WORKER,
 } from '../../utils/constants';
-import {useGetWorker, useWorkerStatusUpdate} from '../../utils/hooks';
+import { useGetWorker, useWorkerStatusUpdate } from '../../utils/hooks';
 
 const WorkerProfile = ({navigation, route}) => {
   const {workerId} = route.params;
@@ -116,8 +116,9 @@ const WorkerProfile = ({navigation, route}) => {
           flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
+          backgroundColor: white
         }}>
-        <DotsLoading />
+        <DotsLoading text='Fetching Worker Profile' />
       </View>
     );
   }

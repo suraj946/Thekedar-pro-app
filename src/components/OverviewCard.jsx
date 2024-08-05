@@ -1,8 +1,10 @@
-import {StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {Dimensions, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import React, { memo } from 'react';
 import {Avatar} from 'react-native-paper';
 import {dark_light_l1, theme_secondary, white} from '../styles/colors';
 import { moderateScale, verticalScale } from 'react-native-size-matters';
+
+const {width: windowWidth} = Dimensions.get('window');
 
 const OverviewCard = ({
     icon = 'help', 
@@ -12,10 +14,10 @@ const OverviewCard = ({
     pressHandler = () => {}
 }) => {
     const handlePress = () => {
-        if(typeof pressHandler !== "function"){
-            throw new Error("pressHandler should be a function");
-        }
-        pressHandler();
+      if(typeof pressHandler !== "function"){
+        throw new Error("pressHandler should be a function");
+      }
+      pressHandler();
     }
 
   return (
@@ -31,8 +33,8 @@ export default memo(OverviewCard);
 const styles = StyleSheet.create({
   container: {
     margin:moderateScale(5),
-    width: moderateScale(100),
-    height: moderateScale(100),
+    width: windowWidth/4,
+    height: windowWidth/4,
     borderRadius: moderateScale(10),
     justifyContent: 'center',
     alignItems: 'center',
@@ -45,6 +47,7 @@ const styles = StyleSheet.create({
     shadowRadius: moderateScale(10),
     elevation: 3,
     backgroundColor: white,
+    padding: moderateScale(5),
   },
   textStyle:{
     color:dark_light_l1,

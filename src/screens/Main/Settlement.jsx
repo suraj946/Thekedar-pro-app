@@ -36,13 +36,6 @@ const Settlement = ({navigation}) => {
                 </Text>
             )}
             renderItem={({item}) => (
-              // <WorkerCard2
-              //   _id={item._id}
-              //   name={item.name}
-              //   handlePress={handleSelectWorker}
-              //   role={item.role}
-              //   recordId={item.currentRecordId}
-              // />
               <WorkerCard2 handlePress={handleSelectWorker} {...item}/>
             )}
             keyExtractor={item => item._id}
@@ -62,7 +55,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme_secondary,
     paddingVertical: verticalScale(5),
     textAlign: 'center',
-    borderRadius: moderateScale(10),
+    borderRadius: moderateScale(5),
     width: '100%',
     alignSelf: 'center',
   },

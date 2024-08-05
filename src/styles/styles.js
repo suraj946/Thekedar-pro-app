@@ -1,6 +1,6 @@
-import {Platform, StatusBar, StyleSheet} from "react-native";
-import { info, light, theme_primary, white } from "./colors";
+import { StyleSheet } from "react-native";
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import { dark, info, theme_primary, white } from "./colors";
 
 export const sharedStyles = StyleSheet.create({
   dateView: {
@@ -43,5 +43,15 @@ export const sharedStyles = StyleSheet.create({
   formView: {
     width: '100%',
     marginTop: verticalScale(10),
+  },
+  fullShadow: {
+    shadowColor: dark,
+    shadowOffset: {
+      width: 0,
+      height: 12,
+    },
+    shadowOpacity: 0.58,
+    shadowRadius: 16.0,
+    elevation: 24,
   },
 })

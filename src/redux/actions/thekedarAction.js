@@ -41,7 +41,7 @@ export const loadUser = () => async dispatch => {
     try {
         dispatch({type: LOAD_USER_REQUEST});
         const {data} = await instance.get('/thekedar/loaduser');
-        if (data.success) {
+        if (data.success) {            
             dispatch({type: LOAD_USER_SUCCESS, payload: data.data});
         }
     } catch (error) {
