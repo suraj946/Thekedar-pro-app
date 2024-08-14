@@ -36,17 +36,9 @@ const ResetPassword = ({navigation}) => {
 
   const validateInputs = () => {
     const passCheck = validatePassword(password);
-    if (passCheck.isValid) {
-      setPasswordError('');
-    } else {
-      setPasswordError(passCheck.errorText);
-    }
+    setPasswordError(passCheck.errorText);
     const otpCheck = validateOtp(otp);
-    if (otpCheck.isValid) {
-      setOtpError('');
-    } else {
-      setOtpError(otpCheck.errorText);
-    }
+    setOtpError(otpCheck.errorText);
     return passCheck.isValid && otpCheck.isValid;
   };
 
@@ -129,7 +121,7 @@ export default ResetPassword;
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: scale(10),
+    paddingHorizontal: scale(20),
     height: windowHeight,
     flexDirection: 'column',
   },

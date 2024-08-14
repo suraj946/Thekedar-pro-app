@@ -16,11 +16,14 @@ import {
   scale,
   verticalScale,
 } from 'react-native-size-matters';
+import Snackbar from 'react-native-snackbar';
 import { useDispatch } from 'react-redux';
 import ContainedBtn from '../../components/ContainedBtn';
 import Input from '../../components/Input';
 import OutlinedBtn from '../../components/OutlinedBtn';
-import { light, theme_secondary } from '../../styles/colors';
+import SocialButtons from '../../components/SocialButtons';
+import { googleSignInAndLogin } from '../../redux/actions/thekedarAction';
+import { danger, light, theme_secondary } from '../../styles/colors';
 import { setCookie } from '../../utils/asyncStorage';
 import instance from '../../utils/axiosInstance';
 import { CONNECTION_ERROR, REGISTER_SUCCESS } from '../../utils/constants';
@@ -29,20 +32,20 @@ import {
   validateName,
   validatePassword,
 } from '../../utils/formValidator';
+import { defaultSnackbarOptions } from '../../utils/helpers';
 import { useErrorMessage } from '../../utils/hooks';
+import { googleSignIn } from '../../utils/social';
 
 const Signup = ({navigation}) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [companyName, setCompanyName] = useState('');
 
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
-  const [companyNameError, setCompanyNameError] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -52,25 +55,13 @@ const Signup = ({navigation}) => {
 
   const validateInputs = () => {
     const nameCheck = validateName(name, 'Full Name');
-    if (nameCheck.isValid) {
-      setNameError('');
-    } else {
-      setNameError(nameCheck.errorText);
-    }
+    setNameError(nameCheck.errorText);
 
     const emailCheck = validateEmail(email);
-    if (emailCheck.isValid) {
-      setEmailError('');
-    } else {
-      setEmailError(emailCheck.errorText);
-    }
+    setEmailError(emailCheck.errorText);
 
     const passCheck = validatePassword(password);
-    if (passCheck.isValid) {
-      setPasswordError('');
-    } else {
-      setPasswordError(passCheck.errorText);
-    }
+    setPasswordError(passCheck.errorText);
 
     const isPassMatch = password === confirmPassword;
     if (isPassMatch && confirmPassword.length !== 0) {
@@ -82,19 +73,11 @@ const Signup = ({navigation}) => {
       }
     }
 
-    const checkCompanyName = validateName(companyName, 'Company Name');
-    if (checkCompanyName.isValid) {
-      setCompanyNameError('');
-    } else {
-      setCompanyNameError(checkCompanyName.errorText);
-    }
-
     return (
       nameCheck.isValid &&
       emailCheck.isValid &&
       passCheck.isValid &&
-      isPassMatch &&
-      checkCompanyName.isValid
+      isPassMatch 
     );
   };
 
@@ -103,7 +86,7 @@ const Signup = ({navigation}) => {
       setLoading(true);
       const {data, headers} = await instance.post(
         '/thekedar/register',
-        {name, email, password, companyName},
+        {name, email, password},
         {
           withCredentials: false,
         },
@@ -130,6 +113,18 @@ const Signup = ({navigation}) => {
   };
 
   useErrorMessage({error, setError, message, setMessage});
+
+  const handleGoogleSignIn = async() => {
+    setLoading(true);
+    const userInfo = await googleSignIn();
+    if(!userInfo){
+      setLoading(false);
+      Snackbar.show(defaultSnackbarOptions('Something went wrong, please try again', danger));
+      return;
+    }
+    dispatch(googleSignInAndLogin(userInfo.idToken));
+    setLoading(false);
+  }
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -185,14 +180,6 @@ const Signup = ({navigation}) => {
               errorText={confirmPasswordError}
               disabled={loading}
             />
-            <Input
-              label="Company Name"
-              placeholder="Your company name"
-              value={companyName}
-              onChangeText={text => setCompanyName(text)}
-              errorText={companyNameError}
-              disabled={loading}
-            />
             <ContainedBtn
               loading={loading}
               title="Sign-up"
@@ -203,6 +190,10 @@ const Signup = ({navigation}) => {
               title="Login"
               handler={() => navigation.navigate('Login')}
               disabled={loading}
+            />
+            <SocialButtons
+              handleGoogleSignIn={handleGoogleSignIn}
+              loading={loading}
             />
           </ScrollView>
         </Animated.View>
@@ -222,7 +213,7 @@ const styles = StyleSheet.create({
   formContainer: {
     width: '100%',
     flex: 1,
-    paddingHorizontal: scale(15),
+    paddingHorizontal: scale(20),
     paddingVertical: verticalScale(10),
   },
   logoImg: {

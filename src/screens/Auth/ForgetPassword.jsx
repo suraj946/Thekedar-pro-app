@@ -30,11 +30,7 @@ const ForgetPassword = ({navigation, route}) => {
 
   const validateInputs = () => {
     const emailCheck = validateEmail(email);
-    if(emailCheck.isValid){
-      setEmailError("");
-    }else{
-      setEmailError(emailCheck.errorText);
-    }
+    setEmailError(emailCheck.errorText);
     return emailCheck.isValid;
   }
 
@@ -99,7 +95,7 @@ export default ForgetPassword;
 
 const styles = StyleSheet.create({
   container:{
-    paddingHorizontal: scale(10),
+    paddingHorizontal: scale(20),
     height: windowHeight,
     flexDirection:"column",
   },

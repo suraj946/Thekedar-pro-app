@@ -52,21 +52,13 @@ const EditAttendance = ({route, navigation}) => {
 
   const validateInputs = () => {
     const wagesCheck = validateWages(wagesOfDay);
-    if (wagesCheck.isValid) {
-      setWagesError('');
-    } else {
-      setWagesError(wagesCheck.errorText);
-    }
+    setWagesError(wagesCheck.errorText);
 
     let forAdvance = true;
     if (advanceAmount?.trim() !== '') {
       const advanceCheck = validateWages(advanceAmount);
-      if (advanceCheck.isValid) {
-        setAdvanceError('');
-      } else {
-        setAdvanceError(advanceCheck.errorText);
-        forAdvance = false;
-      }
+      setAdvanceError(advanceCheck.errorText);
+      forAdvance = advanceCheck.isValid;
     }
     return wagesCheck.isValid && forAdvance;
   };

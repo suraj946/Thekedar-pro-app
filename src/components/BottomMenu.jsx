@@ -1,22 +1,53 @@
-import React, { memo } from 'react';
+import React, {memo, useEffect, useState} from 'react';
 import {
+  Keyboard,
   Modal,
   StyleSheet,
   Text,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { Portal } from 'react-native-paper';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
-import { theme_primary, white } from '../styles/colors';
+import {Portal} from 'react-native-paper';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
+import {theme_primary, white} from '../styles/colors';
 
-const BottomMenu = ({children, title = '', visible = false, setVisible, notToClose=false}) => {
+const BottomMenu = ({
+  children,
+  title = '',
+  visible = false,
+  setVisible,
+  notToClose = false,
+}) => {
   const handleClose = () => {
-    if(notToClose){
+    if (notToClose) {
       return;
     }
     setVisible(false);
-  }
+  };
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      e => {
+        setKeyboardVisible(true);
+        setKeyboardHeight(e.endCoordinates.height);
+      },
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false);
+        setKeyboardHeight(0);
+      },
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
   return (
     <Portal>
       <Modal
@@ -26,7 +57,7 @@ const BottomMenu = ({children, title = '', visible = false, setVisible, notToClo
         visible={visible}
         onRequestClose={() => {
           //condition added later if any bug arises due to this then check here
-          if(notToClose){
+          if (notToClose) {
             return;
           }
           setVisible(false);
@@ -35,7 +66,7 @@ const BottomMenu = ({children, title = '', visible = false, setVisible, notToClo
           <View style={styles.overlay} />
         </TouchableWithoutFeedback>
 
-        <View style={styles.menuItemContainer}>
+        <View style={[styles.menuItemContainer, {bottom: keyboardVisible ? keyboardHeight : 0}]}>
           <View style={styles.titleView}>
             <Text numberOfLines={1} style={styles.titleText}>
               {title}
@@ -60,9 +91,8 @@ const styles = StyleSheet.create({
   },
   menuItemContainer: {
     position: 'absolute',
-    bottom: verticalScale(0),
     backgroundColor: white,
-    width: '100%',
+    width: '90%',
     alignSelf: 'center',
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,

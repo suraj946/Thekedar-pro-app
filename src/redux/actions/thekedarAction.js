@@ -1,6 +1,6 @@
 import Snackbar from 'react-native-snackbar';
 import {danger} from '../../styles/colors';
-import {deleteCookie} from '../../utils/asyncStorage';
+import {deleteCookie, setCookie} from '../../utils/asyncStorage';
 import instance from '../../utils/axiosInstance';
 import {
     CONNECTION_ERROR,
@@ -8,6 +8,7 @@ import {
     LOAD_USER_REQUEST,
     LOAD_USER_SUCCESS,
     LOGOUT_SUCCESS,
+    REGISTER_SUCCESS,
 } from '../../utils/constants';
 import {defaultSnackbarOptions} from '../../utils/helpers';
 
@@ -84,5 +85,21 @@ export const updateUser = async(formData) => {
             Snackbar.show(defaultSnackbarOptions(error.response?.data?.message, danger));
         }
         return false;
+    }
+}
+
+export const googleSignInAndLogin = (idToken) => async dispatch => {
+    try {
+        const {data, headers} = await instance.post('/thekedar/google-signin', {idToken});
+        if(data.success){
+            await setCookie(headers['set-cookie'][0].split(";")[0].split("=")[1]);
+            dispatch({type: REGISTER_SUCCESS, payload: data?.data});
+            Snackbar.show(defaultSnackbarOptions(data.message));
+        }
+    } catch (error) {
+        console.log(error);
+        if(error.errorType !== CONNECTION_ERROR){
+            Snackbar.show(defaultSnackbarOptions(error.response?.data?.message, danger));
+        }
     }
 }

@@ -97,11 +97,11 @@ const MyProfile = ({navigation}) => {
               navigation.navigate('EditMyProfile')
             }
           />
-          <ActionCard
+          {!(thekedar.googleId || thekedar.facebookId) && <ActionCard
             leftIcon="lock-outline"
             text="Change Password"
             clickHandler={() => setOpenMenu(true)}
-          />
+          />}
         </View>
       </ScrollView>
       <Text style={styles.versionTxt}>v{info.version}</Text>
@@ -167,18 +167,10 @@ const ChangePasswordForm = ({setOpenMenu}) => {
 
   const handleChangePassword = async () => {
     const oldCheck = validatePassword(oldPassword);
-    if (oldCheck.isValid) {
-      setOldPassError('');
-    } else {
-      setOldPassError(oldCheck.errorText);
-    }
+    setOldPassError(oldCheck.errorText);
 
     const newCheck = validatePassword(newPassword);
-    if (newCheck.isValid) {
-      setNewPassError('');
-    } else {
-      setNewPassError(newCheck.errorText);
-    }
+    setNewPassError(newCheck.errorText);
 
     if (!(oldCheck.isValid && newCheck.isValid)) {
       return;

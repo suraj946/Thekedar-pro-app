@@ -123,6 +123,7 @@ const styles = StyleSheet.create({
   formContainer: {
     marginTop: verticalScale(10),
     padding: moderateScale(10),
+    paddingHorizontal: scale(20),
   },
   settlementView: {
     marginTop: verticalScale(10),

@@ -89,7 +89,6 @@ const styles = StyleSheet.create({
     backgroundColor: dark_light_l2,
     padding: moderateScale(5),
     borderRadius: moderateScale(3),
-    width: '50%',
     textAlign: 'center',
     marginBottom: verticalScale(5),
     fontSize: moderateScale(15)

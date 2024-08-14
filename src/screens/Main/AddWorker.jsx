@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 import { Avatar, Icon } from 'react-native-paper';
-import { moderateScale, verticalScale } from 'react-native-size-matters';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import Snackbar from 'react-native-snackbar';
 import { useDispatch } from 'react-redux';
 import ContainedBtn from '../../components/ContainedBtn';
@@ -68,28 +68,16 @@ const AddWorker = () => {
 
   const validateInputs = () => {
     const nameCheck = validateName(name, 'Worker Name');
-    if (nameCheck.isValid) {
-      setNameError('');
-    } else {
-      setNameError(nameCheck.errorText);
-    }
+    setNameError(nameCheck.errorText);
 
     const wagesCheck = validateWages(wagesPerDay);
-    if (wagesCheck.isValid) {
-      setWagesPerDayError('');
-    } else {
-      setWagesPerDayError(wagesCheck.errorText);
-    }
+    setWagesPerDayError(wagesCheck.errorText);
 
     let forContact = true;
     if (contactNumber?.trim() !== '') {
       const contactCheck = validatePhoneNumber(contactNumber);
-      if (contactCheck.isValid) {
-        setContactNumberError('');
-      } else {
-        setContactNumberError(contactCheck.errorText);
-        forContact = false;
-      }
+      setContactNumberError(contactCheck.errorText);
+      forContact = contactCheck.isValid;
     }
     return nameCheck.isValid && wagesCheck.isValid && forContact;
   };
@@ -134,6 +122,7 @@ const AddWorker = () => {
         <ScrollView
           contentContainerStyle={{
             padding: moderateScale(10),
+            paddingHorizontal: scale(25),
           }}
           showsVerticalScrollIndicator={false}>
           <Avatar.Icon
@@ -145,7 +134,7 @@ const AddWorker = () => {
           <View style={styles.dateInfoView}>
             <Icon source={"calendar"} size={moderateScale(30)} color={theme_primary}/>
             <Text style={styles.txt}>
-              {`${DAYS[dayIndex]}, ${dayDate} ${MONTH[monthIndex]}, ${year}`}
+              {`${DAYS[dayIndex].substring(0, 3).toUpperCase()}, ${dayDate}-${monthIndex + 1}-${year}`}
             </Text>
           </View>
 
@@ -237,7 +226,7 @@ const styles = StyleSheet.create({
   txt: {
     marginLeft: moderateScale(10),
     color: dark,
-    fontSize: moderateScale(25),
+    fontSize: moderateScale(30),
     textTransform: 'uppercase',
     color: theme_primary,
   },

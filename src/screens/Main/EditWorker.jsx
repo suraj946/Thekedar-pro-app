@@ -9,7 +9,7 @@ import {
   TouchableWithoutFeedback
 } from 'react-native';
 import { Avatar } from 'react-native-paper';
-import { moderateScale, verticalScale } from 'react-native-size-matters';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import { useDispatch } from "react-redux";
 import ContainedBtn from '../../components/ContainedBtn';
 import Header from '../../components/Header';
@@ -55,28 +55,16 @@ const EditWorker = ({route, navigation}) => {
 
   const validateInputs = () => {
     const nameCheck = validateName(name, 'Worker Name');
-    if (nameCheck.isValid) {
-      setNameError('');
-    } else {
-      setNameError(nameCheck.errorText);
-    }
+    setNameError(nameCheck.errorText);
 
     const wagesCheck = validateWages(wagesPerDay);
-    if (wagesCheck.isValid) {
-      setWagesPerDayError('');
-    } else {
-      setWagesPerDayError(wagesCheck.errorText);
-    }
+    setWagesPerDayError(wagesCheck.errorText);
 
     let forContact = true;
     if (contactNumber?.trim() !== '') {
       const contactCheck = validatePhoneNumber(contactNumber);
-      if (contactCheck.isValid) {
-        setContactNumberError('');
-      } else {
-        setContactNumberError(contactCheck.errorText);
-        forContact = false;
-      }
+      setContactNumberError(contactCheck.errorText);
+      forContact = contactCheck.isValid;
     }
     return nameCheck.isValid && wagesCheck.isValid && forContact;
   };
@@ -118,6 +106,7 @@ const EditWorker = ({route, navigation}) => {
           <ScrollView
             contentContainerStyle={{
               padding: moderateScale(10),
+              paddingHorizontal: scale(20),
             }}
             showsVerticalScrollIndicator={false}>
             <Avatar.Icon

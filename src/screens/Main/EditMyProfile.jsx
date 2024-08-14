@@ -33,46 +33,33 @@ const EditMyProfile = ({navigation}) => {
   const [contactNumberError, setContactNumberError] = useState('');
 
   const [updateLoading, setUpdateLoading] = useState(false);
-
   const dispatch = useDispatch();
 
   const validateInputs = () => {
     const nameCheck = validateName(name, 'Full Name');
-    if (nameCheck.isValid) {
-      setNameError('');
-    } else {
-      setNameError(nameCheck.errorText);
-    }
+    setNameError(nameCheck.errorText);
 
     const emailCheck = validateEmail(email);
-    if (emailCheck.isValid) {
-      setEmailError('');
-    } else {
-      setEmailError(emailCheck.errorText);
-    }
+    setEmailError(emailCheck.errorText);
 
-    const checkCompanyName = validateName(companyName, 'Company Name');
-    if (checkCompanyName.isValid) {
-      setCompanyNameError('');
-    } else {
+    let forCompanyName = true;
+    if(companyName?.trim()){
+      const checkCompanyName = validateName(companyName, 'Company Name');
       setCompanyNameError(checkCompanyName.errorText);
+      forCompanyName = checkCompanyName.isValid;
     }
-
+    
     let forContact = true;
-    if (contactNumber?.trim() !== '') {
+    if (contactNumber?.trim()) {
       const contactCheck = validatePhoneNumber(contactNumber);
-      if (contactCheck.isValid) {
-        setContactNumberError('');
-      } else {
-        setContactNumberError(contactCheck.errorText);
-        forContact = false;
-      }
+      setContactNumberError(contactCheck.errorText);
+      forContact = contactCheck.isValid;
     }
 
     return (
       nameCheck.isValid &&
       emailCheck.isValid &&
-      checkCompanyName.isValid &&
+      forCompanyName &&
       forContact
     );
   };
@@ -110,7 +97,7 @@ const EditMyProfile = ({navigation}) => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: white}}>
       <Header headingText="Edit My Profile" />
-      <View style={{padding: moderateScale(10), paddingHorizontal: scale(15)}}>
+      <View style={{padding: moderateScale(10), paddingHorizontal: scale(20)}}>
         <Input
           label="Full Name*"
           placeholder="John Doe"

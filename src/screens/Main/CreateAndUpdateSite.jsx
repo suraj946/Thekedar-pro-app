@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Checkbox } from 'react-native-paper';
-import { moderateScale, verticalScale } from 'react-native-size-matters';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import ContainedBtn from '../../components/ContainedBtn';
 import Header from '../../components/Header';
 import Input from '../../components/Input';
@@ -171,6 +171,7 @@ export default CreateAndUpdateSite;
 const styles = StyleSheet.create({
   form: {
     padding: moderateScale(10),
+    paddingHorizontal: scale(20),
   },
   headingText: {
     fontSize: moderateScale(20),

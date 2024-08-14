@@ -23,7 +23,7 @@ const OverviewCard = ({
   return (
     <TouchableOpacity activeOpacity={0.9} style={styles.container} onPress={handlePress}>
       <Avatar.Icon icon={icon} size={moderateScale(45)} color={iconColor} style={{backgroundColor:iconBgColor}} />
-      <Text style={styles.textStyle}>{text}</Text>
+      <Text numberOfLines={1} style={styles.textStyle}>{text}</Text>
     </TouchableOpacity>
   );
 };

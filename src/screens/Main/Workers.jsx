@@ -306,9 +306,11 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(25),
     marginBottom: verticalScale(5),
     fontWeight: '400',
+    textAlign: 'center',
   },
   txtSmall: {
     color: theme_primary,
     fontSize: moderateScale(16),
+    textAlign: 'center',
   },
 });

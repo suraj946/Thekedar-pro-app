@@ -16,12 +16,17 @@ import { useDispatch } from 'react-redux';
 import ContainedBtn from '../../components/ContainedBtn';
 import Input from '../../components/Input';
 import OutlinedBtn from '../../components/OutlinedBtn';
-import { dark, light, theme_secondary } from '../../styles/colors';
+import { danger, dark, light, theme_secondary } from '../../styles/colors';
 import { setCookie } from '../../utils/asyncStorage';
 import instance from '../../utils/axiosInstance';
 import { CONNECTION_ERROR, REGISTER_SUCCESS } from '../../utils/constants';
 import { validateEmail } from '../../utils/formValidator';
 import { useErrorMessage } from '../../utils/hooks';
+import SocialButtons from '../../components/SocialButtons';
+import { googleSignIn } from '../../utils/social';
+import Snackbar from 'react-native-snackbar';
+import { defaultSnackbarOptions } from '../../utils/helpers';
+import { googleSignInAndLogin } from '../../redux/actions/thekedarAction';
 
 const windowHeight = Dimensions.get("window").height;
 
@@ -36,11 +41,7 @@ const Login = ({navigation}) => {
 
   const validateInputs = () => {
     const emailCheck = validateEmail(email);
-    if(emailCheck.isValid){
-      setEmailError("");
-    }else{
-      setEmailError(emailCheck.errorText);
-    }
+    setEmailError(emailCheck.errorText);
 
     const passCheck = password.length !== 0;
     if(passCheck){
@@ -79,6 +80,17 @@ const Login = ({navigation}) => {
   }
 
   useErrorMessage({error, setError});
+  const handleGoogleSignIn = async() => {
+    setLoading(true);
+    const userInfo = await googleSignIn();
+    if(!userInfo){
+      setLoading(false);
+      Snackbar.show(defaultSnackbarOptions('Something went wrong, please try again', danger));
+      return;
+    }
+    dispatch(googleSignInAndLogin(userInfo.idToken));
+    setLoading(false);
+  }
   
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -118,6 +130,10 @@ const Login = ({navigation}) => {
               style={styles.mv}
               handler={handleLogin}
             />
+            <SocialButtons
+              handleGoogleSignIn={handleGoogleSignIn}
+              loading={loading}
+            />
             <Text 
               style={styles.forgetText} 
               disabled={loading}
@@ -139,7 +155,7 @@ export default Login;
 
 const styles = StyleSheet.create({
   container:{
-    paddingHorizontal: scale(10),
+    paddingHorizontal: scale(20),
     height: windowHeight,
     flexDirection:"column",
   },
