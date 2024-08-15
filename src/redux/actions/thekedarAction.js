@@ -88,8 +88,9 @@ export const updateUser = async(formData) => {
     }
 }
 
-export const googleSignInAndLogin = (idToken) => async dispatch => {
+export const googleSignInAndLogin = (idToken, setLoading) => async dispatch => {
     try {
+        setLoading(true);
         const {data, headers} = await instance.post('/thekedar/google-signin', {idToken});
         if(data.success){
             await setCookie(headers['set-cookie'][0].split(";")[0].split("=")[1]);
@@ -101,5 +102,7 @@ export const googleSignInAndLogin = (idToken) => async dispatch => {
         if(error.errorType !== CONNECTION_ERROR){
             Snackbar.show(defaultSnackbarOptions(error.response?.data?.message, danger));
         }
+    }finally{
+        setLoading(false);
     }
 }

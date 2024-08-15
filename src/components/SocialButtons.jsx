@@ -1,8 +1,11 @@
-import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import { dark_light_l2, theme_secondary } from '../styles/colors';
-import { moderateScale, verticalScale } from 'react-native-size-matters';
-import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import {
+  dark_light_l1,
+  dark_light_l2,
+  white
+} from '../styles/colors';
 
 const SocialButtons = ({
   handleGoogleSignIn = () => {},
@@ -12,15 +15,45 @@ const SocialButtons = ({
   return (
     <>
       <Text style={styles.orTxt}>OR</Text>
+      <Text style={{
+        textAlign: 'center',
+        color: dark_light_l1,
+        fontSize: moderateScale(18),
+        marginBottom: verticalScale(10)
+      }}>Sign in with</Text>
       <View style={styles.socialView}>
-        <GoogleSigninButton
+        <SButton
+          icon={require('../assests/google.png')}
+          text={'Google'}
           disabled={loading}
-          style={styles.googleBtn}
           onPress={handleGoogleSignIn}
         />
-        <Text style={styles.fbBtn}>FaceBook</Text>
       </View>
     </>
+  );
+};
+
+const SButton = ({
+  icon,
+  text,
+  onPress = () => {},
+  disabled,
+  containerStyle = {},
+  textStyle = {},
+}) => {
+  return (
+    <TouchableOpacity
+      activeOpacity={0.7}
+      onPress={onPress}
+      disabled={disabled}
+      style={[
+        styles.sBtn,
+        containerStyle,
+        {backgroundColor: disabled ? dark_light_l2 : white},
+      ]}>
+      <Image style={styles.socialIcon} source={icon} />
+      <Text style={[styles.socialText, textStyle]}>{text}</Text>
+    </TouchableOpacity>
   );
 };
 
@@ -31,8 +64,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: dark_light_l2,
     fontSize: moderateScale(20),
-    marginTop: verticalScale(10), 
-    marginBottom: verticalScale(8),
+    marginTop: verticalScale(10),
   },
   socialView: {
     width: '100%',
@@ -40,12 +72,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
   },
-  googleBtn: {
-    width: '45%',
+  sBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: moderateScale(5),
+    paddingVertical: verticalScale(2),
+    paddingHorizontal: scale(10),
   },
-  fbBtn: {
-    color: theme_secondary,
+  socialIcon: {
+    width: scale(30),
+    height: scale(30),
+    resizeMode: 'contain',
+    borderRadius: moderateScale(30),
+  },
+  socialText: {
+    color: dark_light_l1,
     fontSize: moderateScale(20),
-    width: '45%',
+    marginLeft: scale(10),
   },
 });
