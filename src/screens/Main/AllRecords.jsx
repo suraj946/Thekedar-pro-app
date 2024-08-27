@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import {
+  Dimensions,
   FlatList,
   SafeAreaView,
   StatusBar,
@@ -36,6 +37,8 @@ import {
   useGetALlRecords,
   useSelectionSystem,
 } from '../../utils/hooks';
+
+const {height} = Dimensions.get('window');
 
 const getTabsValue = (joinedYear, currentYear) => {
   const tabs = [];
@@ -116,6 +119,7 @@ const AllRecords = ({route}) => {
             )}
             <View style={styles.cardContainer}>
               <FlatList
+                style={{minHeight: height-400}}
                 data={data}
                 renderItem={({item}) => (
                   <MonthCard
@@ -130,6 +134,8 @@ const AllRecords = ({route}) => {
                     deSelectSingle={deSelectSingle}
                   />
                 )}
+                onRefresh={() => dispatch(getAllRecordsOfYear(workerId, selectedYear))}
+                refreshing={loading}
                 keyExtractor={item => item._id}
                 showsVerticalScrollIndicator={false}
                 ListEmptyComponent={() => (

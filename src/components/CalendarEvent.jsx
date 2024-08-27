@@ -3,58 +3,75 @@ import React, { useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import Snackbar from 'react-native-snackbar';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getMonthEvents } from '../redux/actions/monthlyRecordAction';
-import {
-  danger,
-  dark_light_l1,
-  dark_light_l2
-} from '../styles/colors';
+import { danger, dark_light_l1, dark_light_l2, success } from '../styles/colors';
 import { defaultSnackbarOptions } from '../utils/helpers';
-import { useCurrentDate } from '../utils/hooks';
+import { useCurrentDate, useMonthEvent } from '../utils/hooks';
+import ContainedBtn from './ContainedBtn';
 import DayCard from './DayCard';
+import InfoView from './InfoView';
 
-const CalendarEvent = ({data, workerId, recordId, currentShowingMonthIndex}) => {
+const CalendarEvent = ({
+  workerId, currentShowingMonthIndex,
+}) => {
+  const {selectedRecord} = useSelector(state => state.calendarUtil);
+  const {wagesPerDay, recordId} = selectedRecord;
   const [refresh, setRefresh] = useState(false);
   const dispatch = useDispatch();
   const {monthIndex} = useCurrentDate();
   const handleReferesh = () => {
-    if (currentShowingMonthIndex !== monthIndex) return;
+    // if (currentShowingMonthIndex !== monthIndex) return;
     setRefresh(true);
     dispatch(getMonthEvents(workerId, monthIndex));
     setRefresh(false);
   };
-
+  const {getEvent} = useMonthEvent();
+  const data = getEvent(workerId, currentShowingMonthIndex);
   const navigation = useNavigation();
 
-  const cardPressHandler = (item) => {
-    const {lastSettlementDate} = data; 
-    if(item.dayDate <= lastSettlementDate){
-      Snackbar.show(defaultSnackbarOptions("You cannot edit this event", danger));
+  const cardPressHandler = item => {
+    const {lastSettlementDate} = data;
+    if (
+      item.dayDate <= lastSettlementDate ||
+      currentShowingMonthIndex < monthIndex ||
+      recordId === null
+    ) {
+      Snackbar.show(
+        defaultSnackbarOptions('You cannot edit this event', danger),
+      );
       return;
-    }
-    navigation.navigate("EditAttendance", {...item, recordId, workerId});
-  }
+    }    
+    navigation.navigate('EditAttendance', {...item, recordId, workerId, wagesPerDay});
+  };
 
   const dayEventCard = ({item}) => {
     return (
-      <TouchableOpacity onPress={() => cardPressHandler(item)} activeOpacity={0.5} >
-        <DayCard item={item}/>
+      <TouchableOpacity
+        onPress={() => cardPressHandler(item)}
+        activeOpacity={0.5}>
+        <DayCard item={item} />
       </TouchableOpacity>
     );
   };
+  
+  if (monthIndex === currentShowingMonthIndex && recordId === null) {
+    return (
+      <View style={[styles.container, {marginTop: verticalScale(50), paddingHorizontal: scale(20)}]}>
+        <InfoView text='Record not found for this month'/>
+        <ContainedBtn
+          title='Create Record'
+          style={{marginTop: verticalScale(10), backgroundColor: success, width: '60%', alignSelf: 'center'}}
+          handler={() => navigation.navigate('CreateRecordForm', {workerId, screenName: 'Calendar'})}
+        />
+      </View>
+    );
+  }
 
   if (!data || !data?.dailyRecords?.length)
     return (
       <View style={[styles.container, {marginTop: verticalScale(100)}]}>
-        <Text
-          style={{
-            textAlign: 'center',
-            fontSize: moderateScale(25),
-            color: dark_light_l2,
-          }}>
-          No events found
-        </Text>
+        <Text style={styles.utilText}>No events found</Text>
       </View>
     );
 
@@ -106,5 +123,10 @@ const styles = StyleSheet.create({
     color: dark_light_l1,
     textAlignVertical: 'center',
     padding: moderateScale(10),
+  },
+  utilText: {
+    textAlign: 'center',
+    fontSize: moderateScale(25),
+    color: dark_light_l2,
   },
 });

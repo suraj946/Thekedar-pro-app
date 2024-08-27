@@ -8,6 +8,7 @@ import {
 import {LOGOUT_SUCCESS} from '../utils/constants';
 import {allRecordsReducer, eventReducer} from './slices/recordSlice';
 import {singleSiteReducer, siteReducer} from './slices/siteSlice';
+import { calendarUtilReducer } from './slices/calendarSlice';
 
 const appReducer = combineReducers({
     thekedar: thekedarReducer,
@@ -17,7 +18,9 @@ const appReducer = combineReducers({
     events: eventReducer,
     allRecords: allRecordsReducer,
     site: siteReducer,
-    singleSite: singleSiteReducer
+    singleSite: singleSiteReducer,
+    calendarUtil: calendarUtilReducer
+
 });
 
 const rootReducer = (state, action) => {

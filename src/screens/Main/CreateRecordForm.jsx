@@ -5,7 +5,8 @@ import { useDispatch } from 'react-redux';
 import AmountInfoCard from '../../components/AmountInfoCard';
 import ContainedBtn from '../../components/ContainedBtn';
 import Header from '../../components/Header';
-import { getSingleWorker } from '../../redux/actions/workerAction';
+import { getSingleWorker, getWorkers } from '../../redux/actions/workerAction';
+import { setRecordData } from '../../redux/slices/calendarSlice';
 import {
   dark_light_l1,
   dark_light_l2,
@@ -28,7 +29,7 @@ const CreateRecordForm = ({route}) => {
 
   const {year, monthIndex, numberOfDays} = useCurrentDate();
 
-  const afterRecordCreation = async () => {
+  const afterRecordCreation = async (recordId) => {
     switch (screenName) {
       case 'WorkerList':
         dispatch({type: UPDATE_WORKER_FOR_NEW_RECORD, payload: workerId});
@@ -36,6 +37,11 @@ const CreateRecordForm = ({route}) => {
       case 'WorkerProfile':
         const worker = await getSingleWorker(workerId);
         dispatch({type: ADD_SINGLE_WORKER, payload: worker});
+        dispatch(getWorkers());
+        break;
+      case 'Calendar':
+        dispatch(setRecordData({recordId}));
+        dispatch(getWorkers());
         break;
       default:
         break;

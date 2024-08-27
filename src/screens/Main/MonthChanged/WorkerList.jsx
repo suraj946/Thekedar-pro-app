@@ -146,7 +146,7 @@ const WorkerList = ({navigation}) => {
       <HomeDrawer
         visible={drawerOpen}
         setVisible={setDrawerOpen}
-        showLogoutOnly={false}
+        showLogoutOnly={true}
       />
       <BottomMenu
         visible={optionModalVisible}

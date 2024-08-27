@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   mainText: {
+    marginBottom: verticalScale(5),
     fontSize: moderateScale(25),
     textTransform: 'capitalize',
     color: dark_light_l2,

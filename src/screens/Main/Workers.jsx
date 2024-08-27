@@ -33,7 +33,7 @@ const Workers = ({navigation}) => {
   const [tabValue, setTabValue] = useState('active');
   const [refreshing, setRefreshing] = useState(false);
 
-  const {loading, workers, nonActiveWorkers, activeFetched, nonActiveFetched} =
+  const {loading, workers, nonActiveWorkers, workerFetched} =
     useSelector(state => state.workers);
   const dispatch = useDispatch();
   const [workersData, setWorkersData] = useState([]);
@@ -73,11 +73,7 @@ const Workers = ({navigation}) => {
             const response = await deleteWorkers(workerIds);
             setDeleteLoading(false);
             if (response) {
-              if (tabValue === 'active') {
-                dispatch(getWorkers());
-              } else {
-                dispatch(getWorkers(false));
-              }
+              dispatch(getWorkers());
               dispatch(updateWorkersCount(-1 * workerIds.length));
               //to clear selected items
               deselectAll();
@@ -90,29 +86,15 @@ const Workers = ({navigation}) => {
 
   const handleOnRefresh = () => {
     setRefreshing(true);
-    if (tabValue === 'active') {
-      dispatch(getWorkers());
-    } else {
-      dispatch(getWorkers(false));
-    }
+    dispatch(getWorkers());
     setRefreshing(false);
   };
 
   useEffect(() => {
-    if (tabValue === 'active') {
-      if (!activeFetched) {
-        dispatch(getWorkers());
-      } else {
-        setWorkersData(workers);
-      }
-    } else {
-      if (!nonActiveFetched) {
-        dispatch(getWorkers(false));
-      } else {
-        setWorkersData(nonActiveWorkers);
-      }
-    }
-  }, [tabValue, activeFetched, nonActiveFetched, workers, nonActiveWorkers]);
+    if(!workerFetched) dispatch(getWorkers());
+    if (tabValue === 'active') setWorkersData(workers);
+    else setWorkersData(nonActiveWorkers);
+  }, [tabValue, workerFetched, workers, nonActiveWorkers]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {

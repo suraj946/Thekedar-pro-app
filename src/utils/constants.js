@@ -28,8 +28,7 @@ export const REGISTER_FAIL = "registerFail";
 export const UPDATE_USER = "updateUser";
 
 export const GET_WORKER_REQUEST = "getWorkerRequest";
-export const GET_WORKER_SUCCESS_ACTIVE = "getWorkerSuccessActive";
-export const GET_WORKER_SUCCESS_NON_ACTIVE = "getWorkerSuccessNonActive";
+export const GET_WORKER_SUCCESS = "getWorkerSuccess";
 export const GET_WORKER_FAIL = "getWorkerFail";
 export const ADD_WORKER_FOR_ATTENDANCE = "addWorkerForAttendance";
 export const UPDATE_AFTER_ATTENDANCE = "updateAfterAttendance";

@@ -5,8 +5,7 @@ import {
   ADD_WORKER_FOR_NEW_RECORD,
   GET_WORKER_FAIL,
   GET_WORKER_REQUEST,
-  GET_WORKER_SUCCESS_ACTIVE,
-  GET_WORKER_SUCCESS_NON_ACTIVE,
+  GET_WORKER_SUCCESS,
   UPDATE_AFTER_ATTENDANCE,
   UPDATE_SINGLE_WORKER,
   UPDATE_WORKER_FOR_NEW_RECORD,
@@ -19,22 +18,17 @@ const workersSlice = createSlice({
     workers: [],
     nonActiveWorkers: [],
     workerForAttendance: [],
-    activeFetched:false,
-    nonActiveFetched:false
+    workerFetched:false,
   },
   extraReducers: builder => {
     builder.addCase(GET_WORKER_REQUEST, (state) => {
       state.loading = true;
     })
-    .addCase(GET_WORKER_SUCCESS_ACTIVE, (state, action) => {
+    .addCase(GET_WORKER_SUCCESS, (state, action) => {
       state.loading = false;
-      state.workers = action.payload;
-      state.activeFetched = true;
-    })
-    .addCase(GET_WORKER_SUCCESS_NON_ACTIVE, (state, action) => {
-      state.loading = false;
-      state.nonActiveWorkers = action.payload;
-      state.nonActiveFetched = true;
+      state.workers = action.payload.activeWorkers;
+      state.nonActiveWorkers = action.payload.inactiveWorkers;
+      state.workerFetched = true;
     })
     .addCase(GET_WORKER_FAIL, (state) => {
       state.loading = false;

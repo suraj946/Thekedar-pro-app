@@ -24,7 +24,7 @@ import { defaultSnackbarOptions, getDayIndex } from '../../utils/helpers';
 import { useCurrentDate } from '../../utils/hooks';
 import { sharedStyles } from '../../styles/styles';
 
-const AttendanceForm = ({route, navigation}) => {
+const AttendanceForm = ({route, navigation}) => {  
   const {
     workerId,
     workerName,

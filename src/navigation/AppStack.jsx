@@ -47,7 +47,6 @@ const AppStack = () => {
     })();
   }, []);
 
-  
   return (isInitialCall || hasDate) ? (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="WorkerList" component={WorkerList} />

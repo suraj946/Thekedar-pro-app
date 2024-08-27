@@ -109,7 +109,7 @@ const useCreateMonthlyRecord = () => {
         Snackbar.show(defaultSnackbarOptions(data.message));
         setSettlementResult(data.data?.settlementResponse);
         if(typeof cb === 'function'){
-          await cb();
+          await cb(data.data?.recordId);
         }
       }
     } catch (error) {
@@ -136,7 +136,7 @@ const useWorkerStatusUpdate = () => {
       if(data.success){
         Snackbar.show(defaultSnackbarOptions(data.message));
         if(typeof cb === 'function'){
-          cb();
+          cb(data.data);
         }
       }
     } catch (error) {
@@ -228,10 +228,10 @@ const useCurrentDate = () => {
 const useMonthEvent = () => {
   const {events, loading} = useSelector(state => state.events);
 
-  const getEvent = (workerId, monthIndex) => {
+  const getEvent = (workerId, monthIndex) => {    
     if(!events[workerId]){
       return null;
-    }
+    }    
     return events[workerId][monthIndex];
   }
 
@@ -242,8 +242,6 @@ const useMonthEvent = () => {
     if(!events[workerId][monthIndex]){
       return false;
     }
-    // const {dailyRecords} = events[workerId][monthIndex];
-    // return  dailyRecords?.length > 0;
     return true;
   }
 

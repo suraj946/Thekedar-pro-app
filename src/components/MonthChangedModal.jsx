@@ -11,15 +11,12 @@ import {
   dark,
   dark_light_l1,
   light,
-  light2,
-  theme_primary,
-  theme_secondary,
-  white,
+  theme_primary
 } from '../styles/colors';
 import { MONTH } from '../utils/constants';
-import OutlinedBtn from './OutlinedBtn';
-import MyModal from './MyModal';
 import { useCurrentDate } from '../utils/hooks';
+import ContainedBtn from './ContainedBtn';
+import MyModal from './MyModal';
 
 const MonthChangedModal = ({visible = false, setVisible = () => {}}) => {
   const {monthIndex:currMonthIndex} = useCurrentDate();
@@ -38,20 +35,18 @@ const MonthChangedModal = ({visible = false, setVisible = () => {}}) => {
       visible={visible}
       setVisible={setVisible}
       heading="New Month Arrival"
-      containerStyle={{maxHeight: '100%', width: '100%'}}
+      containerStyle={{top:verticalScale(100), maxHeight: verticalScale(500), height: verticalScale(450)}}
       autoDismiss={false}>
       <View style={styles.contentView}>
         <Animated.View
           style={[
             styles.topView,
-            styles.sharedStyle,
-            styles.shadow,
             viewStyle,
           ]}>
           <Text style={styles.headText}>Month Changed</Text>
           <Icon
             source={'calendar-month-outline'}
-            size={moderateScale(160)}
+            size={moderateScale(100)}
             color={theme_primary}
           />
           <View style={styles.monthContainer}>
@@ -67,21 +62,18 @@ const MonthChangedModal = ({visible = false, setVisible = () => {}}) => {
         <Animated.View
           style={[
             styles.bottomView,
-            styles.sharedStyle,
-            styles.shadow,
             viewStyle,
           ]}>
-          <Text style={styles.bottomHeadText}>Things To-Do</Text>
+          <Text style={styles.bottomHeadText}>What you need to do ?</Text>
           <Text style={styles.bottomDescText}>
             New month has been arrived. You need to create new records for all
             the active workers to go further. Settlement of previous record will
             happen automatically and result will be added to the new record at
             the time of record creation.
           </Text>
-          <OutlinedBtn
+          <ContainedBtn
             title="Proceed"
             style={styles.btn}
-            labelStyle={{color: light}}
             handler={() => setVisible(false)}
           />
         </Animated.View>
@@ -105,41 +97,29 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   contentView: {
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    justifyContent: 'space-evenly',
     height: '100%',
   },
   topView: {
-    height: '50%',
-    backgroundColor: light2,
-    elevation: 5,
     justifyContent: 'space-between',
     alignItems: 'center',
+    alignSelf: 'center',
   },
   bottomView: {
-    height: '40%',
-    backgroundColor: theme_secondary,
     marginBottom: verticalScale(3),
     paddingHorizontal: scale(20),
     paddingVertical: verticalScale(5),
-    alignItems: 'center',
-  },
-  sharedStyle: {
-    width: '95%',
-    borderRadius: moderateScale(30),
+    borderRadius: moderateScale(5),
   },
   headText: {
     color: dark_light_l1,
     fontSize: moderateScale(25),
     textAlign: 'center',
-    marginTop: verticalScale(20),
-    // marginBottom: verticalScale(5),
   },
   monthContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: verticalScale(20),
   },
   monthText: {
     color: light,
@@ -149,20 +129,20 @@ const styles = StyleSheet.create({
     backgroundColor: theme_primary,
     paddingHorizontal: scale(10),
     paddingVertical: verticalScale(5),
-    borderRadius: moderateScale(10),
+    borderRadius: moderateScale(5),
   },
   bottomHeadText: {
-    color: white,
+    color: dark,
     fontSize: moderateScale(25),
-    marginBottom: verticalScale(10),
+    marginBottom: verticalScale(5),
+    fontWeight: '600',
   },
   bottomDescText: {
-    color: dark,
+    color: dark_light_l1,
     fontSize: moderateScale(17),
   },
   btn: {
     marginTop: verticalScale(30),
-    borderColor: light,
-    borderWidth: moderateScale(1.5),
+    alignSelf: 'center',
   },
 });

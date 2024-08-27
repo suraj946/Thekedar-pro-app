@@ -1,9 +1,8 @@
 import Snackbar from "react-native-snackbar";
+import { danger } from "../../styles/colors";
 import instance from "../../utils/axiosInstance";
 import { ALL_RECORDS_FAIL, ALL_RECORDS_REQUEST, ALL_RECORDS_SUCCESS, CONNECTION_ERROR, EVENT_FAIL, EVENT_REQUEST, EVENT_SUCCESS } from "../../utils/constants";
 import { defaultSnackbarOptions } from "../../utils/helpers";
-import { danger } from "../../styles/colors";
-import { addToEvent } from "../slices/recordSlice";
 
 export const addAttendance = async(workersData) => {
   try {
@@ -40,7 +39,7 @@ export const getMonthEvents = (workerId, monthIndex) => async dispatch => {
     const {data} = await instance.get(
       `/record/calendar-events/${workerId}?monthIndex=${monthIndex}`,
     );
-    if (data.success) {
+    if (data.success) {      
       dispatch({type:EVENT_SUCCESS, payload:{monthIndex, workerId, event:data.data}});
     }
   } catch (error) {

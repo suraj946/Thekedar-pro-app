@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -8,17 +8,18 @@ import {
   Text,
   View,
 } from 'react-native';
-import {Avatar, Icon, List, Menu} from 'react-native-paper';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import {useDispatch, useSelector} from 'react-redux';
+import { Avatar, Icon, List, Menu } from 'react-native-paper';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import { useDispatch, useSelector } from 'react-redux';
 import BottomMenu from '../../components/BottomMenu';
 import ContainedBtn from '../../components/ContainedBtn';
 import DotsLoading from '../../components/DotsLoading';
 import Header from '../../components/Header';
+import InfoView from '../../components/InfoView';
 import MyAlert from '../../components/MyAlert';
 import NotFound from '../../components/NotFound';
 import OutlinedBtn from '../../components/OutlinedBtn';
-import {deleteWorkers} from '../../redux/actions/workerAction';
+import { deleteWorkers, getWorkers } from '../../redux/actions/workerAction';
 import {
   danger,
   dark_light_l1,
@@ -34,7 +35,7 @@ import {
   MONTH,
   UPDATE_SINGLE_WORKER,
 } from '../../utils/constants';
-import {useGetWorker, useWorkerStatusUpdate} from '../../utils/hooks';
+import { useGetWorker, useWorkerStatusUpdate } from '../../utils/hooks';
 
 const WorkerProfile = ({navigation, route}) => {
   const {workerId} = route.params;
@@ -72,7 +73,8 @@ const WorkerProfile = ({navigation, route}) => {
         {
           text: 'Yes',
           onPress: () => {
-            updateStatus(worker._id, !worker.isActive, () => {
+            updateStatus(worker._id, !worker.isActive, (_) => {
+              dispatch(getWorkers());
               dispatch({
                 type: UPDATE_SINGLE_WORKER,
                 payload: {isActive: !worker.isActive, monthRecord: undefined},
@@ -268,15 +270,9 @@ const WorkerProfile = ({navigation, route}) => {
               <View style={styles.bottomView}>
                 {!worker.monthRecord ? (
                   <View>
-                    <View style={styles.warningView}>
-                      <Avatar.Icon
-                        icon={'alert'}
-                        size={moderateScale(40)}
-                        style={{backgroundColor: white}}
-                        color={danger}
-                      />
-                      <Text style={styles.noRecText}>No Record Found</Text>
-                    </View>
+                    <InfoView
+                      text='Record Not Found'
+                    />
                     <ContainedBtn
                       title="Create Record"
                       handler={() =>
@@ -288,7 +284,7 @@ const WorkerProfile = ({navigation, route}) => {
                       style={{
                         backgroundColor: success,
                         width: '50%',
-                        marginTop: verticalScale(10),
+                        margin: moderateScale(10),
                         alignSelf: 'center',
                       }}
                     />
@@ -301,6 +297,7 @@ const WorkerProfile = ({navigation, route}) => {
                         workerId: worker._id,
                         recordId: worker.monthRecord._id,
                         name: worker.name,
+                        wagesPerDay: worker.wagesPerDay
                       })
                     }
                   />
@@ -426,21 +423,6 @@ const styles = StyleSheet.create({
   },
   bottomView: {
     padding: verticalScale(10),
-  },
-  warningView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: verticalScale(10),
-    elevation: 5,
-    backgroundColor: white,
-    padding: verticalScale(4),
-    borderRadius: moderateScale(5),
-  },
-  noRecText: {
-    fontSize: moderateScale(18),
-    color: dark_light_l1,
-    marginLeft: scale(10),
   },
   activeTxt: {
     margin: moderateScale(5),

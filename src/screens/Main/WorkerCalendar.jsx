@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import {
   FlatList,
   RefreshControl,
@@ -8,19 +8,19 @@ import {
   Text,
   View,
 } from 'react-native';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import {useDispatch, useSelector} from 'react-redux';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import { useDispatch, useSelector } from 'react-redux';
+import DotsLoading from '../../components/DotsLoading';
 import Header from '../../components/Header';
 import WorkerCard2 from '../../components/WorkerCard2';
-import {getWorkers} from '../../redux/actions/workerAction';
-import {theme_secondary, white} from '../../styles/colors';
-import DotsLoading from '../../components/DotsLoading';
+import { getWorkers } from '../../redux/actions/workerAction';
+import { theme_secondary, white } from '../../styles/colors';
 
 const WorkerCalendar = ({navigation}) => {
   const {workers, loading} = useSelector(state => state.workers);
   const dispatch = useDispatch();
-  const handleSelectWorker = (workerId, name, recordId) => {
-    navigation.navigate('Calendar', {workerId, name, recordId});
+  const handleSelectWorker = (workerId, name, recordId, wagesPerDay) => {
+    navigation.navigate('Calendar', {workerId, name, recordId, wagesPerDay});
   };
   const handleRefresh = () => {
     dispatch(getWorkers());
@@ -40,9 +40,10 @@ const WorkerCalendar = ({navigation}) => {
         <Text style={styles.headingText}>Choose Worker</Text>
 
         {loading ? (
-          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <DotsLoading />
-        </View>
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <DotsLoading />
+          </View>
         ) : (
           <FlatList
             style={{marginTop: verticalScale(10)}}

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -7,9 +7,9 @@ import {
   Text,
   View,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
-import { useSelector } from 'react-redux';
+import {Icon} from 'react-native-paper';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
+import {useSelector} from 'react-redux';
 import Header from '../../components/Header';
 import TabComponent from '../../components/TabComponent';
 import WorkerCard2 from '../../components/WorkerCard2';
@@ -21,24 +21,32 @@ import {
   theme_secondary,
   white,
 } from '../../styles/colors';
+import ListEmptyComponent from '../../components/ListEmptyComponent';
 
 const Attendance = ({navigation}) => {
   const {workers, workerForAttendance: workersData} = useSelector(
     state => state.workers,
   );
+  const workersHavingRecords = useMemo(
+    () => workers.filter(w => w.currentRecordId !== null),
+    [],
+  );
   const [selectedTab, setSelectedTab] = useState('for-today');
 
-  const handleSelectWorker = useCallback((wId, name, recordId, wpd, rest) => {
-    navigation.navigate('AttendanceForm', {
-      workerId: wId,
-      workerName: name,
-      recordId,
-      numberOfDays: rest.records.numberOfDays,
-      lastSettlementDate: rest.records.lastSettlementDate,
-      wagesPerDay: wpd,
-      selectedTab
-    });
-  }, [selectedTab]);
+  const handleSelectWorker = useCallback(
+    (wId, name, recordId, wpd, rest) => {
+      navigation.navigate('AttendanceForm', {
+        workerId: wId,
+        workerName: name,
+        recordId,
+        numberOfDays: rest.records.numberOfDays,
+        lastSettlementDate: rest.records.lastSettlementDate,
+        wagesPerDay: wpd,
+        selectedTab,
+      });
+    },
+    [selectedTab],
+  );
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -81,18 +89,29 @@ const Attendance = ({navigation}) => {
               <Text style={styles.text}>
                 If you want to edit worker's attendance then go to
               </Text>
-              <Text style={styles.hightLightedText} onPress={() => navigation.navigate('WorkerCalendar')}> View Calendar</Text>
+              <Text
+                style={styles.hightLightedText}
+                onPress={() => navigation.navigate('WorkerCalendar')}>
+                {' '}
+                View Calendar
+              </Text>
               <Text style={styles.text}>
                 If you want to make left attendance then press
               </Text>
-              <Text style={styles.hightLightedText} onPress={() => setSelectedTab('for-left')}>For Left</Text>
+              <Text
+                style={styles.hightLightedText}
+                onPress={() => setSelectedTab('for-left')}>
+                For Left
+              </Text>
               {/* <Text style={styles.text}>tab</Text> */}
             </View>
           </View>
         )}
         <FlatList
           style={{marginTop: verticalScale(10)}}
-          data={selectedTab === 'for-today' ? workersData : workers}
+          data={
+            selectedTab === 'for-today' ? workersData : workersHavingRecords
+          }
           renderItem={({item}) => (
             <WorkerCard2
               _id={item._id}
@@ -105,6 +124,14 @@ const Attendance = ({navigation}) => {
             />
           )}
           keyExtractor={item => item._id}
+          ListEmptyComponent={
+            selectedTab === 'for-left' && 
+            <ListEmptyComponent
+              style={{marginTop: verticalScale(30)}}
+              mainText="No Workers To Show" 
+              subText="If you don't see any worker here then you either have not created any worker or your worker doesn't have any record"
+            />
+          }
         />
       </View>
     </SafeAreaView>

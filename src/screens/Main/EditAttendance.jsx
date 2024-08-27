@@ -1,23 +1,23 @@
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import React, {useState} from 'react';
-import {danger, theme_primary, white} from '../../styles/colors';
-import Header from '../../components/Header';
-import {useCurrentDate} from '../../utils/hooks';
-import {CONNECTION_ERROR, MONTH} from '../../utils/constants';
-import {Button, Icon} from 'react-native-paper';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import SelectAttendanceStatus from '../../components/SelectAttendanceStatus';
-import {sharedStyles} from '../../styles/styles';
-import OutlinedBtn from '../../components/OutlinedBtn';
-import Input from '../../components/Input';
-import ContainedBtn from '../../components/ContainedBtn';
-import {validateWages} from '../../utils/formValidator';
-import instance from '../../utils/axiosInstance';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Button, Icon } from 'react-native-paper';
+import { moderateScale, verticalScale } from 'react-native-size-matters';
 import Snackbar from 'react-native-snackbar';
-import { defaultSnackbarOptions } from '../../utils/helpers';
 import { useDispatch } from 'react-redux';
-import { getMonthEvents } from '../../redux/actions/monthlyRecordAction';
+import ContainedBtn from '../../components/ContainedBtn';
+import Header from '../../components/Header';
+import Input from '../../components/Input';
 import MyAlert from '../../components/MyAlert';
+import OutlinedBtn from '../../components/OutlinedBtn';
+import SelectAttendanceStatus from '../../components/SelectAttendanceStatus';
+import { getMonthEvents } from '../../redux/actions/monthlyRecordAction';
+import { danger, theme_primary, white } from '../../styles/colors';
+import { sharedStyles } from '../../styles/styles';
+import instance from '../../utils/axiosInstance';
+import { CONNECTION_ERROR, MONTH } from '../../utils/constants';
+import { validateWages } from '../../utils/formValidator';
+import { defaultSnackbarOptions } from '../../utils/helpers';
+import { useCurrentDate } from '../../utils/hooks';
 
 const EditAttendance = ({route, navigation}) => {
   const {monthIndex} = useCurrentDate();
@@ -29,6 +29,7 @@ const EditAttendance = ({route, navigation}) => {
     wagesOfDay: prevWages,
     advance,
     workerId,
+    wagesPerDay
   } = route.params;
 
   const [visible, setVisible] = useState(false);
@@ -127,6 +128,18 @@ const EditAttendance = ({route, navigation}) => {
       ],
     })
   };
+
+  useEffect(() => {
+    setWagesOfDay(prev => {
+      let toSet;
+      if (presenceStatus === 'present') toSet = Number(wagesPerDay);
+      else if (presenceStatus === 'half') toSet = Number(wagesPerDay) * 0.5;
+      else if (presenceStatus === 'absent') toSet = 0;
+      else toSet = Number(wagesPerDay) * 1.5;
+
+      return toSet.toString();
+    });
+  }, [presenceStatus]);
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: white}}>

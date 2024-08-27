@@ -17,9 +17,11 @@ import {
 } from '../styles/colors';
 import { DAYS } from '../utils/constants';
 import { generateEvents } from '../utils/helpers';
-import { useCurrentDate } from '../utils/hooks';
+import { useCurrentDate, useMonthEvent } from '../utils/hooks';
 
-const RenderCalendar = ({data, currentShowingMonthIndex}) => {
+const RenderCalendar = ({currentShowingMonthIndex, workerId}) => {
+  const {getEvent} = useMonthEvent();
+  const data = getEvent(workerId, currentShowingMonthIndex);
   const monthDetails = generateEvents(data?.dailyRecords, data?.dayIndex, data?.numberOfDays);
   const {dayDate, monthIndex} = useCurrentDate();
   const startDayIndex = monthDetails && DAYS.indexOf(monthDetails[0].dayOfWeek);

@@ -6,30 +6,22 @@ import {
     CONNECTION_ERROR,
     GET_WORKER_FAIL,
     GET_WORKER_REQUEST,
-    GET_WORKER_SUCCESS_ACTIVE,
-    GET_WORKER_SUCCESS_NON_ACTIVE,
+    GET_WORKER_SUCCESS,
 } from '../../utils/constants';
 import { defaultSnackbarOptions } from '../../utils/helpers';
 
 export const getWorkers =
-    (status = true) =>
+    () =>
     async dispatch => {
         try {
             dispatch({type: GET_WORKER_REQUEST});
-            const {data} = await instance.get(`/worker/all?status=${status}`);
+            const {data} = await instance.get(`/worker/all`);
             if (data.success) {
-                if (status) {
-                    dispatch({
-                        type: GET_WORKER_SUCCESS_ACTIVE,
-                        payload: data.data,
-                    });
-                    dispatch({type: ADD_WORKER_FOR_ATTENDANCE, payload: data.data?.filter(w => w.markedToday === false)});
-                } else {
-                    dispatch({
-                        type: GET_WORKER_SUCCESS_NON_ACTIVE,
-                        payload: data.data,
-                    });
-                }
+                dispatch({
+                    type: GET_WORKER_SUCCESS,
+                    payload: data.data,
+                });
+                dispatch({type: ADD_WORKER_FOR_ATTENDANCE, payload: data.data?.activeWorkers?.filter(w => (w.markedToday === false && w.currentRecordId !== null))});
             }
         } catch (error) {
             if (error.errorType !== CONNECTION_ERROR) {
